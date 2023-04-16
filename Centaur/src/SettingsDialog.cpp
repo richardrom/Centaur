@@ -197,6 +197,14 @@ void SettingsDialog::treeItemPressed(QTreeWidgetItem *item, C_UNUSED int column)
     {
         setPage(Pages::Shortcuts);
     }
+    else
+    {
+        auto pg = _impl->pluginSettingsPages.find(item);
+        if (pg != _impl->pluginSettingsPages.end())
+        {
+            ui()->stackedWidget->setCurrentWidget(pg->second);
+        }
+    }
 }
 
 void SettingsDialog::setPage(SettingsDialog::Pages page) noexcept
