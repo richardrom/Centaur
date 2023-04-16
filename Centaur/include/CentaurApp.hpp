@@ -122,6 +122,7 @@ public:
 
 public:
     std::vector<CENTAUR_PLUGIN_NAMESPACE::IBase *> &getPluginBase() const noexcept;
+    PluginConfiguration *getPluginConfig(const uuid &id) const noexcept;
 
 protected:
     void mapPluginBase(CENTAUR_PLUGIN_NAMESPACE::IBase *base) noexcept;

@@ -8,6 +8,7 @@
 #include "../ui/ui_CentaurApp.h"
 #include "CandleChartDialog.hpp"
 #include "CandleViewWidget.hpp"
+#include "CentaurPlugin.hpp"
 #include "DAL.hpp"
 #include "DepthChartDialog.hpp"
 #include "FavoritesDialog.hpp"
@@ -373,6 +374,14 @@ void CentaurApp::mapStatusPlugins(const uuid &plugin, CENTAUR_PLUGIN_NAMESPACE::
 std::vector<CENTAUR_PLUGIN_NAMESPACE::IBase *> &CentaurApp::getPluginBase() const noexcept
 {
     return _impl->pluginsData;
+}
+
+PluginConfiguration *CentaurApp::getPluginConfig(const uuid &id) const noexcept
+{
+    auto iter = _impl->configurationInterface.find(id);
+    if (iter == _impl->configurationInterface.end())
+        return nullptr;
+    return iter->second;
 }
 
 void CentaurApp::closeEvent(QCloseEvent *event)
