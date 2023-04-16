@@ -33,9 +33,12 @@ SET(CMAKE_AUTORCC ON)
 
 SET(PROJECT_FILES
         include/ExchangeRate.hpp
-        src/ExchangeRate.cpp)
+        src/ExchangeRate.cpp
+        src/SettingsWidget.cpp
+        include/SettingsWidget.hpp)
 
 SET(RESOURCE_FILES
+        ui/SettingsWidget.ui
         res/resources.qrc)
 
 ADD_LIBRARY(ExchangeRate SHARED
@@ -47,6 +50,7 @@ ADD_LIBRARY(ExchangeRate SHARED
 TARGET_INCLUDE_DIRECTORIES(ExchangeRate PRIVATE
         include
         ../include
+        ../../Library/cui/include
         ../../Library/Protocol/include
         ../../Library/uuid/include
         ../../include/)
@@ -56,8 +60,9 @@ TARGET_LINK_LIBRARIES(ExchangeRate PRIVATE Qt6::Widgets)
 TARGET_LINK_LIBRARIES(ExchangeRate PRIVATE fmt::fmt)
 TARGET_LINK_LIBRARIES(ExchangeRate PRIVATE cpr::cpr)
 
-TARGET_LINK_LIBRARIES(ExchangeRate PRIVATE ${CMAKE_BINARY_DIR}/lib/libuuid.dylib)
-TARGET_LINK_LIBRARIES(ExchangeRate PRIVATE ${CMAKE_BINARY_DIR}/lib/libProtocol.dylib)
+TARGET_LINK_LIBRARIES(ExchangeRate PRIVATE cui)
+TARGET_LINK_LIBRARIES(ExchangeRate PRIVATE uuid)
+TARGET_LINK_LIBRARIES(ExchangeRate PRIVATE Protocol)
 
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
