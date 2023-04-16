@@ -9,8 +9,10 @@
 
 cen::PluginConfiguration::PluginConfiguration(const QString &uuidString)
 {
-    m_settingsFile = QString("%1/Settings/%2.json").arg(g_globals->paths.pluginsPath, uuidString);
-    m_path         = QString("%1/Private/%2.pem").arg(g_globals->paths.pluginsPath, uuidString);
+    const QString localPluginPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/Plugins";
+
+    m_settingsFile = QString("%1/Settings/%2.json").arg(localPluginPath, uuidString);
+    m_path         = QString("%1/Public/%2.pem").arg(localPluginPath, uuidString);
 }
 
 cen::PluginConfiguration::~PluginConfiguration() = default;
