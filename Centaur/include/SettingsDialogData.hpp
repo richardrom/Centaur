@@ -46,6 +46,8 @@ struct SettingsDialog::Impl
 
     std::unique_ptr<Ui::SettingsDialog> ui;
 
+    std::map<QTreeWidgetItem *, QWidget *> pluginSettingsPages;
+
     bool forceShowPluginWarning { false };
 };
 
@@ -165,7 +167,6 @@ public:
         KeymapFileNameMap();
         std::map<QString, QString> keyNameMap;
     } shortcutNameMap;
-
 
 public:
     QStandardItemModel *itemModel;
