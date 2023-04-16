@@ -7,6 +7,8 @@
 #include "../ui/ui_SettingsDialog.h"
 #include "CentaurApp.hpp"
 #include "DAL.hpp"
+#include "LoginDialog.hpp"
+#include "Protocol.hpp"
 #include "SettingsDialog.hpp"
 
 #include <QCryptographicHash>
@@ -167,6 +169,48 @@ void SettingsDialog::initPluginsWidget() noexcept
                     itemProtected->setBackground(QColor(0, 255, 0, 25));
                     itemLoaded->setBackground(QColor(0, 255, 0, 25));
 
+                    if (auto plWidget = loadedPlugins->settingsWidget(loadedPlugins, g_app->getPluginConfig(loadedPlugins->getPluginUUID())); plWidget)
+                    {
+
+                        auto treeItem = new QTreeWidgetItem({ loadedPlugins->getPluginName() });
+                        _impl->pluginsItem->insertChild(_impl->pluginsItem->childCount(), treeItem);
+
+                        auto *plSettingsPage = new QWidget;
+                        auto *verticalLayout = new QVBoxLayout(plSettingsPage);
+                        plSettingsPage->setObjectName("shortcutsPage");
+                        verticalLayout->setContentsMargins(0, 0, 0, 0);
+                        auto titleFrame = new QFrame(plSettingsPage);
+                        titleFrame->setMinimumSize(QSize(0, 50));
+                        titleFrame->setMaximumSize(QSize(16777215, 50));
+                        titleFrame->setBaseSize(QSize(0, 0));
+                        titleFrame->setStyleSheet(QString::fromUtf8("QFrame{\n"
+                                                                    "background-color: rgb(31,39,45);\n"
+                                                                    "}"));
+                        titleFrame->setFrameShape(QFrame::StyledPanel);
+                        titleFrame->setFrameShadow(QFrame::Raised);
+                        auto verticalTitleLayoutData = new QVBoxLayout(titleFrame);
+                        verticalTitleLayoutData->setContentsMargins(0, 0, 0, 0);
+                        auto titleLabel = new QLabel(tr("Plugin: %1").arg(loadedPlugins->getPluginName()), titleFrame);
+                        titleLabel->setStyleSheet(QString::fromUtf8("QLabel{\n"
+                                                                    "font-size:  25px;\n"
+                                                                    "}"));
+                        titleLabel->setIndent(15);
+                        verticalTitleLayoutData->addWidget(titleLabel);
+                        verticalLayout->addWidget(titleFrame);
+                        auto *dataFrame = new QFrame(plSettingsPage);
+                        dataFrame->setStyleSheet(QString::fromUtf8("QFrame{\n"
+                                                                   "	background: transparent;\n"
+                                                                   "}"));
+                        dataFrame->setFrameShape(QFrame::StyledPanel);
+                        dataFrame->setFrameShadow(QFrame::Raised);
+                        auto *dataLayout = new QVBoxLayout(dataFrame);
+                        dataLayout->addWidget(plWidget);
+                        plWidget->setParent(dataFrame);
+                        verticalLayout->addWidget(dataFrame);
+                        ui()->stackedWidget->addWidget(plSettingsPage);
+
+                        _impl->pluginSettingsPages[treeItem] = plSettingsPage;
+                    }
                     break;
                 }
             }
@@ -225,6 +269,19 @@ void cen::SettingsDialog::installPlugin() noexcept
 
     if (dlg.exec() == QDialog::Accepted)
     {
+        QString userPsw;
+        LoginDialog usrDlg(this);
+        usrDlg.setPasswordMode();
+        if (usrDlg.exec() == QDialog::Accepted)
+            userPsw = usrDlg.userPassword;
+        else
+        {
+            QMessageBox::critical(this, tr("Error"),
+                tr("Can not continue"),
+                QMessageBox::Ok);
+            return;
+        }
+
         settings.beginGroup("settings.Plugins");
         settings.setValue("Install.LastDirectory", dlg.directory().absolutePath());
         settings.endGroup();
@@ -248,8 +305,10 @@ void cen::SettingsDialog::installPlugin() noexcept
         watcher.setFuture(
             QtConcurrent::run(QThreadPool::globalInstance(),
                 [&]() {
-                    const QString &resPath         = g_globals->paths.resPath;
-                    const QString schemaJSONPlugin = resPath + "/Schema/plugins.schema.json";
+                    const QString &resPath          = g_globals->paths.resPath;
+                    const QString schemaJSONPlugin  = resPath + "/Schema/plugins.schema.json";
+                    const QString privatePluginPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/Plugins/Private";
+                    const QString publicPluginPath  = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/Plugins/Public";
                     // Open the plugin schema
                     namespace json = rapidjson;
 
@@ -372,6 +431,22 @@ void cen::SettingsDialog::installPlugin() noexcept
                             continue;
                         }
 
+                        bool protectedPlugin = jsonDoc["identification"]["protected"].GetBool();
+                        if (protectedPlugin)
+                        {
+                            try
+                            {
+                                CENTAUR_PROTOCOL_NAMESPACE::Encryption::generateRSAPrivatePublicKeys(
+                                    QString("%1/%2.pem").arg(privatePluginPath, jsonDoc["identification"]["uuid"].GetString()).toStdString(),
+                                    QString("%1/%2.pem").arg(publicPluginPath, jsonDoc["identification"]["uuid"].GetString()).toStdString(),
+                                    userPsw.toStdString());
+                            } catch (const std::exception &ex)
+                            {
+                                errorStrings.push_back(QString(tr("%1\nCould not create the pem files. %2")).arg(file, ex.what()));
+                                continue;
+                            }
+                        }
+
                         // Check for the Data integrity
                         auto hash = QString { jsonDoc["identification"]["checksum"].GetString() };
 
@@ -454,7 +529,7 @@ void cen::SettingsDialog::installPlugin() noexcept
                                          hash,
                                          nfo.fileName(),
                                          true,
-                                         jsonDoc["identification"]["protected"].GetBool()}
+                                         protectedPlugin}
                         });
 
                         emit watcher.progressValueChanged(++ipv);
