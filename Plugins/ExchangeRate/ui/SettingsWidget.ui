@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>cen::plugin::SettingsWidget</class>
+ <widget class="QWidget" name="cen::plugin::SettingsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>480</width>
+    <height>576</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+QLabel{
+font-size:  14px;
+}
+QLabel#serverLabel{
+font-size:  25px;
+}
+
+
+QPushButton{
+font-size: 14px;
+font-weight: 600;
+color:  #0D3C61;
+border: 0px;
+border-radius:  5px;
+background-color: #2196f3;
+}
+
+QPushButton:default{
+font-size: 14px;
+font-weight: 800;
+color:  #0d3C61;
+border: 0px;
+border-radius:  5px;
+border: 2px solid rgba(144,203,249,100);
+background-color: #2196f3;
+}
+
+
+
+QPushButton:hover, QPushButton:hover:default{
+	background-color:  #339EF4;
+}
+
+QPushButton:pressed{
+background-color:  #68B8F7;
+}
+
+QPushButton:pressed:default{
+background-color:  #68B8F7;
+}
+
+QPushButton:disabled{
+color: #c0c0c0;
+background-color: #9D9EA4;
+}
+
+QLineEdit{
+font-size: 14px;
+border: 0px;
+color: rgb(225,225,255);
+background-color: rgb(63,70,76);
+border-radius:  0px;
+border-bottom: 2px solid  rgb(63,70,76);
+min-height: 25px;
+padding: 0 0 0 5;
+}
+
+
+QLineEdit:hover{
+background-color:  rgb(78,85,90);
+border-bottom: 2px solid #6ec6ff;
+}
+
+QLineEdit:focus{
+color: white;
+background-color:  rgb(94,100,105);
+border-bottom: 2px solid rgb(33,150,243);
+}
+
+QGroupBox {
+	font-size: 14px;
+    background-color: rgb(26,34,40);
+    border-radius: 5px;
+    margin-top: 18px; /* leave space at the top for the title */
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left; /* position at the top center */
+    padding: 0 3px;
+}
+
+QComboBox {
+    border: 1px solid gray;
+    min-width: 6em;
+	font-size: 14px;
+	border: 0px;
+	color: rgb(225,225,255);
+	background-color: rgb(63,70,76);
+	border-radius:  0px;
+	border-bottom: 2px solid  rgb(63,70,76);
+	min-height: 25px;
+	padding: 0 0 0 5;
+}
+
+
+QComboBox:editable {
+    color: black;
+}
+
+
+
+QComboBox::down-arrow {
+    border-image: url(:/ui/global/drop-down) 5 5 5 5 stretch stretch;
+}
+
+QComboBox:hover{
+background-color:  rgb(78,85,90);
+border: 2px solid #6ec6ff;
+}
+
+QComboBox:focus{
+color: white;
+background-color:  rgb(94,100,105);
+border: 2px solid rgb(33,150,243);
+}
+
+QComboBox:editable {
+    background: white;
+}
+
+QComboBox:!editable, QComboBox::drop-down:editable {
+   background-color:  rgb(94,100,105);
+}
+
+/* QComboBox gets the &quot;on&quot; state when the popup is open */
+QComboBox:!editable:on, QComboBox::drop-down:editable:on {
+    background-color: rgb(63,70,76)
+}
+
+QComboBox:on { /* shift the text when the popup opens */
+    padding-top: 3px;
+    padding-left: 4px;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+
+    border-left-width: 1px;
+    border-left-color: darkgray;
+    border-left-style: solid; /* just a single line */
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+}
+
+
+
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="mainFrame">
+     <property name="styleSheet">
+      <string notr="true">QFrame{
+	background: transparent;
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QSplitter" name="splitter">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <widget class="QGroupBox" name="symbolGroupBox">
+         <property name="title">
+          <string>Supported Symbols</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="CENTAUR_NAMESPACE::SearchLineEdit" name="searchSymbols">
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{
+border: 0px;
+color: black;
+background-color: rgb(220,220,220);
+border-radius:  0px;
+min-height: 25px;
+padding: 0 0 0 5;
+}
+
+
+QLineEdit:hover{
+background-color:  rgb(232,232,232);
+border: 2px solid #339ef4
+}
+
+QLineEdit:focus{
+background-color:  rgb(240,240,240);
+border: 2px solid #56aff6;
+}
+</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableView" name="supportedSymTable">
+            <property name="styleSheet">
+             <string notr="true">QTableView {
+    color: white;
+    background-color: rgb(46,53,59);
+    alternate-background-color: rgb(61,68,73);
+    border: 0px;
+}
+
+QTableView QTableCornerButton::section {
+    background: #5299D4;
+    border: 0px;
+}
+
+QTableView::item {
+    border: 0px;
+    height: 25px;
+}
+
+QTableView::item:hover{
+    background-color: rgb(79,85,90);
+}
+
+QTableView::item:hover:selected{
+    background-color: rgb(104,109,113);
+	font-weight: 800;
+}
+
+QTableView::item:selected{
+    color: white;
+	font-weight: 600;
+    background-color: rgb(91,97,102);
+}
+
+QHeaderView::section:checked
+{
+    background-color:  #3387CD;
+    color: white;
+}
+
+/***************************************************************************/
+QHeaderView::section {
+    font: normal 800 13px Roboto;
+    padding-left: 4px;
+    border: 0px;
+    height: 26px;
+    background-color: #0069c0;
+    color: white;
+    padding-left: 4px;
+    border: 0px;
+}
+
+QHeaderView::section:hover
+{
+    background-color: #5299D4;
+    color: white;
+}</string>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="showGrid">
+             <bool>false</bool>
+            </property>
+            <property name="gridStyle">
+             <enum>Qt::NoPen</enum>
+            </property>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Used pairs</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="CENTAUR_NAMESPACE::SearchLineEdit" name="searchUsedPairs">
+              <property name="styleSheet">
+               <string notr="true">QLineEdit{
+border: 0px;
+color: black;
+background-color: rgb(220,220,220);
+border-radius:  0px;
+min-height: 25px;
+padding: 0 0 0 5;
+}
+
+
+QLineEdit:hover{
+background-color:  rgb(232,232,232);
+border: 2px solid #339ef4
+}
+
+QLineEdit:focus{
+background-color:  rgb(240,240,240);
+border: 2px solid #56aff6;
+}
+</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="addPairButton">
+              <property name="minimumSize">
+               <size>
+                <width>85</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Add</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icon/add</normaloff>:/icon/add</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="CENTAUR_NAMESPACE::DeletableTable" name="usedPairsTable">
+            <property name="styleSheet">
+             <string notr="true">QTableView {
+    color: white;
+    background-color: rgb(46,53,59);
+    alternate-background-color: rgb(61,68,73);
+    border: 0px;
+}
+
+QTableView QTableCornerButton::section {
+    background: #5299D4;
+    border: 0px;
+}
+
+QTableView::item {
+    border: 0px;
+    height: 25px;
+}
+
+QTableView::item:hover{
+    background-color: rgb(79,85,90);
+}
+
+QTableView::item:hover:selected{
+    background-color: rgb(104,109,113);
+	font-weight: 800;
+}
+
+QTableView::item:selected{
+    color: white;
+	font-weight: 600;
+    background-color: rgb(91,97,102);
+}
+
+QHeaderView::section:checked
+{
+    background-color:  #3387CD;
+    color: white;
+}
+
+/***************************************************************************/
+QHeaderView::section {
+    font: normal 800 13px Roboto;
+    padding-left: 4px;
+    border: 0px;
+    height: 26px;
+    background-color: #0069c0;
+    color: white;
+    padding-left: 4px;
+    border: 0px;
+}
+
+QHeaderView::section:hover
+{
+    background-color: #5299D4;
+    color: white;
+}</string>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::DoubleClicked</set>
+            </property>
+            <property name="showGrid">
+             <bool>false</bool>
+            </property>
+            <property name="gridStyle">
+             <enum>Qt::NoPen</enum>
+            </property>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>-1</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="resetCacheButton">
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Reset Cache</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../res/resources.qrc">
+                <normaloff>:/icon/reset</normaloff>:/icon/reset</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Data reloading</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLineEdit" name="timeframeEdit"/>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="timeframeFrames">
+           <item>
+            <property name="text">
+             <string>ms</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>secs</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>minutes</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>hours</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Specify the timeframe between prices updates. Beware that small timeframes could cause an IP banning from the REST API</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CENTAUR_NAMESPACE::SearchLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>../../Library/cui/include/SearchLineEdit.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>CENTAUR_NAMESPACE::DeletableTable</class>
+   <extends>QTableView</extends>
+   <header>../../Library/cui/include/DeletableTable.hpp</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../res/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
