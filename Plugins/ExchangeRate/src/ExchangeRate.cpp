@@ -8,13 +8,18 @@
 #include "CentaurInterface.hpp"
 #include "CentaurPlugin.hpp"
 #include "Protocol.hpp"
+#include "QtCore/qdebug.h"
+#include "QtCore/qpointer.h"
+#include "SettingsWidget.hpp"
 #include <QApplication>
 #include <QDate>
 #include <QFile>
+#include <QMenu>
 #include <QMessageBox>
 #include <QObject>
 #include <QTextStream>
 #include <QTimer>
+#include <utility>
 
 #ifdef __clang__
 #pragma clang diagnostic push #pragma clang diagnostic ignored "-Wold-style-cast"
@@ -54,10 +59,10 @@ namespace
 
 } // namespace
 
-CENTAUR_PLUGIN_NAMESPACE::ValueThread::ValueThread(const QString &qte, const QString &bse, qreal qteQty, QObject *parent) noexcept :
+CENTAUR_PLUGIN_NAMESPACE::ValueThread::ValueThread(QString qte, QString bse, qreal qteQty, QObject *parent) noexcept :
     QThread(parent),
-    quote { qte },
-    base { bse },
+    quote { std::move(qte) },
+    base { std::move(bse) },
     quoteQuantity { qteQty }
 {
 }
@@ -109,6 +114,7 @@ void CENTAUR_PLUGIN_NAMESPACE::ValueThread::run()
 
 CENTAUR_PLUGIN_NAMESPACE::ExchangeRatePlugin::ExchangeRatePlugin(QObject *parent) :
     QObject(parent),
+    m_reloadDataTimer { new QTimer(this) },
     m_thisUUID { g_uuidString, false }
 {
 }
@@ -142,6 +148,7 @@ CENTAUR_NAMESPACE::uuid CENTAUR_PLUGIN_NAMESPACE::ExchangeRatePlugin::getPluginU
 
 cen::plugin::IStatus::DisplayMode cen::plugin::ExchangeRatePlugin::initialize() noexcept
 {
+    auto d = m_config->getConfigurationFileName();
     std::ifstream input(m_config->getConfigurationFileName());
     rapidjson::IStreamWrapper isw(input);
 
@@ -155,19 +162,75 @@ cen::plugin::IStatus::DisplayMode cen::plugin::ExchangeRatePlugin::initialize() 
     m_updateMilliseconds = [&]() -> int64_t {
         if (auto iter = pluginSettings.FindMember("reload-timer"); iter != pluginSettings.MemberEnd())
         {
-            const auto time = iter->value.GetInt64();
+            const auto time = iter->value.GetDouble();
             logTrace("ExchangeRatePlugin", QString("Timer will be set to: %1").arg(time));
-            return time;
+            return static_cast<int64_t>(time);
         }
         logWarn("ExchangeRatePlugin", "Timer will be set to default: 1 hour");
         return 3'600'000ll;
     }();
 
-    auto *reloadDataTimer = new QTimer(this);
-    connect(reloadDataTimer, &QTimer::timeout, this, [&]() {
+    m_clickAction = new QAction(this);
+
+    connect(m_clickAction, &QAction::triggered, this, [&](C_UNUSED bool checked) {
+        if (m_currencySupported.isEmpty())
+            return;
+
+        QPointer<QMenu> menu = new QMenu;
+
+        int totalHeight = 0;
+        for (const auto &cur : m_currencySupported)
+        {
+            const auto &[b, q] = cur;
+            auto *action       = menu->addAction(b + "/" + q, this, [&]() {
+                auto sndr = qobject_cast<QAction *>(sender());
+                if (sndr == nullptr)
+                    return;
+
+                auto base  = sndr->data().toStringList()[0];
+                auto quote = sndr->data().toStringList()[1];
+
+                if (base == m_defaultBase && quote == m_defaultQuote)
+                    return;
+
+                auto defaultObject = pluginSettings.FindMember("default");
+                if (defaultObject != pluginSettings.MemberEnd())
+                {
+                    auto baseDefault = defaultObject->value.FindMember("base");
+                    if (baseDefault != defaultObject->value.MemberEnd())
+                    {
+                        baseDefault->value.SetString(base.toUtf8().constData(), static_cast<rapidjson::SizeType>(base.toUtf8().size()), pluginSettings.GetAllocator());
+                    }
+
+                    auto quoteDefault = defaultObject->value.FindMember("quote");
+                    if (quoteDefault != defaultObject->value.MemberEnd())
+                    {
+                        quoteDefault->value.SetString(quote.toUtf8().constData(), static_cast<rapidjson::SizeType>(quote.toUtf8().size()), pluginSettings.GetAllocator());
+                    }
+
+                    if (auto iter = pluginSettings.FindMember("value-timestamp"); iter != pluginSettings.MemberEnd())
+                    {
+                        // This will invalidate the data cache
+                        iter->value.SetInt64(0);
+                    }
+
+                    onReloadData(true);
+                    storeData();
+                }
+            });
+            action->setData(QStringList() << b << q);
+            totalHeight += menu->actionGeometry(action).height();
+        }
+
+        auto origin = m_clickAction->data().toPoint();
+        origin.setY(origin.y() - totalHeight - 15);
+        menu->exec(origin);
+    });
+
+    connect(m_reloadDataTimer, &QTimer::timeout, this, [&]() {
         onReloadData(true);
     });
-    reloadDataTimer->start(static_cast<int>(m_updateMilliseconds));
+    m_reloadDataTimer->start(static_cast<int>(m_updateMilliseconds));
     m_configurationLoaded = true;
     loadData();
 
@@ -181,10 +244,7 @@ QString cen::plugin::ExchangeRatePlugin::text() noexcept
 
 QPixmap cen::plugin::ExchangeRatePlugin::image() noexcept
 {
-    if (!m_configurationLoaded)
-        return QPixmap(":/icon/red");
-    else
-        return QPixmap(":/icon/blue");
+    return { !m_configurationLoaded ? ":/icon/red" : ":/icon/blue" };
 }
 
 QFont cen::plugin::ExchangeRatePlugin::font() noexcept
@@ -209,7 +269,7 @@ QBrush cen::plugin::ExchangeRatePlugin::brush(cen::plugin::IStatus::DisplayRole 
 
 QAction *cen::plugin::ExchangeRatePlugin::action() noexcept
 {
-    return nullptr;
+    return m_clickAction;
 }
 
 QList<QString> cen::plugin::ExchangeRatePlugin::listSupported() noexcept
@@ -404,7 +464,7 @@ void cen::plugin::ExchangeRatePlugin::loadData() noexcept
 
     if (timestampCache.day() != currentDate.day())
     {
-        // We have a change of date
+        // We have a change of day
         acquireFromInternet();
     }
     else
@@ -497,9 +557,10 @@ void cen::plugin::ExchangeRatePlugin::onReloadData(bool threading) noexcept
 
     storeData();
 
-    for (auto &available : pluginSettings["available"].GetArray())
+    m_currencySupported.clear();
+    for (auto available = pluginSettings["available"].MemberBegin(); available != pluginSettings["available"].MemberEnd(); ++available)
     {
-        m_currencySupported.emplace_back(available["b"].GetString(), available["q"].GetString());
+        m_currencySupported.emplace_back(available->value["b"].GetString(), available->value["q"].GetString());
     }
 
     emit displayChange(plugin::IStatus::DisplayRole::Text);
@@ -523,4 +584,14 @@ void cen::plugin::ExchangeRatePlugin::onValueUpdate(qreal val) noexcept
     storeData();
 
     emit displayChange(plugin::IStatus::DisplayRole::Text);
+}
+
+QWidget *cen::plugin::ExchangeRatePlugin::settingsWidget(IBase *thisObject, CENTAUR_INTERFACE_NAMESPACE::IConfiguration *config) const noexcept
+{
+    return new SettingsWidget(thisObject, config);
+}
+
+void cen::plugin::ExchangeRatePlugin::restartReloadTimer(int ms) noexcept
+{
+    m_reloadDataTimer->setInterval(ms);
 }

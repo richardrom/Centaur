@@ -45,7 +45,7 @@ namespace CENTAUR_PLUGIN_NAMESPACE
     {
         Q_OBJECT
     public:
-        ValueThread(const QString &qte, const QString &bse, qreal qteQty, QObject *parent) noexcept;
+        ValueThread(QString qte, QString bse, qreal qteQty, QObject *parent) noexcept;
         ~ValueThread() override = default;
 
     public:
@@ -95,40 +95,49 @@ namespace CENTAUR_PLUGIN_NAMESPACE
         QString getPluginVersionString() const noexcept override;
         void setPluginInterfaces(CENTAUR_INTERFACE_NAMESPACE::ILogger *logger, CENTAUR_INTERFACE_NAMESPACE::IConfiguration *config) noexcept override;
         uuid getPluginUUID() const noexcept override;
+        QWidget *settingsWidget(IBase *thisObject, CENTAUR_INTERFACE_NAMESPACE::IConfiguration *config) const noexcept override;
 
-    protected:
+    public:
         void loadData() noexcept;
         void acquireFromCache() noexcept;
         void acquireFromInternet() noexcept;
         void storeData() noexcept;
+        void restartReloadTimer(int ms) noexcept;
 
-    protected:
+    public:
         void onReloadData(bool threading) noexcept;
 
     protected slots:
         void onValueUpdate(qreal val) noexcept;
 
-    private:
+    public:
         rapidjson::Document pluginSettings;
 
     signals:
         void displayChange(plugin::IStatus::DisplayRole dr);
 
     private:
-        QString m_defaultQuote;
-        QString m_defaultBase;
-        qreal m_defaultValue;
+        QAction *m_clickAction;
+
+        QTimer *m_reloadDataTimer;
 
         QMap<QString, QString> m_currencyData;
         QList<QPair<QString, QString>> m_currencySupported;
 
-    private:
-        int64_t m_updateMilliseconds;
-        int64_t m_lastUpdateTimeStamp;
-        bool m_configurationLoaded { false };
+        uuid m_thisUUID;
+
         CENTAUR_INTERFACE_NAMESPACE::ILogger *m_logger { nullptr };
         CENTAUR_INTERFACE_NAMESPACE::IConfiguration *m_config { nullptr };
-        uuid m_thisUUID;
+
+        QString m_defaultQuote;
+        QString m_defaultBase;
+
+        qreal m_defaultValue { -0.0 };
+
+        int64_t m_updateMilliseconds { 0 };
+        int64_t m_lastUpdateTimeStamp { 0 };
+
+        bool m_configurationLoaded { false };
     };
 } // namespace CENTAUR_PLUGIN_NAMESPACE
 
