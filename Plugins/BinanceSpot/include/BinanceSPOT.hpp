@@ -32,9 +32,7 @@
 
 namespace CENTAUR_NAMESPACE
 {
-
     class SpotMarketWS;
-
     class BinanceSpotPlugin : public QObject,
                               public CENTAUR_PLUGIN_NAMESPACE::IExchange
     {
@@ -61,6 +59,7 @@ namespace CENTAUR_NAMESPACE
         QString getPluginName() const noexcept override;
         QString getPluginVersionString() const noexcept override;
         uuid getPluginUUID() const noexcept override;
+        QWidget *settingsWidget(IBase *thisObject, CENTAUR_INTERFACE_NAMESPACE::IConfiguration *config) const noexcept override;
 
         // IExchange
     public:

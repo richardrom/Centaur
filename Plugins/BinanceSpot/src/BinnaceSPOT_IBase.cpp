@@ -47,3 +47,8 @@ QString CENTAUR_NAMESPACE::BinanceSpotPlugin::getUUIDString() const noexcept
 {
     return g_uuidString;
 }
+
+QWidget *CENTAUR_NAMESPACE::BinanceSpotPlugin::settingsWidget(IBase *thisObject, CENTAUR_INTERFACE_NAMESPACE::IConfiguration *config) const noexcept
+{
+    return nullptr;
+}
