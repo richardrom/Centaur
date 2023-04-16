@@ -102,14 +102,14 @@ void SettingsDialog::initShortcutsWidget() noexcept
             QFileInfo nfo(it.next());
             if (nfo.completeSuffix() != "keymap.json")
             {
-                logWarn("initShortcutsWidget", tr("An extraneous file (%1) in a keymap path (%2) was found").arg(nfo.fileName()).arg(path));
+                logWarn("initShortcutsWidget", tr("An extraneous file (%1) in a keymap path (%2) was found").arg(nfo.fileName(), path));
                 continue;
             }
 
             QFile jsonKeymap(nfo.absoluteFilePath());
             if (!jsonKeymap.open(QIODevice::ReadOnly))
             {
-                logWarn("initShortcutsWidget", tr("File %1 in the keymap path (%2) could not be opened").arg(nfo.fileName()).arg(path));
+                logWarn("initShortcutsWidget", tr("File %1 in the keymap path (%2) could not be opened").arg(nfo.fileName(), path));
                 continue;
             }
 
@@ -120,13 +120,13 @@ void SettingsDialog::initShortcutsWidget() noexcept
 
             if (jsonDoc.HasParseError())
             {
-                logWarn("initShortcutsWidget", tr("File %1 in the keymap path (%2) is not a valid JSON file").arg(nfo.fileName()).arg(path));
+                logWarn("initShortcutsWidget", tr("File %1 in the keymap path (%2) is not a valid JSON file").arg(nfo.fileName(), path));
                 continue;
             }
 
             if (!jsonDoc.Accept(schemaValidator))
             {
-                logWarn("initShortcutsWidget", tr("File %1 in the keymap path (%2) is not a valid keymap json file").arg(nfo.fileName()).arg(path));
+                logWarn("initShortcutsWidget", tr("File %1 in the keymap path (%2) is not a valid keymap json file").arg(nfo.fileName(), path));
                 continue;
             }
 
@@ -136,7 +136,7 @@ void SettingsDialog::initShortcutsWidget() noexcept
             int idx = ui()->shortcutsComboBox->findText(keymapName);
             if (idx >= 0)
             {
-                logWarn("initShortcutsWidget", tr("File %1 in the keymap path (%2) implements an already implemented keymap by name").arg(nfo.fileName()).arg(path));
+                logWarn("initShortcutsWidget", tr("File %1 in the keymap path (%2) implements an already implemented keymap by name").arg(nfo.fileName(), path));
                 continue;
             }
 
