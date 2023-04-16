@@ -154,6 +154,12 @@ namespace CENTAUR_PLUGIN_NAMESPACE
         /// \brief Get the plugin UUID
         /// \return Beware that versions are check in order to run the plugin
         virtual uuid getPluginUUID() const noexcept = 0;
+
+        /// \brief Creates a widget to be displayed in the settings page
+        /// \param thisObject The IBase object
+        /// \param config The main configuration object associated with plugin
+        /// \return A QWidget with all the settings. Return nullptr if no settings page is required. The UI will take ownership of the widget
+        virtual QWidget *settingsWidget(IBase *thisObject, CENTAUR_INTERFACE_NAMESPACE::IConfiguration *config) const noexcept = 0;
     };
 
     /// \brief Provides access to the status bar
