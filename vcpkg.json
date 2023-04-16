@@ -19,7 +19,7 @@
   "overrides": [
     {
       "name": "cpr",
-      "version": "1.8.3"
+      "version": "1.9.2"
     }
   ],
   "builtin-baseline": "2f0a16b5ae24fec6c615924e2fbc8bc43ab73764"
