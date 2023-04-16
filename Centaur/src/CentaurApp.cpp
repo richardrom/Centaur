@@ -913,9 +913,9 @@ void CentaurApp::onStatusDisplayChanged(plugin::IStatus::DisplayRole mode)
         return;
     }
 
+    QToolButton *button = std::get<1>(data->second);
     if (mode == plugin::IStatus::DisplayRole::Foreground)
     {
-        QToolButton *button = std::get<1>(data->second);
         button->setFont(sndr->font());
         button->setText(sndr->text());
 
@@ -944,6 +944,11 @@ QToolButton:pressed{background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:
         }
         button->setPalette(palette);
     }
+    else if (mode == plugin::IStatus::DisplayRole::Text)
+    {
+        button->setText(sndr->text());
+    }
+    // TODO: all other modes
 }
 
 void CentaurApp::loadFavoritesWatchList() noexcept
