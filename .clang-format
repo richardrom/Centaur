@@ -52,3 +52,7 @@ SpaceBeforeCaseColon: false
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceBeforeSquareBrackets: false
 SpaceInEmptyParentheses: false
+EmptyLineBeforeAccessModifier: LogicalBlock
+IndentRequiresClause: true
+InsertNewlineAtEOF: true
+LambdaBodyIndentation: Signature
