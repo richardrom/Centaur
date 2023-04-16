@@ -178,7 +178,7 @@ void CENTAUR_NAMESPACE::CentaurApp::loadPlugins(SplashDialog *splash) noexcept
                 logInfo("loadPlugins", tr("Plugin found in file: ##F2FEFF#%1#").arg(plFile));
 
                 // Init the plugin
-                auto pluginConfig = new PluginConfiguration(baseInterface->getPluginUUID().to_string().c_str());
+                auto pluginConfig = new PluginConfiguration(baseInterface->getPluginUUID().to_string(false).c_str());
 
                 baseInterface->setPluginInterfaces(g_logger,
                     static_cast<CENTAUR_INTERFACE_NAMESPACE::IConfiguration *>(pluginConfig));
