@@ -5,6 +5,11 @@ SET(CMAKE_CXX_STANDARD 20)
 FIND_PACKAGE(Catch2 CONFIG REQUIRED)
 
 
+SET(SOURCE_FILES main.cpp tests.cpp)
+
+ADD_EXECUTABLE(tests
+        ${SOURCE_FILES})
+
 IF (UNIX AND NOT APPLE)
     MESSAGE(STATUS "TESTS: Linux Detected")
 ELSEIF (WIN32)
@@ -17,11 +22,6 @@ ELSEIF (UNIX AND APPLE)
 ELSE ()
     message(FATAL_ERROR "TESTS: Unknown target platform")
 ENDIF ()
-
-SET(SOURCE_FILES main.cpp tests.cpp)
-
-ADD_EXECUTABLE(tests
-        ${SOURCE_FILES})
 
 
 TARGET_INCLUDE_DIRECTORIES(tests PRIVATE
@@ -37,7 +37,7 @@ TARGET_LINK_LIBRARIES(tests PRIVATE ${CMAKE_BINARY_DIR}/lib/libuuid.dylib)
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     # Control clang warnings
-    SET(COMPILER_OPTIONS " -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-reserved-identifier -Wno-poison-system-directories ")
+    SET(COMPILER_OPTIONS "-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-reserved-identifier -Wno-poison-system-directories ")
 
     SET_SOURCE_FILES_PROPERTIES(
             ${SOURCE_FILES}
