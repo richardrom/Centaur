@@ -14,56 +14,73 @@
 #include "Protocol.hpp"
 #include <QApplication>
 #include <QMessageBox>
-#include <fmt/core.h>
 #include <rapidjson/istreamwrapper.h>
 
-#define CATCH_API_EXCEPTION()                                                                                                                                              \
-    switch (ex.type())                                                                                                                                                     \
-    {                                                                                                                                                                      \
-        case BINAPI_NAMESPACE::APIException::Type::request:                                                                                                                \
-            {                                                                                                                                                              \
-                auto request = ex.request();                                                                                                                               \
-                logError("BinanceSPOTPlugin", fmt::format("REQUEST.\nCode: {}. URL: {}\n{}\n", std::get<0>(request), std::get<1>(request), std::get<2>(request)).c_str()); \
-            }                                                                                                                                                              \
-            break;                                                                                                                                                         \
-        case BINAPI_NAMESPACE::APIException::Type::limits:                                                                                                                 \
-            logError("BinanceSPOTPlugin", fmt::format("LIMITS.\n{}\n", std::get<0>(ex.limits())).c_str());                                                                 \
-            break;                                                                                                                                                         \
-        case BINAPI_NAMESPACE::APIException::Type::http1:                                                                                                                  \
-            {                                                                                                                                                              \
-                auto http1 = ex.http1();                                                                                                                                   \
-                logError("BinanceSPOTPlugin", fmt::format("HTTPa.\nCode: {}\nURL: {}\n{}\n", std::get<0>(http1), std::get<1>(http1), std::get<2>(http1)).c_str());         \
-            }                                                                                                                                                              \
-            break;                                                                                                                                                         \
-        case BINAPI_NAMESPACE::APIException::Type::http2:                                                                                                                  \
-            {                                                                                                                                                              \
-                auto http2 = ex.http2();                                                                                                                                   \
-                logError("BinanceSPOTPlugin", fmt::format("HTTPb.\nStatus: {}. Code: {}\nURL: {}.\n{}\n",                                                                  \
-                                                  std::get<0>(http2),                                                                                                      \
-                                                  std::get<1>(http2),                                                                                                      \
-                                                  std::get<2>(http2),                                                                                                      \
-                                                  std::get<4>(http2))                                                                                                      \
-                                                  .c_str());                                                                                                               \
-            }                                                                                                                                                              \
-            break;                                                                                                                                                         \
-        case BINAPI_NAMESPACE::APIException::Type::json:                                                                                                                   \
-            {                                                                                                                                                              \
-                auto json = ex.json();                                                                                                                                     \
-                logError("BinanceSPOTPlugin", fmt::format("JSON.\nURL: {}\n{}\n", std::get<0>(json), std::get<1>(json)).c_str());                                          \
-            }                                                                                                                                                              \
-            break;                                                                                                                                                         \
-        case BINAPI_NAMESPACE::APIException::Type::api:                                                                                                                    \
-            {                                                                                                                                                              \
-                auto api1 = ex.api();                                                                                                                                      \
-                logError("BinanceSPOTPlugin", fmt::format("API.\nCode: {}\nURL: {}\n{}", std::get<0>(api1), std::get<1>(api1), std::get<2>(api1)).c_str());                \
-            }                                                                                                                                                              \
-            break;                                                                                                                                                         \
-        case BINAPI_NAMESPACE::APIException::Type::schema:                                                                                                                 \
-            {                                                                                                                                                              \
-                auto schema = ex.schema();                                                                                                                                 \
-                logError("BinanceSPOTPlugin", fmt::format("SCHEMA.\nURL: {}\n{}\n", std::get<0>(schema), std::get<1>(schema)).c_str());                                    \
-            }                                                                                                                                                              \
-            break;                                                                                                                                                         \
+#define CATCH_API_EXCEPTION()                                                                          \
+    switch (ex.type())                                                                                 \
+    {                                                                                                  \
+        case BINAPI_NAMESPACE::APIException::Type::request:                                            \
+            {                                                                                          \
+                const auto request = ex.request();                                                     \
+                logError("BinanceSPOTPlugin", QString("REQUEST.\nCode: %1. URL: %2\n%3\n")             \
+                                                  .arg(std::get<0>(request))                           \
+                                                  .arg(                                                \
+                                                      QString::fromStdString(std::get<1>(request)),    \
+                                                      QString::fromStdString(std::get<2>(request))));  \
+            }                                                                                          \
+            break;                                                                                     \
+        case BINAPI_NAMESPACE::APIException::Type::limits:                                             \
+            logError("BinanceSPOTPlugin", QString("LIMITS.\n%1\n")                                     \
+                                              .arg(QString::fromStdString(std::get<0>(ex.limits())))); \
+            break;                                                                                     \
+        case BINAPI_NAMESPACE::APIException::Type::http1:                                              \
+            {                                                                                          \
+                auto http1 = ex.http1();                                                               \
+                logError("BinanceSPOTPlugin", QString("HTTPa.\nCode: %1\nURL: %2\n%3\n")               \
+                                                  .arg(std::get<0>(http1))                             \
+                                                  .arg(                                                \
+                                                      QString::fromStdString(std::get<1>(http1)),      \
+                                                      QString::fromStdString(std::get<2>(http1))));    \
+            }                                                                                          \
+            break;                                                                                     \
+        case BINAPI_NAMESPACE::APIException::Type::http2:                                              \
+            {                                                                                          \
+                auto http2 = ex.http2();                                                               \
+                logError("BinanceSPOTPlugin", QString("HTTPb.\nStatus: %1. Code: %2\nURL: %3.\n%4\n")  \
+                                                  .arg(std::get<0>(http2), std::get<1>(http2))         \
+                                                  .arg(                                                \
+                                                      QString::fromStdString(std::get<2>(http2)),      \
+                                                      QString::fromStdString(std::get<4>(http2))));    \
+            }                                                                                          \
+            break;                                                                                     \
+        case BINAPI_NAMESPACE::APIException::Type::json:                                               \
+            {                                                                                          \
+                const auto json = ex.json();                                                           \
+                logError("BinanceSPOTPlugin", QString("JSON.\nURL: %1\n%2\n")                          \
+                                                  .arg(                                                \
+                                                      QString::fromStdString(std::get<0>(json)),       \
+                                                      QString::fromStdString(std::get<1>(json))));     \
+            }                                                                                          \
+            break;                                                                                     \
+        case BINAPI_NAMESPACE::APIException::Type::api:                                                \
+            {                                                                                          \
+                auto api1 = ex.api();                                                                  \
+                logError("BinanceSPOTPlugin", QString("API.\nCode: {}\nURL: {}\n{}")                   \
+                                                  .arg(std::get<0>(api1))                              \
+                                                  .arg(                                                \
+                                                      QString::fromStdString(std::get<1>(api1)),       \
+                                                      QString::fromStdString(std::get<2>(api1))));     \
+            }                                                                                          \
+            break;                                                                                     \
+        case BINAPI_NAMESPACE::APIException::Type::schema:                                             \
+            {                                                                                          \
+                auto schema = ex.schema();                                                             \
+                logError("BinanceSPOTPlugin", QString("SCHEMA.\nURL: {}\n{}\n")                        \
+                                                  .arg(                                                \
+                                                      QString::fromStdString(std::get<0>(schema)),     \
+                                                      QString::fromStdString(std::get<1>(schema))));   \
+            }                                                                                          \
+            break;                                                                                     \
     }
 
 namespace
