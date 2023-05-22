@@ -34,6 +34,17 @@ SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
 
 
+SET(INCLUDE_FILES
+        include/BinanceSPOT.hpp
+        ../../Library/cui/include/OptionsWidget.hpp
+        ../../Library/cui/include/OptionsTableWidget.hpp
+        include/CoinInfoDialog.hpp
+        include/NetworkAddressDialog.hpp
+        include/AssetDetailDialog.hpp
+        include/FeesDialog.hpp
+        include/StatusDialog.hpp
+        include/SettingsWidget.hpp)
+
 SET(SOURCE_FILES
         src/BinanceSPOT.cpp
         src/SpotMarketWS.cpp
@@ -44,18 +55,9 @@ SET(SOURCE_FILES
         src/FeesDialog.cpp
         src/BinanceSPOT_IStatus.cpp
         src/BinnaceSPOT_IBase.cpp
-        src/BinanceSPOT_IExchange.cpp)
+        src/BinanceSPOT_IExchange.cpp
+        src/SettingsWidget.cpp)
 
-SET(INCLUDE_FILES
-        include/BinanceSPOT.hpp
-        ../../Library/cui/include/OptionsWidget.hpp
-        ../../Library/cui/include/OptionsTableWidget.hpp
-        include/CoinInfoDialog.hpp
-        include/NetworkAddressDialog.hpp
-        include/AssetDetailDialog.hpp
-        include/FeesDialog.hpp
-        include/StatusDialog.hpp
-        )
 
 SET(UI_FILES
         ui/AssetDetailDialog.ui
@@ -102,7 +104,7 @@ TARGET_COMPILE_DEFINITIONS(BinanceSPOT PRIVATE BINANCESPOTPLUGIN_LIBRARY)
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     # Control clang warnings
-    SET(COMPILER_OPTIONS " -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-reserved-identifier -Wno-poison-system-directories ")
+    SET(COMPILER_OPTIONS " -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-reserved-identifier -Wno-poison-system-directories -Wno-c++20-compat")
 
     SET_SOURCE_FILES_PROPERTIES(
             ${INCLUDE_FILES}
