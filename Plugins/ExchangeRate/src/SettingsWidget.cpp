@@ -508,8 +508,6 @@ cen::plugin::SettingsWidget::~SettingsWidget()
     settings.setValue("h-geometry", ui->usedPairsTable->horizontalHeader()->saveGeometry());
     settings.setValue("state", ui->usedPairsTable->horizontalHeader()->saveState());
     settings.endGroup();
-
-    delete ui;
 }
 
 void cen::plugin::SettingsWidget::reloadTimer(const QString &timeframe)

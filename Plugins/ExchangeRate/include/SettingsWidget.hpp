@@ -38,7 +38,7 @@ namespace cen::plugin
         void reloadTimer(double time);
 
     private:
-        Ui::SettingsWidget *ui;
+        std::unique_ptr<Ui::SettingsWidget> ui;
         ExchangeRatePlugin *m_exchRatePlg { nullptr };
         CENTAUR_INTERFACE_NAMESPACE::IConfiguration *m_config { nullptr };
         QStandardItemModel *m_symsItemModel { nullptr };
