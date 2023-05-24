@@ -194,7 +194,7 @@ void LoginDialog::onAccept() noexcept
 
 #ifndef TEST_LOGIN_MODE // avoid closing because it's not going to work
     accept();
-#endif /*TEST_LOGIN_MODE*/
+#endif                  /*TEST_LOGIN_MODE*/
 }
 
 void LoginDialog::restoreInterface() noexcept
@@ -211,6 +211,7 @@ void LoginDialog::setPasswordMode() noexcept
     ui()->userEdit->setReadOnly(true);
     ui()->userEdit->setText(g_globals->session.user);
     ui()->tfaEdit->hide();
+    ui()->acceptButton->setText(tr("Verify"));
     ui()->iconLabel->setPixmap(
         QPixmap::fromImage(
             g_globals->session.image.scaled(ui()->iconLabel->size(), Qt::KeepAspectRatio)));
@@ -227,6 +228,8 @@ void LoginDialog::setNormalMode() noexcept
     g_globals->session.tfa = settings.value("__2fa__").toBool();
     settings.endGroup();
 
+    ui()->acceptButton->setText(tr("Start"));
+
     // Index 0 holds the 2FA activated and Index 1 holds the login 2fa
     if (g_globals->session.tfa)
     {
@@ -242,6 +245,7 @@ void LoginDialog::setTFAMode() noexcept
     _impl->tfaMode = true;
     ui()->userEdit->setReadOnly(true);
     ui()->userEdit->setText(g_globals->session.user);
+    ui()->acceptButton->setText(tr("Verify"));
     ui()->iconLabel->setPixmap(
         QPixmap::fromImage(
             g_globals->session.image.scaled(ui()->iconLabel->size(), Qt::KeepAspectRatio)));
@@ -256,7 +260,7 @@ void LoginDialog::loadImage() noexcept
     const QString dataPath      = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     const QString imageFilePath = QString("%1/e30dfd91071c.image.data").arg(dataPath);
 
-    if(QFile::exists(imageFilePath))
+    if (QFile::exists(imageFilePath))
     {
         g_globals->session.image.load(imageFilePath);
 
