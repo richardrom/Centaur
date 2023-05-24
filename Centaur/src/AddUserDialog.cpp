@@ -264,17 +264,14 @@ void AddUserDialog::searchImage() noexcept
 
         if (QFile::exists(imageFilePath))
         {
-            logInfo("addUser", "Internal image file removed.");
             QFile::remove(imageFilePath);
         }
 
         if (QFile::copy(dlg.selectedFiles().first(), imageFilePath))
         {
-            logInfo("addUser", "Internal image file copied.");
             _impl->photoUpdate = true;
             if (_impl->photo.load(imageFilePath))
             {
-                logInfo("addUser", "Internal image file valid and loaded.");
                 ui()->photoLabel->setPixmap(QPixmap::fromImage(_impl->photo.scaled(ui()->photoLabel->size())));
             }
         }
