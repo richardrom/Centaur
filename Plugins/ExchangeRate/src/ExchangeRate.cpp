@@ -8,7 +8,6 @@
 #include "CentaurInterface.hpp"
 #include "CentaurPlugin.hpp"
 #include "Protocol.hpp"
-#include "QtCore/qdebug.h"
 #include "QtCore/qpointer.h"
 #include "SettingsWidget.hpp"
 #include <QApplication>
