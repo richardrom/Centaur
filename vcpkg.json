@@ -14,7 +14,11 @@
     "libqrencode",
     "cryptopp",
     "cli11",
-    "libzip"
+    "libzip",
+    {
+      "name": "cryptopp",
+      "version>=": "8.7.0#3"
+    }
   ],
   "overrides": [
     {
