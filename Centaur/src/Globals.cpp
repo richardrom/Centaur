@@ -36,6 +36,8 @@
 
 CENTAUR_NAMESPACE::Globals *CENTAUR_NAMESPACE::g_globals { nullptr };
 
+QString *CENTAUR_NAMESPACE::g_credentials { nullptr };
+
 BEGIN_CENTAUR_NAMESPACE
 
 namespace

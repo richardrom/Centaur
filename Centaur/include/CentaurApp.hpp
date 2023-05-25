@@ -64,6 +64,8 @@ public:
 protected:
     void closeEvent(QCloseEvent *event) override;
 
+    void initSession();
+
 private:
     /// \brief initializeInterface Set interface status
     void initializeInterface() noexcept;
@@ -103,7 +105,11 @@ protected:
 public:
     LogDialog *logDialog() noexcept;
 
+public:
+    void keepAliveCredentialStatus() noexcept;
+
 private slots:
+    void credentialsStatus() noexcept;
     void onShowPlugins() noexcept;
     void onShowLogDialog() noexcept;
     void onShowSettings() noexcept;

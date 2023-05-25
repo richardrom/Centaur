@@ -20,10 +20,14 @@
 #include <QAreaSeries>
 #include <QChartView>
 #include <QDateTimeAxis>
+#include <QDirIterator>
+#include <QFile>
+#include <QFileInfo>
 #include <QGraphicsBlurEffect>
 #include <QImageReader>
 #include <QMenu>
 #include <QMessageBox>
+#include <QProcess>
 #include <QResizeEvent>
 #include <QShortcut>
 #include <QSqlDatabase>
@@ -33,6 +37,7 @@
 #include <QSqlRecord>
 #include <QStandardPaths>
 #include <QTextStream>
+#include <QTimer>
 #include <QtCharts/QValueAxis>
 #include <utility>
 
@@ -105,6 +110,8 @@ struct CentaurApp::Impl
     QAreaSeries *last7SevenAreaSeries { nullptr };
     QSplineSeries *last7SevenLowSeries { nullptr };
     QSplineSeries *last7SevenUpSeries { nullptr };
+
+    QTimer *credentialsTimer { nullptr };
 };
 
 class FavoritesDBManager final
@@ -199,17 +206,20 @@ CentaurApp::CentaurApp(QWidget *parent) :
     QMainWindow(parent),
     _impl { new Impl(this) }
 {
+
     auto *splashScreen = new SplashDialog(this);
     splashScreen->setDisplayText(tr("Setting up user interface"));
     splashScreen->setProgressRange(0, 7);
     splashScreen->setProgressPos(0);
-    splashScreen->show();
 
     START_TIME(initializationTimeStart);
 
     g_app     = this;
     g_globals = new Globals;
 
+    initSession();
+
+    splashScreen->show();
     qRegisterMetaType<uuid>("uuid");
     // qRegisterMetaType<cen::plugin::CandleData>("plugin::ICandleView::CandleData");
     qRegisterMetaType<cen::plugin::TimeFrame>("plugin::ICandleView::TimeFrame");
@@ -268,42 +278,10 @@ CentaurApp::CentaurApp(QWidget *parent) :
     loadFavoritesWatchList();
     splashScreen->step();
 
-    /*
-
-                        onCandleView("ETHUSDT", m_candleViewSupport.begin()->first, plugin::ICandleView::TimeFrame::Minutes_1, pluginInformationFromBase(m_exchangeList.begin()->second.exchange));
-                    */
-
     END_TIME_SEC(initializationTimeStart, initializationTimeEnd, initializationTime);
     logInfo("app", QString("%1").arg(initializationTime.count(), 0, 'f', 4));
     splashScreen->hide();
     delete splashScreen;
-
-    if (SettingsDialog::isFirstTimeStarted())
-    {
-        const auto res = QMessageBox::question(this, tr("User"), tr("There is no user information. Would you like to set it?"), QMessageBox::Yes | QMessageBox::No);
-        if (res == QMessageBox::No)
-        {
-            exit(EXIT_FAILURE);
-        }
-        else
-        {
-            onShowSettings();
-        }
-    }
-    else
-    {
-        LoginDialog dlg(this);
-        dlg.setNormalMode();
-#ifndef TEST_LOGIN_MODE
-        if (dlg.exec() != QDialog::Accepted)
-        {
-            exit(EXIT_FAILURE);
-        }
-#else
-        dlg.onAccept();
-#endif
-        updateUserInformationStatus();
-    }
 }
 
 CentaurApp::~CentaurApp()
@@ -323,7 +301,76 @@ CentaurApp::~CentaurApp()
         _impl->loggerThread->join();
     }
 
+    if (g_credentials != nullptr)
+        delete g_credentials;
+
     delete g_globals;
+}
+
+void CentaurApp::initSession()
+{
+    if (SettingsDialog::isFirstTimeStarted())
+    {
+        const auto res = QMessageBox::question(this, tr("User"), tr("There is no user information. Would you like to set it?"), QMessageBox::Yes | QMessageBox::No);
+        if (res == QMessageBox::No)
+        {
+            exit(EXIT_FAILURE);
+        }
+        else
+        {
+            onShowSettings();
+
+            QMessageBox::warning(this,
+                "Restart",
+                "Application will be restarted",
+                QMessageBox::Ok);
+
+            // Restart the App
+            QProcess::startDetached(QCoreApplication::arguments()[0], QCoreApplication::arguments());
+            exit(EXIT_SUCCESS);
+        }
+    }
+    else
+    {
+
+        LoginDialog dlg;
+        dlg.setNormalMode();
+#ifndef TEST_LOGIN_MODE
+        if (dlg.exec() != QDialog::Accepted)
+        {
+            exit(EXIT_FAILURE);
+        }
+
+#else
+        dlg.onAccept();
+#endif
+        updateUserInformationStatus();
+    }
+}
+
+void CentaurApp::credentialsStatus() noexcept
+{
+    delete g_credentials;
+    g_credentials = nullptr;
+
+    logInfo("credentialsStatus", "Credentials no longer in cache");
+}
+
+void CentaurApp::keepAliveCredentialStatus() noexcept
+{
+    QSettings settings("CentaurProject", "Centaur");
+    settings.beginGroup("__Session__data");
+    const auto time = settings.value("__securing_time__", 300'000).toInt();
+    settings.endGroup();
+
+    if (_impl->credentialsTimer == nullptr)
+    {
+        _impl->credentialsTimer = new QTimer(this);
+        _impl->credentialsTimer->setSingleShot(true);
+        connect(_impl->credentialsTimer, &QTimer::timeout, this, &CentaurApp::credentialsStatus);
+    }
+
+    _impl->credentialsTimer->start(time);
 }
 
 Ui::CentaurApp *CentaurApp::ui()

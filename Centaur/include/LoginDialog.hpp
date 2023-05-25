@@ -38,6 +38,9 @@ public:
     void setTFAMode() noexcept;
 
 public:
+    void accept() override;
+
+public:
     /// \brief Only valid when password mode is set, and the caller must clear the data
     QString userPassword;
 

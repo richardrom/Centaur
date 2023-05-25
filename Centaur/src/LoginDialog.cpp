@@ -6,8 +6,10 @@
 
 #include "LoginDialog.hpp"
 #include "../ui/ui_LoginDialog.h"
+#include "CentaurApp.hpp"
 #include "Globals.hpp"
 #include "TOTP.hpp"
+#include <Protocol.hpp>
 #include <QCryptographicHash>
 #include <QFile>
 #include <QMessageBox>
@@ -61,12 +63,22 @@ void LoginDialog::onAccept() noexcept
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
 
+    settings.beginGroup("user.password");
+    auto pad = settings.value("pad").toString();
+    settings.endGroup();
+
     settings.beginGroup("__Session__data");
     const QString registeredPassword = settings.value("__sec__").toString();
     const QString registeredUser     = settings.value("__user__").toString();
-    const bool loginTFA              = settings.value("__2fa__").toBool();
+#ifndef TEST_LOGIN_MODE
+    const bool loginTFA = settings.value("__2fa__").toBool();
+#endif /*TEST_LOGIN_MODE*/
     settings.endGroup();
 
+    using namespace CENTAUR_PROTOCOL_NAMESPACE;
+    settings.beginGroup("__iv__");
+    const auto localIV = settings.value("__local__").toString();
+    settings.endGroup();
 
     const QString hashedPassword = QString::fromUtf8(QCryptographicHash::hash(QByteArrayView(ui()->passwordEdit->text().toUtf8()), QCryptographicHash::RealSha3_512).toBase64());
 
@@ -126,7 +138,17 @@ void LoginDialog::onAccept() noexcept
             QString fileData = stream.readAll();
             file.close();
 
-            g_globals->session.userTFA = AESSym::decrypt(fileData, ui()->passwordEdit->text().toLocal8Bit());
+            try
+            {
+                g_globals->session.userTFA = QString::fromStdString(
+                    Encryption::DecryptAES(
+                        fileData.toStdString(),
+                        pad.replace(0, ui()->passwordEdit->text().size(), ui()->passwordEdit->text()).toStdString(),
+                        localIV.toStdString()));
+            } catch (const std::exception &ex)
+            {
+                return;
+            }
 
             if (ui()->tfaEdit->text().toInt() != getTOTPCode(g_globals->session.userTFA.toStdString()))
             {
@@ -179,7 +201,10 @@ void LoginDialog::onAccept() noexcept
             QString fileData = stream.readAll();
             file.close();
 
-            g_globals->session.userTFA = AESSym::decrypt(fileData, ui()->passwordEdit->text().toLocal8Bit());
+            g_globals->session.userTFA = QString::fromStdString(
+                Encryption::DecryptAES(fileData.toStdString(),
+                    pad.replace(0, ui()->passwordEdit->text().size(), ui()->passwordEdit->text()).toStdString(),
+                    localIV.toStdString()));
         }
 
         if (ui()->tfaEdit->text().toInt() != getTOTPCode(g_globals->session.userTFA.toStdString()))
@@ -192,9 +217,71 @@ void LoginDialog::onAccept() noexcept
         accept();
     }
 
-#ifndef TEST_LOGIN_MODE // avoid closing because it's not going to work
     accept();
-#endif                  /*TEST_LOGIN_MODE*/
+}
+
+void LoginDialog::accept()
+{
+    auto mainWindow = []() -> CentaurApp * {
+        foreach (QWidget *w, QApplication::topLevelWidgets())
+            if (auto *mainWin = qobject_cast<CentaurApp *>(w))
+                return mainWin;
+        return nullptr;
+    }();
+
+    if (g_credentials != nullptr)
+        delete g_credentials;
+
+#ifndef TEST_LOGIN_MODE
+    // The 'new' approach tries to randomize addresses as much as possible
+    g_credentials = new QString(this->ui()->passwordEdit->text());
+#else
+
+    /// TODO: DOCUMENT HOW THIS WORKS
+
+    QString fileName = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/h983mjuklg43";
+    QFile file(fileName);
+    if (!file.exists() || !file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QMessageBox::critical(this,
+            tr("Error"),
+            tr("When the login test mode is on. You must set the password in a file.\nCheck documentation to see how this is done"),
+            QMessageBox::Ok);
+        abort();
+    }
+
+    QTextStream stream(&file);
+    const QString fileData   = stream.readAll();
+    const QString hashedData = QString::fromUtf8(QCryptographicHash::hash(QByteArrayView(fileData.toUtf8()), QCryptographicHash::RealSha3_512).toBase64());
+
+    QSettings settings("CentaurProject", "Centaur");
+    settings.beginGroup("__Session__data");
+    const QString registeredPassword = settings.value("__sec__").toString();
+    settings.endGroup();
+
+    if (registeredPassword != hashedData)
+    {
+        QMessageBox::critical(this,
+            tr("Error"),
+            tr("The login test mode is on, and the password written is not correct.\nCheck documentation to see how this is done"),
+            QMessageBox::Ok);
+        abort();
+    }
+    file.close();
+
+    // Set the credentials
+    g_credentials = new QString(fileData);
+#endif
+
+    if (mainWindow != nullptr)
+        mainWindow->keepAliveCredentialStatus();
+
+#ifndef TEST_LOGIN_MODE // avoid closing because it's not going to work
+    QDialog::accept();
+#else
+    if (_impl->pswMode || _impl->tfaMode)
+        QDialog::accept();
+#endif // TEST_LOGIN_MODE
 }
 
 void LoginDialog::restoreInterface() noexcept

@@ -78,6 +78,8 @@ namespace CENTAUR_NAMESPACE
     extern QPixmap findAssetImage(int size, const QString &asset, CENTAUR_INTERFACE_NAMESPACE::AssetImageSource source, QWidget *caller = nullptr);
 
     extern Globals *g_globals;
+
+    extern QString *g_credentials;
 } // namespace CENTAUR_NAMESPACE
 
 #endif // CENTAUR_GLOBALS_HPP
