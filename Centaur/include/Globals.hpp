@@ -33,8 +33,8 @@ namespace CENTAUR_NAMESPACE
 {
     struct AESSym
     {
-        static auto decrypt(const QString &text, const QByteArray &key) -> QString;
-        static auto encrypt(const QByteArray &data, const QByteArray &key) -> QString;
+        // static auto decrypt(const QString &text, const QByteArray &key) -> QString;
+        // static auto encrypt(const QByteArray &data, const QByteArray &key) -> QString;
         static auto createUniqueId(int rounds, std::size_t maxSize) -> std::string;
     };
 

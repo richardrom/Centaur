@@ -111,16 +111,32 @@ namespace CENTAUR_INTERFACE_NAMESPACE
     ///        Configuration files have the ".json" extension
     struct IConfiguration
     {
-        virtual ~IConfiguration() = default;
 
-    public:
-        /// \brief Returns the file name containing the plugin key
-        /// \return The file containing the data
-        virtual auto getPluginPublicKeyPath() -> std::string = 0;
+        enum class CredentialsMethod
+        {
+            encrypt,
+            decrypt
+        };
+        virtual ~IConfiguration() = default;
 
     public:
         /// \brief return the configuration filename with json extension
         virtual auto getConfigurationFileName() noexcept -> std::string = 0;
+
+    public:
+        /// \brief Ask for the main UI for the Credentials Dialog. Use this to encrypt data
+        /// \param textData When Method is encrypt: Text to cipher
+        ///                 When Method is decrypt: A Base64 string to decipher
+        /// \param forceDialog Set to true if the user credentials dialog must be shown, otherwise,
+        ///                     if the main UI holds a copy of the user credentials in memory the dialog will not be shown
+        ///                     (it is not guaranteed that the UI will always have such data available)
+        /// \param method Encrypt/Decrypt
+        /// \throw std::runtime_error in case of the encryption failed. if the user enter bad credentials the function will not throw (see return)
+        /// \return When Method is encrypt: A Base64 string with the ciphered data
+        ///         When Method is decrypt: A string with the data decrypted.
+        ///         In both cases, if the user failed to authenticate the string returned will be empty
+
+        virtual auto credentials(const std::string &textData, bool forceDialog, CredentialsMethod method = CredentialsMethod::encrypt) -> std::string = 0;
 
         /// Access to images of assets
     public:

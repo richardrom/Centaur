@@ -18,26 +18,27 @@
 
 #include <unordered_map>
 
-namespace CENTAUR_NAMESPACE
+BEGIN_CENTAUR_NAMESPACE
+
+class PluginConfiguration : public CENTAUR_NAMESPACE::interface::IConfiguration
 {
-    class PluginConfiguration : public CENTAUR_NAMESPACE::interface::IConfiguration
-    {
-    public:
-        explicit PluginConfiguration(const QString &uuidString);
-        ~PluginConfiguration() override;
+public:
+    explicit PluginConfiguration(const QString &uuidString);
+    ~PluginConfiguration() override;
 
-    public:
-        auto getPluginPublicKeyPath() -> std::string override;
-        auto getConfigurationFileName() noexcept -> std::string override;
+public:
+    auto getConfigurationFileName() noexcept -> std::string override;
+    auto credentials(const std::string &textData, bool forceDialog, CredentialsMethod method = CredentialsMethod::encrypt) -> std::string override;
 
-    public:
-        auto getAssetImage(int size, CENTAUR_INTERFACE_NAMESPACE::AssetImageSource source, const QString &asset, QWidget *parent) -> QPixmap override;
+public:
+    auto getAssetImage(int size, CENTAUR_INTERFACE_NAMESPACE::AssetImageSource source, const QString &asset, QWidget *parent) -> QPixmap override;
 
-    private:
-        QString m_path;
-        QString m_settingsFile;
-    };
+private:
+    QString m_path;
+    QString m_settingsFile;
+    QString m_uuidString;
+};
 
-} // namespace CENTAUR_NAMESPACE
+END_CENTAUR_NAMESPACE
 
 #endif // CENTAUR_CONFIGURATIONINTERFACE_HPP

@@ -19,12 +19,6 @@
 
 #include <concepts>
 
-#include <cryptopp/aes.h>
-#include <cryptopp/cryptlib.h>
-#include <cryptopp/hex.h>
-#include <cryptopp/modes.h>
-#include <cryptopp/rijndael.h>
-
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
 #include <rapidjson/filereadstream.h>
@@ -39,36 +33,6 @@ CENTAUR_NAMESPACE::Globals *CENTAUR_NAMESPACE::g_globals { nullptr };
 QString *CENTAUR_NAMESPACE::g_credentials { nullptr };
 
 BEGIN_CENTAUR_NAMESPACE
-
-namespace
-{
-    auto isInitializationVector() -> bool
-    {
-        QSettings settings("CentaurProject", "Centaur");
-        settings.beginGroup("__iv__");
-        const auto present = settings.value("__present__").toBool();
-        settings.endGroup();
-        return present;
-    }
-
-    auto createInitializationVector(const QByteArray &data) -> void
-    {
-        QSettings settings("CentaurProject", "Centaur");
-        settings.beginGroup("__iv__");
-        settings.setValue("__present__", true);
-        settings.setValue("__local__", data);
-        settings.endGroup();
-    }
-
-    auto getInitializationVector() -> QByteArray
-    {
-        QSettings settings("CentaurProject", "Centaur");
-        settings.beginGroup("__iv__");
-        auto data = settings.value("__local__").toByteArray();
-        settings.endGroup();
-        return data;
-    }
-} // namespace
 
 auto AESSym::createUniqueId(int rounds, std::size_t maxSize) -> std::string
 {
@@ -89,7 +53,7 @@ auto AESSym::createUniqueId(int rounds, std::size_t maxSize) -> std::string
 
     return { characters.data(), maxSize };
 }
-
+/*
 auto AESSym::encrypt(const QByteArray &data, const QByteArray &key) -> QString
 {
     namespace crypto = CryptoPP;
@@ -205,12 +169,12 @@ auto AESSym::decrypt(const QString &text, const QByteArray &key) -> QString
 
     return QString::fromStdString(decrypted);
 }
-
+*/
 END_CENTAUR_NAMESPACE
 
 namespace
 {
-    // clang-format off
+// clang-format off
     #if defined(__clang__) || defined(__GNUC__)
     CENTAUR_WARN_PUSH()
     CENTAUR_WARN_OFF("-Wexit-time-destructors")

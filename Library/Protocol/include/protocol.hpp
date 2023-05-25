@@ -174,37 +174,8 @@ namespace CENTAUR_PROTOCOL_NAMESPACE
         ~Encryption();
 
     public:
-        auto loadKeyPair(const std::string &privateFile, const std::string &publicFile, const std::string &passphrase) -> void;
-
-        /// \brief Encrypt with the private key
-        /// \param plainText Data to encrypt
-        /// \return Return Base64 or Base156 according
-        auto encryptPrivate(const std::string &plainText) -> std::string;
-
-        auto decryptPrivate(const std::string &cipherText) -> std::string;
-
-        auto encryptPublic(const std::string &plainText) -> std::string;
-
-        /// \brief Decrypt with the public key
-        /// \param cipherText Data to decrypt
-        /// \return an array of the decrypted data
-        auto decryptPublic(const std::string &cipherText) -> std::string;
-
-    public:
-        /// \throws std::runtime_error when an error occur
-        static auto generateRSAPrivatePublicKeys(const std::string &privateFile, const std::string &publicFile, const std::string &passphrase) -> void;
-
-        static auto toBase64(const std::string &str) -> std::string;
-
-        static auto toBase16(const std::string &str) -> std::string;
-
-        static auto fromBase64(const std::string &str) -> std::string;
-
-        static auto fromBase16(const std::string &str) -> std::string;
-
-    private:
-        struct Impl;
-        std::unique_ptr<Impl> pimpl;
+        static std::string EncryptAES(const std::string &plaintext, const std::string &key, const std::string &iv);
+        static std::string DecryptAES(const std::string &ciphertext, const std::string &key, const std::string &iv);
     };
 
     template <typename T>

@@ -12,11 +12,13 @@
 #include "DAL.hpp"
 #include "DepthChartDialog.hpp"
 #include "FavoritesDialog.hpp"
+#include "Globals.hpp"
 #include "LogDialog.hpp"
 #include "LoginDialog.hpp"
 #include "OrderbookDialog.hpp"
 #include "SettingsDialog.hpp"
 #include "SplashDialog.hpp"
+#include <QApplication>
 #include <QAreaSeries>
 #include <QChartView>
 #include <QDateTimeAxis>

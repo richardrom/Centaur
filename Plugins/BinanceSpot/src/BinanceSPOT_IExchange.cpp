@@ -8,6 +8,7 @@
 
 #include "AssetDetailDialog.hpp"
 #include "BinanceSPOT.hpp"
+#include "CentaurInterface.hpp"
 #include "CoinInfoDialog.hpp"
 #include "FeesDialog.hpp"
 #include "NetworkAddressDialog.hpp"
@@ -15,6 +16,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <rapidjson/istreamwrapper.h>
+#include <stdexcept>
 
 #define CATCH_API_EXCEPTION()                                                                          \
     switch (ex.type())                                                                                 \
@@ -96,7 +98,7 @@ namespace
             case cen::plugin::TimeFrame::Seconds_30: C_FALLTHROUGH;                                      // Not valid, however, supportedTimeFrames() must protect us from this case
             case cen::plugin::TimeFrame::Seconds_45: return BINAPI_NAMESPACE::BinanceTimeIntervals::i1m; // Not valid, however, supportedTimeFrames() must protect us from this case
             case cen::plugin::TimeFrame::Minutes_1: return BINAPI_NAMESPACE::BinanceTimeIntervals::i1m;
-            case cen::plugin::TimeFrame::Minutes_2: return BINAPI_NAMESPACE::BinanceTimeIntervals::i1m; // Not valid, however, supportedTimeFrames() must protect us from this case
+            case cen::plugin::TimeFrame::Minutes_2: return BINAPI_NAMESPACE::BinanceTimeIntervals::i1m;  // Not valid, however, supportedTimeFrames() must protect us from this case
             case cen::plugin::TimeFrame::Minutes_3: return BINAPI_NAMESPACE::BinanceTimeIntervals::i3m;
             case cen::plugin::TimeFrame::Minutes_5: return BINAPI_NAMESPACE::BinanceTimeIntervals::i5m;
             case cen::plugin::TimeFrame::Minutes_10: return BINAPI_NAMESPACE::BinanceTimeIntervals::i1m; // Not valid, however, supportedTimeFrames() must protect us from this case
@@ -121,51 +123,72 @@ bool CENTAUR_NAMESPACE::BinanceSpotPlugin::initialization() noexcept
 {
     logTrace("BinanceSpotPlugin", "BinanceSpotPlugin::initialization");
 
-    CENTAUR_PROTOCOL_NAMESPACE::Encryption ec;
-    auto publicKeyFile = m_config->getPluginPublicKeyPath();
+    auto configurationFileName = m_config->getConfigurationFileName();
+    std::ifstream input(configurationFileName);
 
-    std::ifstream input(m_config->getConfigurationFileName());
     rapidjson::IStreamWrapper isw(input);
-    rapidjson::Document pluginSettings;
 
     if (pluginSettings.ParseStream(isw).HasParseError())
     {
         QString str = QString(tr("%1 at %2")).arg(rapidjson::GetParseError_En(pluginSettings.GetParseError())).arg(pluginSettings.GetErrorOffset());
-        logError("BinanceSpotPlugin", QString("Settings contain JSON errors. %1").arg(str));
+        logError("BinanceSpotPlugin", tr("Settings contain JSON errors. %1").arg(str));
         return false;
     }
 
-    try
+    if (pluginSettings.HasMember("allowUserData") && pluginSettings["allowUserData"].IsBool())
     {
-        ec.loadPublicKey(publicKeyFile);
-    } catch (const std::exception &ex)
+        if (!pluginSettings.HasMember("user")
+            || !pluginSettings["user"].IsObject()
+            || !pluginSettings["user"].HasMember("api")
+            || !pluginSettings["user"].HasMember("secret")
+            || !pluginSettings["user"]["api"].IsString()
+            || !pluginSettings["user"]["secret"].IsString())
+        {
+            logError("BinanceSpotPlugin", tr("Mis-formed settings file. User data inaccessible. Re-installation of the plugin might solve the problem"));
+            return false;
+        }
+
+        const bool allowUserData = pluginSettings["allowUserData"].GetBool();
+
+        if (allowUserData)
+        {
+            const std::string apiKey    = pluginSettings["user"]["api"].GetString();
+            const std::string secretKey = pluginSettings["user"]["secret"].GetString();
+
+            try
+            {
+                const auto decSecretKey = m_config->credentials(
+                    secretKey,
+                    false,
+                    CENTAUR_INTERFACE_NAMESPACE::IConfiguration::CredentialsMethod::decrypt);
+
+                if (!decSecretKey.empty())
+                {
+                    m_keys.apiKey    = apiKey;
+                    m_keys.secretKey = decSecretKey;
+                }
+                else
+                    logError("BinanceSpotPlugin", "Failed to authenticate the user");
+
+            } catch (const std::runtime_error &ex)
+            {
+                logError("BinanceSpotPlugin", tr("Could not load the plugin user keys. %1").arg(ex.what()));
+            }
+        }
+        else
+        {
+            m_keys.apiKey.clear();
+            m_keys.secretKey.clear();
+            logInfo("BinanceSpotPlugin", tr("User data is not allowed"));
+        }
+    }
+    else
     {
-        logError("BinanceSpotPlugin", QString("Could not load the plugin public key. %1").arg(ex.what()));
+        logError("BinanceSpotPlugin", tr("Mis-formed settings file. Re-installation of the plugin might solve the problem"));
         return false;
     }
 
-    auto apiKeyCip = std::string(pluginSettings["api"].GetString());
-    auto secKeyCip = std::string(pluginSettings["secret"].GetString());
-
-    if (apiKeyCip.empty() || secKeyCip.empty())
-    {
-        logError("BinanceSpotPlugin", "Either the API Key or the secret key are empty on the plugins configuration file.");
-        return false;
-    }
-
-    const auto apiKey = ec.decryptPublic(apiKeyCip, CENTAUR_PROTOCOL_NAMESPACE::Encryption::BinaryBase::Base64);
-    const auto secKey = ec.decryptPublic(secKeyCip, CENTAUR_PROTOCOL_NAMESPACE::Encryption::BinaryBase::Base64);
-
-    if (apiKey.empty() || secKey.empty())
-    {
-        logError("BinanceSpotPlugin", "Could not decrypt the binance keys");
-        return false;
-    }
-
-    // set the keys
-    m_keys.apiKey    = apiKey;
-    m_keys.secretKey = secKey;
-    m_bAPI           = std::make_unique<BINAPI_NAMESPACE::BinanceAPISpot>(&m_keys, &m_limits);
+    m_bAPI = std::make_unique<BINAPI_NAMESPACE::BinanceAPISpot>(&m_keys, &m_limits);
 
     try
     {
@@ -795,7 +818,8 @@ QList<QPair<CENTAUR_PLUGIN_NAMESPACE::IExchange::Timestamp, CENTAUR_PLUGIN_NAMES
 
                 cd.push_back({
                     candle.openTime,
-                    {.high     = candle.high,
+                    {//
+.high   = candle.high,
                                .open   = candle.open,
                                .close  = candle.close,
                                .low    = candle.low,

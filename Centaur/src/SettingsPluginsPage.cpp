@@ -305,10 +305,8 @@ void cen::SettingsDialog::installPlugin() noexcept
         watcher.setFuture(
             QtConcurrent::run(QThreadPool::globalInstance(),
                 [&]() {
-                    const QString &resPath          = g_globals->paths.resPath;
-                    const QString schemaJSONPlugin  = resPath + "/Schema/plugins.schema.json";
-                    const QString privatePluginPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/Plugins/Private";
-                    const QString publicPluginPath  = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/Plugins/Public";
+                    const QString &resPath         = g_globals->paths.resPath;
+                    const QString schemaJSONPlugin = resPath + "/Schema/plugins.schema.json";
                     // Open the plugin schema
                     namespace json = rapidjson;
 
@@ -434,17 +432,10 @@ void cen::SettingsDialog::installPlugin() noexcept
                         bool protectedPlugin = jsonDoc["identification"]["protected"].GetBool();
                         if (protectedPlugin)
                         {
-                            try
-                            {
-                                CENTAUR_PROTOCOL_NAMESPACE::Encryption::generateRSAPrivatePublicKeys(
-                                    QString("%1/%2.pem").arg(privatePluginPath, jsonDoc["identification"]["uuid"].GetString()).toStdString(),
-                                    QString("%1/%2.pem").arg(publicPluginPath, jsonDoc["identification"]["uuid"].GetString()).toStdString(),
-                                    userPsw.toStdString());
-                            } catch (const std::exception &ex)
-                            {
-                                errorStrings.push_back(QString(tr("%1\nCould not create the pem files. %2")).arg(file, ex.what()));
-                                continue;
-                            }
+                            QSettings settings("CentaurProject", "Centaur");
+                            settings.beginGroup("local.plugins.iv");
+                            settings.setValue(jsonDoc["identification"]["uuid"].GetString(), QString::fromStdString(AESSym::createUniqueId(10, 16)));
+                            settings.endGroup();
                         }
 
                         // Check for the Data integrity
