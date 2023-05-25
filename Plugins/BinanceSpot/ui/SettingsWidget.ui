@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>cen::SettingsWidget</class>
+ <widget class="QWidget" name="cen::SettingsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>432</width>
+    <height>197</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+QLabel{
+font-size:  14px;
+}
+QLabel#serverLabel{
+font-size:  25px;
+}
+
+
+QPushButton{
+font-size: 14px;
+font-weight: 600;
+color:  #0D3C61;
+border: 0px;
+border-radius:  5px;
+background-color: #2196f3;
+}
+
+QPushButton:default{
+font-size: 14px;
+font-weight: 800;
+color:  #0d3C61;
+border: 0px;
+border-radius:  5px;
+border: 2px solid rgba(144,203,249,100);
+background-color: #2196f3;
+}
+
+
+
+QPushButton:hover, QPushButton:hover:default{
+	background-color:  #339EF4;
+}
+
+QPushButton:pressed{
+background-color:  #68B8F7;
+}
+
+QPushButton:pressed:default{
+background-color:  #68B8F7;
+}
+
+QPushButton:disabled{
+color: #c0c0c0;
+background-color: #9D9EA4;
+}
+
+QLineEdit{
+font-size: 14px;
+border: 0px;
+color: rgb(225,225,255);
+background-color: rgb(63,70,76);
+border-radius:  0px;
+border-bottom: 2px solid  rgb(63,70,76);
+min-height: 25px;
+padding: 0 0 0 5;
+}
+
+
+QLineEdit:hover{
+background-color:  rgb(78,85,90);
+border-bottom: 2px solid #6ec6ff;
+}
+
+QLineEdit:focus{
+color: white;
+background-color:  rgb(94,100,105);
+border-bottom: 2px solid rgb(33,150,243);
+}
+
+QGroupBox {
+	font-size: 14px;
+    background-color: rgb(26,34,40);
+    border-radius: 5px;
+    margin-top: 18px; /* leave space at the top for the title */
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left; /* position at the top center */
+    padding: 0 3px;
+}
+
+QComboBox {
+    border: 1px solid gray;
+    min-width: 6em;
+	font-size: 14px;
+	border: 0px;
+	color: rgb(225,225,255);
+	background-color: rgb(63,70,76);
+	border-radius:  0px;
+	border-bottom: 2px solid  rgb(63,70,76);
+	min-height: 25px;
+	padding: 0 0 0 5;
+}
+
+
+QComboBox:editable {
+    color: black;
+}
+
+
+
+QComboBox::down-arrow {
+    border-image: url(:/ui/global/drop-down) 5 5 5 5 stretch stretch;
+}
+
+QComboBox:hover{
+background-color:  rgb(78,85,90);
+border: 2px solid #6ec6ff;
+}
+
+QComboBox:focus{
+color: white;
+background-color:  rgb(94,100,105);
+border: 2px solid rgb(33,150,243);
+}
+
+QComboBox:editable {
+    background: white;
+}
+
+QComboBox:!editable, QComboBox::drop-down:editable {
+   background-color:  rgb(94,100,105);
+}
+
+/* QComboBox gets the &quot;on&quot; state when the popup is open */
+QComboBox:!editable:on, QComboBox::drop-down:editable:on {
+    background-color: rgb(63,70,76)
+}
+
+QComboBox:on { /* shift the text when the popup opens */
+    padding-top: 3px;
+    padding-left: 4px;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+
+    border-left-width: 1px;
+    border-left-color: darkgray;
+    border-left-style: solid; /* just a single line */
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+}
+
+
+
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="generalInfoGroupBox">
+     <property name="title">
+      <string>User settings</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QCheckBox" name="allowUserData">
+        <property name="text">
+         <string>Allow connection to User Information</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="horizontalSpacing">
+         <number>15</number>
+        </property>
+        <property name="verticalSpacing">
+         <number>-1</number>
+        </property>
+        <item row="0" column="1">
+         <widget class="CENTAUR_NAMESPACE::LinkedLineEdit" name="apiKey">
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="CENTAUR_NAMESPACE::LinkedLineEdit" name="secretKey">
+          <property name="echoMode">
+           <enum>QLineEdit::PasswordEchoOnEdit</enum>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="apiLabel">
+          <property name="text">
+           <string>API Key</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="secretLabel">
+          <property name="text">
+           <string>Secret Key</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CENTAUR_NAMESPACE::LinkedLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>../../Library/cui/include/LinkedLineEdit.hpp</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

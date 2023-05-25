@@ -7,6 +7,8 @@
 // IBase Implementation
 
 #include "BinanceSPOT.hpp"
+#include "SettingsWidget.hpp"
+#include <QFile>
 
 namespace
 {
@@ -50,5 +52,26 @@ QString CENTAUR_NAMESPACE::BinanceSpotPlugin::getUUIDString() const noexcept
 
 QWidget *CENTAUR_NAMESPACE::BinanceSpotPlugin::settingsWidget(IBase *thisObject, CENTAUR_INTERFACE_NAMESPACE::IConfiguration *config) const noexcept
 {
-    return nullptr;
+    return new SettingsWidget(thisObject, config);
+}
+
+void CENTAUR_NAMESPACE::BinanceSpotPlugin::storeData() noexcept
+{
+    rapidjson::StringBuffer jsonBuffer;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(jsonBuffer);
+    pluginSettings.Accept(writer);
+
+    QFile file(QString::fromStdString(m_config->getConfigurationFileName()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate))
+    {
+        QTextStream stream(&file);
+        stream << jsonBuffer.GetString();
+        file.close();
+    }
+}
+
+void CENTAUR_NAMESPACE::BinanceSpotPlugin::updateKeys(const QString &api, const QString &secret) noexcept
+{
+    m_keys.apiKey    = api.toStdString();
+    m_keys.secretKey = secret.toStdString();
 }

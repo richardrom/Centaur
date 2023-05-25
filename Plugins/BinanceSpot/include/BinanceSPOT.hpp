@@ -52,6 +52,10 @@ protected:
 protected:
     C_NODISCARD QString getUUIDString() const noexcept;
 
+public:
+    void storeData() noexcept;
+    void updateKeys(const QString &api, const QString &secret) noexcept;
+
     // IBase
 public:
     QObject *getPluginObject() noexcept override;
@@ -154,6 +158,9 @@ protected:
 protected:
     QPixmap m_image;
     QAction *m_statusAction;
+
+public:
+    rapidjson::Document pluginSettings;
 };
 
 class SpotMarketWS : public BINAPI_NAMESPACE::ws::WSSpotBinanceAPI
