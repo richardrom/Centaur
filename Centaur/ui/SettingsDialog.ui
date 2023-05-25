@@ -674,7 +674,7 @@ background: transparent;
 </string>
                </property>
                <property name="currentIndex">
-                <number>3</number>
+                <number>1</number>
                </property>
                <widget class="QWidget" name="sessionPage">
                 <property name="styleSheet">
@@ -1074,7 +1074,7 @@ font-size:  25px;
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>155</width>
+                         <width>547</width>
                          <height>836</height>
                         </rect>
                        </property>
