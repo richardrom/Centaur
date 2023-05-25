@@ -7,6 +7,7 @@
 #include "SettingsDialog.hpp"
 #include "../ui/ui_SettingsDialog.h"
 #include "CentaurApp.hpp"
+#include "Globals.hpp"
 #include "Logger.hpp"
 
 #include <QCheckBox>
@@ -68,9 +69,16 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     initializeTree();
     initSessionWidget();
-    initAdvancedWidget();
-    initPluginsWidget();
-    initShortcutsWidget();
+
+    // Don't initialize on first time start
+    // Because when this dialog will be shown on first time the main services will not be started
+    // And these pages or even the settings widgets from plugins might use this services
+    if (!SettingsDialog::isFirstTimeStarted())
+    {
+        initAdvancedWidget();
+        initPluginsWidget();
+        initShortcutsWidget();
+    }
 
     restoreInterface();
 
@@ -91,6 +99,20 @@ bool SettingsDialog::isFirstTimeStarted() noexcept
     settings.beginGroup("__Session__");
     const auto value = settings.value("__time__").toBool();
     settings.endGroup();
+
+    if (!value)
+    {
+        // Encryption needs multiples of 16-bytes for the key
+        // In case the user do not insert a 16-byte password, this string will pad the data
+        settings.beginGroup("user.password");
+        settings.setValue("pad", QString::fromStdString(AESSym::createUniqueId(100, 32)));
+        settings.endGroup();
+
+        settings.beginGroup("__iv__");
+        settings.setValue("__local__", QString::fromStdString(AESSym::createUniqueId(10, 16)));
+        settings.endGroup();
+    }
+
     return !value;
 }
 
@@ -167,7 +189,14 @@ void SettingsDialog::initializeTree() noexcept
     ui()->treeWidget->setIndentation(20);
     ui()->treeWidget->setColumnCount(1);
 
-    _impl->sessionItem   = new QTreeWidgetItem({ tr("Session") });
+    _impl->sessionItem = new QTreeWidgetItem({ tr("Session") });
+
+    // Don't create the pages
+    // Because when this dialog will be shown on first time the main services will not be started
+    // And these pages or even the settings widgets from plugins might use this services
+    if (SettingsDialog::isFirstTimeStarted())
+        return;
+
     _impl->advancedItem  = new QTreeWidgetItem({ tr("Advanced") });
     _impl->pluginsItem   = new QTreeWidgetItem({ tr("Plugins") });
     _impl->shortcutsItem = new QTreeWidgetItem({ tr("Shortcuts") });

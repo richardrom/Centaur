@@ -68,6 +68,7 @@ namespace
 
         return out;
     }
+
 } // namespace
 
 BEGIN_CENTAUR_NAMESPACE
@@ -117,8 +118,15 @@ void SettingsDialog::initSessionWidget() noexcept
 
 void SettingsDialog::onAddUser() noexcept
 {
+    using namespace CENTAUR_PROTOCOL_NAMESPACE;
     QSettings settings("CentaurProject", "Centaur");
-    settings.beginGroup("__Session__data");
+    settings.beginGroup("__iv__");
+    const auto localIV = settings.value("__local__").toString();
+    settings.endGroup();
+
+    settings.beginGroup("user.password");
+    const auto pad = settings.value("pad").toString();
+    settings.endGroup();
 
     bool editingMode = false;
     AddUserDialog dlg(this);
@@ -171,7 +179,12 @@ void SettingsDialog::onAddUser() noexcept
                 QString fileData = stream.readAll();
                 file.close();
 
-                g_globals->session.userTFA = AESSym::decrypt(fileData, ifo.prevPsw.toLocal8Bit());
+                auto pad0                  = pad;
+                g_globals->session.userTFA = QString::fromStdString(
+                    Encryption::DecryptAES(
+                        fileData.toStdString(),
+                        pad0.replace(0, ifo.prevPsw.size(), ifo.prevPsw).toStdString(),
+                        localIV.toStdString()));
 
                 if (!QFile::remove(tfaFile))
                 {
@@ -181,7 +194,13 @@ void SettingsDialog::onAddUser() noexcept
                 }
                 else
                 {
-                    auto result = AESSym::encrypt(g_globals->session.userTFA.toLocal8Bit(), ifo.psw.toLocal8Bit());
+                    auto pad1   = pad;
+                    auto result = QString::fromStdString(
+                        Encryption::EncryptAES(
+                            g_globals->session.userTFA.toStdString(),
+                            pad1.replace(0, ifo.psw.size(), ifo.psw).toStdString(),
+                            localIV.toStdString()));
+
                     QFile file(tfaFile);
                     if (!file.open(QIODeviceBase::WriteOnly) || result.isEmpty())
                     {
@@ -284,6 +303,16 @@ void SettingsDialog::openUserInformationData() noexcept
 
 void SettingsDialog::onAllow2FA(bool checked) noexcept
 {
+    using namespace CENTAUR_PROTOCOL_NAMESPACE;
+    QSettings settings("CentaurProject", "Centaur");
+    settings.beginGroup("__iv__");
+    const auto localIV = settings.value("__local__").toString();
+    settings.endGroup();
+
+    settings.beginGroup("user.password");
+    auto pad = settings.value("pad").toString();
+    settings.endGroup();
+
     const QString tfaFile = []() -> QString {
         QString data = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
         return QString("%1/f6110cb58f3b").arg(data);
@@ -326,7 +355,7 @@ void SettingsDialog::onAllow2FA(bool checked) noexcept
         }
 
         // Create a 120-bits random key, shuffled 1000 times
-        auto generatedKey = AESSym::createUniqueId(1'000, 15);
+        auto generatedKey = AESSym::createUniqueId(1'000, 16);
         auto base32       = QString::fromStdString(toBase32(generatedKey));
 
         // Store in the file the key encrypted with the password
@@ -349,7 +378,12 @@ void SettingsDialog::onAllow2FA(bool checked) noexcept
             }
         }
 
-        auto result = AESSym::encrypt(QString::fromStdString(generatedKey).toLocal8Bit(), userPsw.toLocal8Bit());
+        auto result = QString::fromStdString(
+            Encryption::EncryptAES(
+                generatedKey,
+                pad.replace(0, userPsw.size(), userPsw).toStdString(),
+                localIV.toStdString()));
+
         QFile file(tfaFile);
         if (!file.open(QIODeviceBase::WriteOnly) || result.isEmpty())
         {
