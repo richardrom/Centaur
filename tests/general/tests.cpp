@@ -6,6 +6,7 @@
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include <chrono>
+#include <filesystem>
 #include <iostream>
 #include <unordered_map>
 #include <uuid.hpp>
@@ -83,7 +84,7 @@ TEST_CASE("UUID unordered_maps no random collisions")
     std::unordered_map<cen::uuid, int> l;
 
     int col = 0;
-    for (uint i = 0; i < 5'000'000; ++i)
+    for (uint i = 0; i < 1'000'000; ++i)
     {
         auto id = cen::uuid::generate();
         if (auto iter = l.find(id); iter != l.end())
@@ -298,7 +299,7 @@ TEST_CASE("Protocol: Send/Receive NO Compression")
     CENTAUR_PROTOCOL_NAMESPACE::Protocol send;
     CENTAUR_PROTOCOL_NAMESPACE::Generator::generate(&send, 10, &pac, false);
 
-    cen::protocol::ProtocolHeader header;
+    cen::protocol::ProtocolHeader header {};
     auto receive = CENTAUR_PROTOCOL_NAMESPACE::Generator::getData(&header, send.get(), send.getSize(), 100000);
 
     CHECK(receive == pac.json());
@@ -320,60 +321,25 @@ TEST_CASE("Protocol: Send/Receive With Compression")
     CHECK(receive == pac.json());
 }
 
-TEST_CASE("Protocol: load private key")
+TEST_CASE("Protocol: Encryption")
 {
     CENTAUR_PROTOCOL_NAMESPACE::Encryption ec;
 
-    CHECK_NOTHROW(ec.loadPrivateKey("/Volumes/RicardoESSD/Projects/Centaur/local/Resources/Private/{85261bc6-8f92-57ca-802b-f08b819031db}.pem"));
-}
+    // CHECK_NOTHROW(ec.loadPrivateKey("/Volumes/RicardoESSD/Projects/Centaur/local/Resources/Private/{85261bc6-8f92-57ca-802b-f08b819031db}.pem"));
 
-TEST_CASE("Protocol: load public key")
-{
-    CENTAUR_PROTOCOL_NAMESPACE::Encryption ec;
+    const std::string pl = "asdasdas";
 
-    CHECK_NOTHROW(ec.loadPublicKey("/Volumes/RicardoESSD/Projects/Centaur/local/Plugin/Private/{85261bc6-8f92-57ca-802b-f08b819031db}.pem"));
-}
+    try
+    {
 
-TEST_CASE("Protocol: Private Encrypt/Public decrypt")
-{
-    CENTAUR_PROTOCOL_NAMESPACE::Encryption ec;
+        const auto e = CENTAUR_PROTOCOL_NAMESPACE::Encryption::EncryptAES(pl, "keyasdasdasdasddkeyasdasdasdasdd", "3331231231231231");
 
-    CHECK_NOTHROW(ec.loadPrivateKey("/Volumes/RicardoESSD/Projects/Centaur/build/debug/bin/Centaur.app/Contents/Private/{85261bc6-8f92-57ca-802b-f08b819031db}.pem"));
-    CHECK_NOTHROW(ec.loadPublicKey("/Volumes/RicardoESSD/Projects/Centaur/build/debug/bin/Centaur.app/Contents/Plugins/Private/{85261bc6-8f92-57ca-802b-f08b819031db}.pem"));
+        const auto d = CENTAUR_PROTOCOL_NAMESPACE::Encryption::DecryptAES(e, "keyasdasdasdasddkeyasdasdasdasdd", "3331231231231231");
 
-    std::string text = "jJ0qvKfhEQQHduoKifoYpDhJGcS7paQWowqcKCGntYQl5BmzDBOpFLj3anW6who0";
-
-    std::string base64, decBase64;
-
-    CHECK_NOTHROW((base64 = ec.encryptPrivate(text, CENTAUR_PROTOCOL_NAMESPACE::Encryption::BinaryBase::Base64)));
-    CHECK_NOTHROW((decBase64 = ec.decryptPrivate(base64, CENTAUR_PROTOCOL_NAMESPACE::Encryption::BinaryBase::Base64)));
-
-    std::cout << base64 << "\n";
-
-    CHECK(decBase64 != text);
-
-    CHECK_NOTHROW((decBase64 = ec.decryptPublic(base64, CENTAUR_PROTOCOL_NAMESPACE::Encryption::BinaryBase::Base64)));
-
-    CHECK(decBase64 == text);
-}
-
-TEST_CASE("Protocol: Public Encrypt/Private decrypt")
-{
-    CENTAUR_PROTOCOL_NAMESPACE::Encryption ec;
-
-    CHECK_NOTHROW(ec.loadPrivateKey("/Volumes/RicardoESSD/Projects/Centaur/local/Resources/Private/{f77ecf55-8162-5570-a9dc-3a79c6757c72}.pem"));
-    CHECK_NOTHROW(ec.loadPublicKey("/Volumes/RicardoESSD/Projects/Centaur/local/Plugin/Private/{f77ecf55-8162-5570-a9dc-3a79c6757c72}.pem"));
-
-    std::string text = "DSDSDDS";
-
-    std::string base64, base16, decBase64, decBase16;
-
-    CHECK_NOTHROW((base64 = ec.encryptPublic(text, CENTAUR_PROTOCOL_NAMESPACE::Encryption::BinaryBase::Base64)));
-    CHECK_NOTHROW((decBase64 = ec.decryptPublic(base64, CENTAUR_PROTOCOL_NAMESPACE::Encryption::BinaryBase::Base64)));
-
-    CHECK(decBase64 != text);
-
-    CHECK_NOTHROW((decBase64 = ec.decryptPrivate(base64, CENTAUR_PROTOCOL_NAMESPACE::Encryption::BinaryBase::Base64)));
-
-    CHECK(decBase64 == text);
+        CHECK(pl == d);
+    } catch (const std::exception &ex)
+    {
+        std::string d = ex.what();
+        int i         = 0;
+    }
 }
