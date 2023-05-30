@@ -22,10 +22,6 @@
   <property name="windowTitle">
    <string>Preferencias</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>:/side-menu/settings</normaloff>:/side-menu/settings</iconset>
-  </property>
   <property name="styleSheet">
    <string notr="true">QDialog{
 background-color:  rgb(3,12,19);
@@ -674,7 +670,7 @@ background: transparent;
 </string>
                </property>
                <property name="currentIndex">
-                <number>1</number>
+                <number>3</number>
                </property>
                <widget class="QWidget" name="sessionPage">
                 <property name="styleSheet">
@@ -1073,7 +1069,7 @@ font-size:  25px;
                        <property name="geometry">
                         <rect>
                          <x>0</x>
-                         <y>0</y>
+                         <y>-7</y>
                          <width>547</width>
                          <height>836</height>
                         </rect>
@@ -1246,7 +1242,7 @@ border: 2px solid #56aff6;
                            </size>
                           </property>
                           <property name="title">
-                           <string>.</string>
+                           <string>Other settings</string>
                           </property>
                           <layout class="QGridLayout" name="gridLayout_6">
                            <property name="verticalSpacing">
@@ -2044,6 +2040,11 @@ QHeaderView::section:hover
  </widget>
  <customwidgets>
   <customwidget>
+   <class>CENTAUR_NAMESPACE::SearchLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>../../Library/cui/include/SearchLineEdit.hpp</header>
+  </customwidget>
+  <customwidget>
    <class>CENTAUR_NAMESPACE::MovableFrame</class>
    <extends>QFrame</extends>
    <header>../../Library/cui/include/MovableFrame.hpp</header>
@@ -2059,11 +2060,6 @@ QHeaderView::section:hover
    <class>CENTAUR_NAMESPACE::SystemPushButton</class>
    <extends>QPushButton</extends>
    <header>../../Library/cui/include/SystemPushButton.hpp</header>
-  </customwidget>
-  <customwidget>
-   <class>CENTAUR_NAMESPACE::SearchLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>../../Library/cui/include/SearchLineEdit.hpp</header>
   </customwidget>
   <customwidget>
    <class>CENTAUR_NAMESPACE::OptionsTableWidget</class>

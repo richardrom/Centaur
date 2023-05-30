@@ -88,7 +88,6 @@ void SettingsDialog::initAdvancedWidget() noexcept
                 if (dlg.exec() == QDialog::Accepted)
                 {
                     _advImpl->_pixmapCacheValue->setText(bytesToString(dlg.memory));
-
                     QSettings settings("CentaurProject", "Centaur");
                     settings.beginGroup("advancedSettings-PixmapCache");
                     settings.setValue("size", dlg.memory);
