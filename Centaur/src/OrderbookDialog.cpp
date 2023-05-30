@@ -168,19 +168,31 @@ OrderbookDialog::OrderbookDialog(QString symbol, CENTAUR_PLUGIN_NAMESPACE::IExch
     // LINK BOTH TABLES HEADER SIZES
     connect(ui()->asksTable->horizontalHeader(), &QHeaderView::sectionResized, this, [&](int index, C_UNUSED int oldSize, int newSize) {
         auto *otherHeader = ui()->bidsTable->horizontalHeader();
+        if (otherHeader == nullptr)
+            return;
         if (otherHeader->sectionSize(index) != newSize)
+        {
+            const auto block = otherHeader->blockSignals(true);
             otherHeader->resizeSection(index, newSize);
+            otherHeader->blockSignals(block);
+        }
     });
     connect(ui()->bidsTable->horizontalHeader(), &QHeaderView::sectionResized, this, [&](int index, C_UNUSED int oldSize, int newSize) {
         auto *otherHeader = ui()->asksTable->horizontalHeader();
+        if (otherHeader == nullptr)
+            return;
         if (otherHeader->sectionSize(index) != newSize)
+        {
+            const auto block = otherHeader->blockSignals(true);
             otherHeader->resizeSection(index, newSize);
+            otherHeader->blockSignals(block);
+        }
     });
 
     ui()->asksTable->sortByColumn(0, Qt::SortOrder::DescendingOrder);
     ui()->bidsTable->sortByColumn(0, Qt::SortOrder::AscendingOrder);
 
-    _impl->source = QString::fromStdString(exchange->getPluginUUID().to_string());
+    _impl->source = QString::fromStdString(exchange->getPluginUUID().to_string(false));
 
     restoreInterface();
 
