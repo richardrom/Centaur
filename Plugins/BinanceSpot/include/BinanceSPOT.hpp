@@ -36,7 +36,6 @@ class SpotMarketWS;
 class BinanceSpotPlugin : public QObject,
                           public CENTAUR_PLUGIN_NAMESPACE::IExchange
 {
-
     Q_OBJECT
 
     Q_PLUGIN_METADATA(IID "com.centaur-project.plugin.BinanceSpotPlugin/1.0")
@@ -158,6 +157,9 @@ protected:
 protected:
     QPixmap m_image;
     QAction *m_statusAction;
+
+protected:
+    bool m_validKeys { false };
 
 public:
     rapidjson::Document pluginSettings;

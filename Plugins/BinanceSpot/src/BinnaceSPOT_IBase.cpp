@@ -74,4 +74,16 @@ void CENTAUR_NAMESPACE::BinanceSpotPlugin::updateKeys(const QString &api, const 
 {
     m_keys.apiKey    = api.toStdString();
     m_keys.secretKey = secret.toStdString();
+
+    try
+    {
+        auto permissions = m_bAPI->getAPIKeyPermission();
+        if (permissions.createTime > 0)
+            m_validKeys = true;
+    } catch (C_UNUSED const BINAPI_NAMESPACE::APIException &ex)
+    {
+        m_validKeys = false;
+    }
+
+    emit displayChange(DisplayRole::Foreground);
 }

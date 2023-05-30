@@ -6,6 +6,7 @@
 
 // IExchange Implementation
 
+#include "APIException.hpp"
 #include "AssetDetailDialog.hpp"
 #include "BinanceSPOT.hpp"
 #include "CentaurInterface.hpp"
@@ -224,6 +225,16 @@ bool CENTAUR_NAMESPACE::BinanceSpotPlugin::initialization() noexcept
         return false;
     }
 
+    try
+    {
+        auto permissions = m_bAPI->getAPIKeyPermission();
+        if (permissions.createTime > 0)
+            m_validKeys = true;
+    } catch (C_UNUSED const BINAPI_NAMESPACE::APIException &ex)
+    {
+        m_validKeys = false;
+    }
+
     return true;
 }
 
@@ -378,7 +389,7 @@ void CENTAUR_NAMESPACE::BinanceSpotPlugin::onSubscription(bool subscribe, bool s
 
     if (auto idIter = m_wsIds.find(id); idIter == m_wsIds.end())
     {
-        logError("BinanceSpotPlugin", "A unknown (un)subscribe message was received.");
+        logError("BinanceSpotPlugin", "An unknown (un)subscribe message was received.");
         return;
     }
     else
@@ -402,7 +413,7 @@ void CENTAUR_NAMESPACE::BinanceSpotPlugin::updateOrderbook(const QString &symbol
     auto itemId = m_symbolsWatch.find(symbol);
     if (itemId == m_symbolsWatch.end())
     {
-        logError("BinanceSpotPlugin", QString("The %1 symbol is not handled and the orderbook can not be send").arg(symbol));
+        logError("BinanceSpotPlugin", QString("The %1 symbol is not handled, and the orderbook can not be sent").arg(symbol));
         return;
     }
 
@@ -426,7 +437,7 @@ void CENTAUR_NAMESPACE::BinanceSpotPlugin::stopOrderbook(const QString &symbol) 
     auto itemId = m_symbolsWatch.find(symbol);
     if (itemId == m_symbolsWatch.end())
     {
-        logError("BinanceSpotPlugin", QString("The %1 symbol is not handled and the orderbook can not be stopped").arg(symbol));
+        logError("BinanceSpotPlugin", QString("The %1 symbol is not handled, and the orderbook can not be stopped").arg(symbol));
         return;
     }
 
@@ -732,7 +743,7 @@ QList<std::pair<quint64, qreal>> cen::BinanceSpotPlugin::get7dayData(const QStri
 {
     QDate thisDate = QDate::currentDate();
 
-    // Reacquire data if the day has change
+    // Reacquire data if the day has changed
     if (thisDate.day() != m_sevenDayLastUpdate.day())
     {
         // Invalidate caches
@@ -740,7 +751,7 @@ QList<std::pair<quint64, qreal>> cen::BinanceSpotPlugin::get7dayData(const QStri
         m_sevenDayLastUpdate = thisDate;
     }
 
-    auto cache = m_sevenDayCache.find(symbol);
+    const auto cache = m_sevenDayCache.find(symbol);
 
     if (cache != m_sevenDayCache.end())
         return cache.value();
@@ -758,7 +769,7 @@ QList<std::pair<quint64, qreal>> cen::BinanceSpotPlugin::get7dayData(const QStri
     QList<std::pair<quint64, qreal>> ret;
     for (const auto &pt : data)
     {
-        ret.emplace_back(pt.openTime, pt.close);
+        ret.push_back({ pt.openTime, pt.close });
     }
 
     m_sevenDayCache[symbol] = ret;
@@ -778,15 +789,15 @@ QList<CENTAUR_PLUGIN_NAMESPACE::TimeFrame> cen::BinanceSpotPlugin::supportedTime
     };
 }
 
-void cen::BinanceSpotPlugin::acquire(const cen::plugin::PluginInformation &pi, const QString &symbol, cen::plugin::TimeFrame frame, const cen::uuid &id) noexcept
+void cen::BinanceSpotPlugin::acquire(C_UNUSED const cen::plugin::PluginInformation &pi, C_UNUSED const QString &symbol, C_UNUSED cen::plugin::TimeFrame frame, C_UNUSED const cen::uuid &id) noexcept
 {
 }
 
-void cen::BinanceSpotPlugin::disengage(const cen::uuid &id, uint64_t lastTimeframeStart, uint64_t lastTimeframeEnd) noexcept
+void cen::BinanceSpotPlugin::disengage(C_UNUSED const cen::uuid &id, C_UNUSED uint64_t lastTimeframeStart, C_UNUSED uint64_t lastTimeframeEnd) noexcept
 {
 }
 
-void cen::BinanceSpotPlugin::resetStoredZoom(const cen::uuid &id) noexcept
+void cen::BinanceSpotPlugin::resetStoredZoom(C_UNUSED const cen::uuid &id) noexcept
 {
 }
 
@@ -795,7 +806,7 @@ QList<QPair<CENTAUR_PLUGIN_NAMESPACE::IExchange::Timestamp, CENTAUR_PLUGIN_NAMES
     const auto interval = mapIntervalFromUIToAPI(frame);
 
     uint64_t total;
-    auto data = BINAPI_NAMESPACE::BinanceAPI::getCandlesTimesAndLimits(interval, start, end, total);
+    auto data = BINAPI_NAMESPACE::BinanceAPI::getCandlesTimesAndLimits(interval, static_cast<uint64_t>(start), static_cast<uint64_t>(end), total);
 
     BINAPI_NAMESPACE::BinanceLimits limits;
     BINAPI_NAMESPACE::BinanceAPISpot spot { nullptr, &limits };
@@ -803,10 +814,10 @@ QList<QPair<CENTAUR_PLUGIN_NAMESPACE::IExchange::Timestamp, CENTAUR_PLUGIN_NAMES
     try
     {
         QList<QPair<Timestamp, cen::plugin::CandleData>> cd;
-        for (auto i = 0ull; i < data.size(); ++i)
+        for (const auto &i : data)
         {
             auto sym     = symbol.toStdString();
-            auto candles = spot.candlestickData(sym.c_str(), interval, std::get<0>(data[i]), std::get<1>(data[i]), std::get<2>(data[i]));
+            auto candles = spot.candlestickData(sym.c_str(), interval, std::get<0>(i), std::get<1>(i), std::get<2>(i));
 
             for (const auto &candle : candles)
             {
@@ -817,13 +828,13 @@ QList<QPair<CENTAUR_PLUGIN_NAMESPACE::IExchange::Timestamp, CENTAUR_PLUGIN_NAMES
                 }
 
                 cd.push_back({
-                    candle.openTime,
+                    static_cast<int64_t>(candle.openTime),
                     {//
 .high   = candle.high,
-                               .open   = candle.open,
-                               .close  = candle.close,
-                               .low    = candle.low,
-                               .volume = candle.volume}
+                                                .open   = candle.open,
+                                                .close  = candle.close,
+                                                .low    = candle.low,
+                                                .volume = candle.volume}
                 });
             }
         }
@@ -833,7 +844,7 @@ QList<QPair<CENTAUR_PLUGIN_NAMESPACE::IExchange::Timestamp, CENTAUR_PLUGIN_NAMES
         });
 
         return cd;
-    } catch (const BINAPI_NAMESPACE::APIException &ex)
+    } catch (C_UNUSED const BINAPI_NAMESPACE::APIException &ex)
     {
         return {};
     }
@@ -849,6 +860,6 @@ bool cen::BinanceSpotPlugin::dynamicReframePlot() noexcept
     return false;
 }
 
-void cen::BinanceSpotPlugin::reframe(cen::plugin::TimeFrame frame) noexcept
+void cen::BinanceSpotPlugin::reframe(C_UNUSED cen::plugin::TimeFrame frame) noexcept
 {
 }

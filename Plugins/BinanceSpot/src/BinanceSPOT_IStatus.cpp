@@ -21,10 +21,12 @@ QString cen::BinanceSpotPlugin::text() noexcept
 {
     return "SPOT";
 }
+
 QPixmap cen::BinanceSpotPlugin::image() noexcept
 {
     return m_image;
 }
+
 QFont cen::BinanceSpotPlugin::font() noexcept
 {
     return QApplication::font();
@@ -40,7 +42,9 @@ QBrush cen::BinanceSpotPlugin::brush(cen::plugin::IStatus::DisplayRole role) noe
         case DisplayRole::Background:
             return Qt::NoBrush;
         case DisplayRole::Foreground:
-            return { QColor(255, 5, 0) };
+            if (!m_validKeys)
+                return { QColor(196, 36, 35) };
+            return { QColor(52, 160, 72) };
     }
 }
 
@@ -53,13 +57,14 @@ void cen::BinanceSpotPlugin::onStatusButtonClicked(C_UNUSED bool status) noexcep
 {
     try
     {
+        auto d           = QApplication::activeWindow();
         auto permissions = m_bAPI->getAPIKeyPermission();
         auto status      = m_bAPI->accountAPITradingStatus();
         StatusDialog dlg(
             &permissions,
             &status,
             tr("BinanceSPOT Account Status: Normal"),
-            nullptr);
+            d);
         dlg.exec();
 
     } catch (C_UNUSED const std::exception &ex)
