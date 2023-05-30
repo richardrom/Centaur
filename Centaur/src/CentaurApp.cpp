@@ -360,6 +360,7 @@ void CentaurApp::credentialsStatus() noexcept
 
 void CentaurApp::keepAliveCredentialStatus() noexcept
 {
+    // TODO Set an advance setting for this
     QSettings settings("CentaurProject", "Centaur");
     settings.beginGroup("__Session__data");
     const auto time = settings.value("__securing_time__", 300'000).toInt();
@@ -535,7 +536,7 @@ void CentaurApp::initializeInterface() noexcept
         }
         else
         {
-            auto *dlg = new OrderbookDialog(actionData.symbol, _impl->exchangeList[uuid(actionData.source.toStdString())].exchange, this);
+            auto *dlg = new OrderbookDialog(actionData.symbol, _impl->exchangeList[uuid(actionData.source.toStdString(), false)].exchange, this);
             dlg->setObjectName(objectName);
             connect(dlg, &OrderbookDialog::closeButtonPressed, this, [&, dlg]() {
                 delete dlg;
@@ -610,11 +611,11 @@ void CentaurApp::initializeInterface() noexcept
 
         QPoint menuPoint = ui()->watchListWidget->mapToGlobal(pt);
 
-        auto actions = _impl->exchangeMenuActions[uuid { source.toStdString() }];
+        auto actions = _impl->exchangeMenuActions[uuid { source.toStdString(), false }];
 
         QMenu menu(this);
 
-        auto exchBase = _impl->exchangeList[uuid { source.toStdString() }].exchange;
+        auto exchBase = _impl->exchangeList[uuid { source.toStdString(), false }].exchange;
 
         OrderBookDepthInformation obdi { symbol, source };
 
@@ -693,7 +694,7 @@ border: 0px;
             return;
         }
 
-        auto itemIter = _impl->exchangeList.find(uuid(source.toStdString()));
+        auto itemIter = _impl->exchangeList.find(uuid(source.toStdString(), false));
         if (itemIter == _impl->exchangeList.end())
         {
             logError("wlOrderbookSend", QString("Watchlist item for the symbol %1 was not found").arg(symbol));
@@ -1070,7 +1071,7 @@ void CentaurApp::onAddToWatchList(const QString &symbol, const QString &sender, 
 {
     logTrace("watchlist", "CentaurApp::onAddToWatchList()");
 
-    auto interface = _impl->exchangeList.find(uuid { sender.toStdString() });
+    auto interface = _impl->exchangeList.find(uuid { sender.toStdString(), false });
 
     if (interface == _impl->exchangeList.end())
     {
@@ -1085,7 +1086,7 @@ void CentaurApp::onAddToWatchList(const QString &symbol, const QString &sender, 
     if (addSuccess)
     {
         QPixmap icon;
-        qDebug() << icon << watchInterface->getBaseFromSymbol(symbol);
+        // qDebug() << icon << watchInterface->getBaseFromSymbol(symbol);
         ui()->watchListWidget->insertItem(symbolWatchlistPixmap, symbol, sender, 0.0, 0.0, 0);
 
         // Add to the database
@@ -1148,7 +1149,7 @@ void CentaurApp::onRemoveWatchList(const QString &itemSource, const QString &ite
     logTrace("watchlist", "CentaurApp::onRemoveWatchList");
     // Retrieve the IExchange from the row based on the 5 column which has the PluginUUID Source
 
-    auto interfaceIter = _impl->exchangeList.find(uuid(itemSource.toStdString()));
+    auto interfaceIter = _impl->exchangeList.find(uuid(itemSource.toStdString(), false));
     if (interfaceIter == _impl->exchangeList.end())
     {
         QString message = QString(tr("Failed to locate the symbol interface."));
@@ -1180,7 +1181,7 @@ void CentaurApp::onSetWatchlistSelection(const QString &source, const QString &s
     if (_impl->currentWatchListSelection == selection)
         return;
 
-    auto itemIter = _impl->exchangeList.find(uuid(source.toStdString()));
+    auto itemIter = _impl->exchangeList.find(uuid(source.toStdString(), false));
     if (itemIter == _impl->exchangeList.end())
     {
         logError("wlOrderbookSend", QString("Watchlist item for the symbol %1 was not found").arg(symbol));

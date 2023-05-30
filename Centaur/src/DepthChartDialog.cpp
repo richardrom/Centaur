@@ -139,6 +139,7 @@ void DepthChartDialog::setPrice(double price)
 {
     _impl->price = price;
 }
+
 void DepthChartDialog::onOrderBookDepth(const QMap<qreal, QPair<qreal, qreal>> &asks, const QMap<qreal, QPair<qreal, qreal>> &bids) noexcept
 {
     if (_impl->price < 0)

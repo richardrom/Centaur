@@ -340,7 +340,7 @@ CENTAUR_NAMESPACE::OptionsTableWidget *CENTAUR_NAMESPACE::CentaurApp::populateEx
             contextMenu.addAction(&action);
 
             connect(&action, &QAction::triggered, this,
-                [&]() { onAddToWatchList(itemData, exchange->getPluginUUID().to_qstring(true), true); });
+                [&]() { onAddToWatchList(itemData, exchange->getPluginUUID().to_qstring(false), true); });
 
             contextMenu.exec(symbolsList->mapToGlobal(pos));
         }
