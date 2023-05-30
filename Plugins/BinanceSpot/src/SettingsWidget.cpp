@@ -7,6 +7,7 @@
 #include "SettingsWidget.hpp"
 #include "../ui/ui_SettingsWidget.h"
 #include "BinanceSPOT.hpp"
+#include "CentaurInterface.hpp"
 #include "LinkedLineEdit.hpp"
 #include "QtCore/qnamespace.h"
 #include "QtWidgets/qcheckbox.h"
@@ -82,7 +83,15 @@ SettingsWidget::SettingsWidget(CENTAUR_PLUGIN_NAMESPACE::IBase *plugin, CENTAUR_
         _impl->initialUserDataState = true;
 
         ui()->apiKey->setText(_impl->binanceSpotPlugin->pluginSettings["user"]["api"].GetString());
-        ui()->secretKey->setText(".......................................................");
+
+        try
+        {
+            const auto sec = config->credentials(_impl->binanceSpotPlugin->pluginSettings["user"]["secret"].GetString(), false, interface::IConfiguration::CredentialsMethod::decrypt);
+            ui()->secretKey->setText(QString::fromStdString(sec));
+        } catch (C_UNUSED const std::runtime_error &ex)
+        {
+            ui()->secretKey->setText("");
+        }
 
         ui()->allowUserData->setCheckState(Qt::CheckState::Checked);
         enableInput();
@@ -119,34 +128,37 @@ SettingsWidget::~SettingsWidget()
         const auto apiData = ui()->apiKey->text().toUtf8();
         userDataJObject["user"]["api"].SetString(apiData.constData(), static_cast<unsigned int>(apiData.size()), userDataJObject.GetAllocator());
 
-        try
+        if (!ui()->secretKey->text().isEmpty())
         {
-            auto cipher = _impl->configuration->credentials(
-                ui()->secretKey->text().toStdString(),
-                true);
-
-            if (!cipher.empty())
+            try
             {
-                userDataJObject["user"]["secret"].SetString(cipher.c_str(), static_cast<unsigned int>(cipher.size()), userDataJObject.GetAllocator());
-            }
-            else
+                auto cipher = _impl->configuration->credentials(
+                    ui()->secretKey->text().toStdString(),
+                    true);
+
+                if (!cipher.empty())
+                {
+                    userDataJObject["user"]["secret"].SetString(cipher.c_str(), static_cast<unsigned int>(cipher.size()), userDataJObject.GetAllocator());
+                }
+                else
+                {
+                    QMessageBox::critical(
+                        this,
+                        "BinanceSPOT Settings",
+                        tr("Could not acquire user credentials"),
+                        QMessageBox::Ok);
+                }
+
+                _impl->binanceSpotPlugin->updateKeys(ui()->apiKey->text(), ui()->secretKey->text());
+
+            } catch (const std::runtime_error &ex)
             {
                 QMessageBox::critical(
                     this,
                     "BinanceSPOT Settings",
-                    tr("Could not acquire user credentials"),
+                    tr("Could not store the data\n%1").arg(ex.what()),
                     QMessageBox::Ok);
             }
-
-            _impl->binanceSpotPlugin->updateKeys(ui()->apiKey->text(), ui()->secretKey->text());
-
-        } catch (const std::runtime_error &ex)
-        {
-            QMessageBox::critical(
-                this,
-                "BinanceSPOT Settings",
-                tr("Could not store the data\n%1").arg(ex.what()),
-                QMessageBox::Ok);
         }
     }
 
