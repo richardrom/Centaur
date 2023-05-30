@@ -14,7 +14,19 @@ cen::StatusDialog::StatusDialog(binapi::SPOT::APIKeyPermissions *apiKeyPermissio
 {
     m_ui->setupUi(this);
 
+#ifdef Q_OS_MAC
+    setWindowFlag(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_TranslucentBackground);
+#endif
+
     restoreInterfaceState();
+
+    m_ui->titleFrame->overrideParent(this);
+
+    m_ui->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
+
+    // Close will have special meaning
+    connect(m_ui->closeButton, &QPushButton::released, this, [&]() { accept(); });
 
     auto setReadOnly = [&](QCheckBox *checkBox) -> void {
         checkBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -34,12 +46,14 @@ cen::StatusDialog::StatusDialog(binapi::SPOT::APIKeyPermissions *apiKeyPermissio
     setReadOnly(m_ui->checkBoxMargin);
     setReadOnly(m_ui->checkBoxSpotAndMargin);
 
-    QPalette pal = m_ui->lineEditStatus->palette();
     if (status == "BinanceSPOT Account Status: Normal")
-        pal.setColor(QPalette::Text, QColor(0, 104, 18));
+    {
+        m_ui->lineEditStatus->setProperty("statusNormal", true);
+    }
     else
-        pal.setColor(QPalette::Text, QColor(172, 6, 0));
-    m_ui->lineEditStatus->setPalette(pal);
+    {
+        m_ui->lineEditStatus->setProperty("statusNormal", false);
+    }
     m_ui->lineEditStatus->setText(status);
 
     if (apiTradingStatus->updateTime > 0)
