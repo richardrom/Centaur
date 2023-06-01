@@ -117,65 +117,6 @@ struct CentaurApp::Impl
     QTimer *credentialsTimer { nullptr };
 };
 
-class FavoritesDBManager final
-{
-public:
-    inline FavoritesDBManager()
-    {
-        m_insert.prepare("INSERT INTO favorites(symbol,plugin) VALUES(:symbol, :plugin);");
-        m_delete.prepare("DELETE FROM favorites WHERE symbol = :symbol AND plugin = :plugin;");
-        m_select.prepare("SELECT symbol,plugin FROM favorites;");
-    }
-    ~FavoritesDBManager() = default;
-
-public:
-    inline void add(const QString &symbol, const QString &uuid)
-    {
-        m_insert.bindValue(":symbol", symbol);
-        m_insert.bindValue(":plugin", uuid);
-
-        if (!m_insert.exec())
-        {
-            logError("app", QString(QCoreApplication::tr("Could not insert the symbol to the favorites DB. %1").arg(m_insert.lastError().text())));
-        }
-    }
-
-    inline QList<QPair<QString, QString>> selectAll()
-    {
-        QList<QPair<QString, QString>> data;
-        if (!m_select.exec())
-        {
-            logError("app", QString(QCoreApplication::tr("Could not select the data from the favorites DB. %1").arg(m_select.lastError().text())));
-            return data;
-        }
-
-        while (m_select.next())
-        {
-            const QSqlRecord currentRecord = m_select.record();
-            data.emplaceBack(currentRecord.field("symbol").value().toString(), currentRecord.field("plugin").value().toString());
-        }
-
-        return data;
-    }
-
-    inline void del(const QString &symbol, const QString &uuid)
-    {
-        m_delete.bindValue(":symbol", symbol);
-        m_delete.bindValue(":plugin", uuid);
-
-        if (!m_delete.exec())
-        {
-            logError("app", QString(QCoreApplication::tr("Could not delete symbol from the favorites DB. %1").arg(m_delete.lastError().text())));
-        }
-    }
-
-private:
-    QSqlQuery m_insert;
-    QSqlQuery m_delete;
-    QSqlQuery m_select;
-    QSqlDatabase m_db;
-};
-
 CandleViewTimeFrameActions::CandleViewTimeFrameActions(QObject *parent) :
     actions {
         { CENTAUR_PLUGIN_NAMESPACE::TimeFrame::Seconds_1,   new QAction(QCoreApplication::tr("1 second"), parent)},
