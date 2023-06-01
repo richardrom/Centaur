@@ -234,11 +234,6 @@ CentaurApp::~CentaurApp()
     {
         delete pli.second;
     }
-    if (m_sqlFavorites != nullptr)
-    {
-        delete m_sqlFavorites;
-        m_sqlFavorites = nullptr;
-    }
     if (g_logger != nullptr)
     {
         g_logger->terminate();
@@ -419,8 +414,6 @@ void CentaurApp::initializeDatabaseServices() noexcept
         case OpenDatabaseCode::Ok:
             [[likely]];
     }
-
-    m_sqlFavorites = new FavoritesDBManager;
 }
 
 void CentaurApp::initializeInterface() noexcept
@@ -945,15 +938,15 @@ QToolButton:pressed{background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:
 
 void CentaurApp::loadFavoritesWatchList() noexcept
 {
-    auto data = m_sqlFavorites->selectAll();
+    auto data = dal::DataAccess::selectFavoriteSymbols();
 
-    if (data.isEmpty())
+    if (data->empty())
     {
         logInfo("app", tr("No favorites in the list"));
         return;
     }
 
-    for (const auto &[sym, plid] : data)
+    for (const auto &[sym, plid] : *data)
     {
         if (sym.isEmpty())
         {
@@ -1027,14 +1020,15 @@ void CentaurApp::onAddToWatchList(const QString &symbol, const QString &sender, 
     const auto [addSuccess, symbolWatchlistPixmap] = watchInterface->addSymbolToWatchlist(symbol);
     if (addSuccess)
     {
-        QPixmap icon;
+        // QPixmap icon;
         // qDebug() << icon << watchInterface->getBaseFromSymbol(symbol);
         ui()->watchListWidget->insertItem(symbolWatchlistPixmap, symbol, sender, 0.0, 0.0, 0);
 
         // Add to the database
         if (addToDatabase)
-            addFavoritesWatchListDB(symbol, sender);
+            dal::DataAccess::addSymbolToFavorites(symbol, sender);
 
+        // TODO: move the next code to a separate function (MAY BE) need more analysis
         QLinearGradient gr_p({ 0, 0 }, { 1, 1 });
         gr_p.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
         gr_p.setColorAt(0, QColor(1, 166, 7));
@@ -1050,8 +1044,8 @@ void CentaurApp::onAddToWatchList(const QString &symbol, const QString &sender, 
         auto dataList = watchInterface->getWatchlist24hrPriceChange();
 
         std::transform(dataList.begin(), dataList.end(), dataList.begin(),
-            [&symbol, &sender, &ui = _impl->ui](const std::tuple<qreal, qreal, QString> &data) -> std::tuple<qreal, qreal, QString> {
-                ui->watchListWidget->updateDifference(symbol, sender, std::get<1>(data));
+            [&sender, &ui = _impl->ui](const std::tuple<qreal, qreal, QString> &data) -> std::tuple<qreal, qreal, QString> {
+                ui->watchListWidget->updateDifference(std::get<2>(data), sender, std::get<1>(data));
                 return { std::get<0>(data),
                     std::get<1>(data),
                     QString(R"(<font size="12"><b>%1</b></font><br><font size="11"><b>$ %2</b><br>%3 %</font>)")
@@ -1089,7 +1083,7 @@ void CentaurApp::onTickerUpdate(const QString &symbol, const QString &source, qu
 void CentaurApp::onRemoveWatchList(const QString &itemSource, const QString &itemSymbol) noexcept
 {
     logTrace("watchlist", "CentaurApp::onRemoveWatchList");
-    // Retrieve the IExchange from the row based on the 5 column which has the PluginUUID Source
+    // Retrieve the IExchange from the row based on the 5 column, which has the PluginUUID Source
 
     auto interfaceIter = _impl->exchangeList.find(uuid(itemSource.toStdString(), false));
     if (interfaceIter == _impl->exchangeList.end())
@@ -1113,7 +1107,7 @@ void CentaurApp::onRemoveWatchList(const QString &itemSource, const QString &ite
     ui()->watchListWidget->removeItem(itemSymbol, itemSource);
 
     logInfo("watchlist", QString(tr("%1 was removed from the UI list")).arg(itemSymbol));
-    m_sqlFavorites->del(itemSymbol, itemSource);
+    dal::DataAccess::deleteFavoritesSymbol(itemSymbol, itemSource);
 }
 
 void CentaurApp::onSetWatchlistSelection(const QString &source, const QString &symbol) noexcept
@@ -1265,11 +1259,6 @@ void CentaurApp::updateUserInformationStatus() noexcept
 
     QString userDataString = QString("%1 (%2)").arg(g_globals->session.display, g_globals->session.email);
     ui()->userData->setText(userDataString);
-}
-
-void CentaurApp::addFavoritesWatchListDB(const QString &symbol, const QString &sender) noexcept
-{
-    m_sqlFavorites->add(symbol, sender);
 }
 
 void CentaurApp::onViewCandleChart(const QString &symbol, const QString &source, cen::plugin::TimeFrame tf) noexcept
