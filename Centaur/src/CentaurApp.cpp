@@ -972,9 +972,9 @@ void CentaurApp::startLoggingService() noexcept
     _impl->loggerThread = std::make_unique<std::thread>(&CentaurLogger::run, g_logger);
     try
     {
+        const auto &user = g_globals->session.user;
         g_logger->setApplication(this);
-        g_logger->setUser("root");
-        g_logger->setSession(0);
+        g_logger->setUser(user.isEmpty() ? "root" : user);
         logInfo("app", QString("TraderSys ") + QString(CentaurVersionString));
     } catch (const std::runtime_error &ex)
     {

@@ -5,7 +5,9 @@
 //
 
 #include "Logger.hpp"
+#include "CentaurInterface.hpp"
 #include "LogDialog.hpp"
+#include "QtSql/qsqlquery.h"
 #include <QApplication>
 #include <QDir>
 #include <QFile>
@@ -15,6 +17,7 @@
 #include <QTranslator>
 #include <fmt/chrono.h>
 #include <fmt/core.h>
+#include <string>
 
 #ifdef __clang__
 #pragma clang diagnostic push
@@ -30,8 +33,13 @@ CENTAUR_NAMESPACE::CentaurLogger *CENTAUR_NAMESPACE::g_logger { nullptr };
 
 namespace
 {
-    constexpr std::string_view insertDb = { R"(INSERT INTO log (date, session, user, level, source, message) VALUES ('{}', {}, '{}', {}, '{}', '{}'); )" };
-}
+    constexpr std::string_view insertDb
+        = { R"(INSERT INTO log (date, session, user, level, source, message) VALUES ('{}', {}, '{}', {}, '{}', '{}'); )" };
+
+    constexpr std::string_view sessionDb
+        = { R"(SELECT max(session) AS mx FROM log;)" };
+} // namespace
+
 static auto sqlExec(void *, int, char **, char **) -> int
 {
     // The database function does not really care about selecting data
@@ -84,7 +92,7 @@ void CENTAUR_NAMESPACE::CentaurLogger::process(const LogMessage &log) noexcept
     const auto thisTime = static_cast<std::time_t>(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count());
 
     // Insert into database
-    std::string query = fmt::format(insertDb,
+    const auto query = fmt::format(insertDb,
         fmt::format("{:%d-%m-%Y %H:%M:%S}", *std::localtime(&thisTime)),
         log.session,
         log.user.toStdString(),
@@ -105,6 +113,36 @@ void CENTAUR_NAMESPACE::CentaurLogger::process(const LogMessage &log) noexcept
             Q_ARG(QString, QString { "logger" }),
             Q_ARG(QString, QString { "insert" }),
             Q_ARG(QString, QString { errStr }));
+        sqlite3_free(errStr);
+    }
+}
+
+void CENTAUR_NAMESPACE::CentaurLogger::setUser(const QString &user)
+{
+    std::unique_lock<std::mutex> lock { m_dataProtect };
+    m_user = user;
+}
+
+void CENTAUR_NAMESPACE::CentaurLogger::updateSession()
+{
+    const auto query = fmt::format(sessionDb);
+
+    auto callback = [](void *param, int argc, char **data, char **cols) -> int {
+        int *session = reinterpret_cast<int *>(param);
+        if (argc == 1 && strcmp(cols[0], "mx") == 0)
+        {
+            *session = std::stoi(data[0]) + 1;
+        }
+
+        return 0;
+    };
+
+    char *errStr;
+    int err = sqlite3_exec(m_sql, sessionDb.data(), callback, reinterpret_cast<void *>(&m_session), &errStr);
+
+    if (err != SQLITE_OK)
+    {
+        log("internal", interface::LogLevel::error, "Session id was not retrieved");
         sqlite3_free(errStr);
     }
 }
@@ -176,6 +214,8 @@ void CENTAUR_NAMESPACE::CentaurLogger::setApplication(CENTAUR_NAMESPACE::Centaur
             throw std::runtime_error(str);
         }
     }
+
+    updateSession();
 }
 
 void CENTAUR_NAMESPACE::CentaurLogger::log(const QString &source, CENTAUR_NAMESPACE::interface::LogLevel level, const QString &msg) noexcept

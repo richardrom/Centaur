@@ -53,8 +53,10 @@ namespace CENTAUR_NAMESPACE
 
     public:
         void setApplication(CentaurApp *app);
-        inline void setUser(const QString &user) { m_user = user; }
-        inline void setSession(const int &session) { m_session = session; }
+        void setUser(const QString &user);
+
+    protected:
+        void updateSession();
 
     public:
         /// \brief Send a log message to the application
