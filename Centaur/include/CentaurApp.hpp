@@ -38,7 +38,6 @@ namespace Ui
     class CentaurApp;
 } // namespace Ui
 
-class FavoritesDBManager;
 class LogDialog;
 class OptionsTableWidget;
 class SplashDialog;
@@ -88,12 +87,6 @@ private:
     void loadFavoritesWatchList() noexcept;
 
 protected:
-    /// \brief Add the symbol to the favorites Database
-    /// \param symbol Symbol Name
-    /// \param sender Plugin UUID
-    void addFavoritesWatchListDB(const QString &symbol, const QString &sender) noexcept;
-
-protected:
     bool initExchangePlugin(CENTAUR_PLUGIN_NAMESPACE::IExchange *exchange) noexcept;
     void initStatusPlugin(CENTAUR_PLUGIN_NAMESPACE::IStatus *status) noexcept;
     OptionsTableWidget *populateExchangeSymbolList(CENTAUR_PLUGIN_NAMESPACE::IExchange *exchange) noexcept;
@@ -138,9 +131,6 @@ protected:
     void mapPluginInstance(QPluginLoader *loader);
     void mapExchangePluginViewMenus(const uuid &plugin, const QList<QAction *> &actions);
     void mapStatusPlugins(const uuid &plugin, CENTAUR_PLUGIN_NAMESPACE::IStatus *status, QToolButton *button, CENTAUR_PLUGIN_NAMESPACE::IStatus::DisplayMode mode);
-
-private:
-    FavoritesDBManager *m_sqlFavorites { nullptr };
 
 private:
     struct Impl;
