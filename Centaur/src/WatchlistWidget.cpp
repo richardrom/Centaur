@@ -120,7 +120,7 @@ namespace
                   diffRect           = option.rect;
 
             const double diff  = index.data(WatchlistModel::DiffRole).toReal();
-            QString diffString = QString("%1 %").arg(QLocale(QLocale::English).toString(diff, 'f', 2));
+            QString diffString = QString("%1 %").arg(QLocale(QLocale::English).toString(diff, 'f', 4));
 
             int horizontalDiffDisplacement = diffMetrics.horizontalAdvance(diffString);
             diffRect.setRight(diffRect.right() - 5);
