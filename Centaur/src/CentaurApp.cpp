@@ -14,6 +14,7 @@
 #include "FavoritesDialog.hpp"
 #include "Globals.hpp"
 #include "LogDialog.hpp"
+#include "Logger.hpp"
 #include "LoginDialog.hpp"
 #include "OrderbookDialog.hpp"
 #include "SettingsDialog.hpp"

@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QSqlDatabase>
 #include <QSqlError>
+#include <QSqlField>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QStandardPaths>
@@ -159,7 +160,7 @@ std::optional<CENTAUR_NAMESPACE::dal::PluginData> CENTAUR_NAMESPACE::dal::DataAc
         return std::nullopt;
     }
 
-    if(!q.size())
+    if (!q.size())
         return {};
 
     q.next();
@@ -318,4 +319,69 @@ std::optional<QString> CENTAUR_NAMESPACE::dal::DataAccess::fromUUIDtoVersion(con
 
     q.next();
     return q.value(q.record().indexOf("version_string")).toString();
+}
+std::optional<bool> cen::dal::DataAccess::addSymbolToFavorites(const QString &symbol, const QString &pluginUUID)
+{
+    QSqlQuery q;
+
+    q.prepare("INSERT INTO favorites(symbol,plugin) VALUES(:symbol, :plugin);");
+    q.bindValue(":symbol", symbol);
+    q.bindValue(":plugin", pluginUUID);
+
+    if (!q.exec())
+    {
+        QSqlError e = q.lastError();
+        QString er  = QString("%1").arg(e.text());
+        qDebug() << er;
+        logError("dbInsertFavs", er);
+        return std::nullopt;
+    }
+
+    return q.numRowsAffected() > 0;
+}
+
+std::optional<std::vector<std::pair<QString, QString>>> cen::dal::DataAccess::selectFavoriteSymbols()
+{
+    QSqlQuery q;
+
+    q.prepare("SELECT symbol,plugin FROM favorites;");
+
+    if (!q.exec())
+    {
+        QSqlError e = q.lastError();
+        QString er  = QString("%1").arg(e.text());
+        qDebug() << er;
+        logError("dbSelectFavs", er);
+        return std::nullopt;
+    }
+
+    std::vector<std::pair<QString, QString>> data;
+
+    while (q.next())
+    {
+        const QSqlRecord currentRecord = q.record();
+        data.emplace_back(currentRecord.field("symbol").value().toString(), currentRecord.field("plugin").value().toString());
+    }
+
+    return data;
+}
+
+std::optional<bool> cen::dal::DataAccess::deleteFavoritesSymbol(const QString &symbol, const QString &pluginUUID)
+{
+    QSqlQuery q;
+
+    q.prepare("DELETE FROM favorites WHERE symbol = :symbol AND plugin = :plugin;");
+    q.bindValue(":symbol", symbol);
+    q.bindValue(":plugin", pluginUUID);
+
+    if (!q.exec())
+    {
+        QSqlError e = q.lastError();
+        QString er  = QString("%1").arg(e.text());
+        qDebug() << er;
+        logError("dbRemoveFavs", er);
+        return std::nullopt;
+    }
+
+    return q.numRowsAffected() > 0;
 }
