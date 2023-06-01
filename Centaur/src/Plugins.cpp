@@ -68,6 +68,8 @@ void CENTAUR_NAMESPACE::CentaurApp::loadPlugins(SplashDialog *splash) noexcept
     QString pluginPath = g_globals->paths.pluginsPath;
     QDir pluginsDir(pluginPath);
 
+    // Modify the range of the splash dialog progress bar
+    // So it can display the loading of the plugins
     auto range = splash->getProgressRange();
     splash->setProgressRange(0, range.second + 2 * static_cast<int>(pluginsDir.entryList(QDir::Files).size()));
 
