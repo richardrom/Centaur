@@ -148,6 +148,8 @@ void SquarifyWidget::setData(const QList<std::tuple<qreal, qreal, QString>> &dat
        * else is just equal sizes
        *
        */
+
+    recalculate(_impl->scene->sceneRect());
 }
 
 void SquarifyWidget::resizeEvent(QResizeEvent *event)
@@ -255,7 +257,7 @@ void SquarifyWidget::Impl::squarify(QRectF &area, QList<std::pair<QRectF, ItemDa
             newAspectRatio = aspectRatio(rcHeight, rcWidth);
         }
         else
-            newAspectRatio = lastAR + 1; // force to establish the rectangle
+            newAspectRatio = lastAR + 1;                                      // force to establish the rectangle
 
         if (newAspectRatio < lastAR || qFuzzyCompare(newAspectRatio, lastAR)) // Let's try to avoid funny weird things with fp
         {
@@ -298,6 +300,7 @@ void SquarifyWidget::Impl::squarify(QRectF &area, QList<std::pair<QRectF, ItemDa
                 rect.setSize({ rcWidth, rcHeight });
                 dynamic_cast<GraphicsItemSquare *>(scene->items()[index])->setRect(rect);
                 dynamic_cast<GraphicsItemSquare *>(scene->items()[index])->setItemData(rectData);
+                dynamic_cast<GraphicsItemSquare *>(scene->items()[index])->setToolTip(rectData.data);
                 if (rectData.orientation > 0)
                     dynamic_cast<GraphicsItemSquare *>(scene->items()[index])->setBrush(positive);
                 else
