@@ -223,7 +223,7 @@ CentaurApp::CentaurApp(QWidget *parent) :
     splashScreen->step();
 
     END_TIME_SEC(initializationTimeStart, initializationTimeEnd, initializationTime);
-    logInfo("app", QString("%1").arg(initializationTime.count(), 0, 'f', 4));
+    logInfo("app", QString("Opening time: %1").arg(initializationTime.count(), 0, 'f', 4));
     splashScreen->hide();
     delete splashScreen;
 }
