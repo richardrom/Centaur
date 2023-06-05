@@ -9,6 +9,8 @@
 #include <string>
 
 #include <CLI/CLI.hpp>
+#include <CLI/Error.hpp>
+#include <CLI/Validators.hpp>
 
 #include <fmt/color.h>
 #include <fmt/core.h>
@@ -23,6 +25,8 @@ constexpr static std::string_view json_template = R"({{
   "version": "0.1.0",
   "identification": {{
     "name": "{}",
+    "theme": {},
+    "extras": {},
     "version": "{}",
     "uuid": "{}",
     "manufacturer": "{}",
@@ -38,66 +42,86 @@ constexpr static std::string_view json_template = R"({{
 constexpr static std::string_view cui_version = "a15c48b4-460b-4a79-a0a8-8ece90603f85";
 
 static std::string add_library_file(const std::string &file, zip_t *z_archive) noexcept;
+static void add_extra_file(const std::string &file, zip_t *z_archive) noexcept;
 
 int main(int argc, char *argv[])
 {
     CLI::App app("Centaur Plugin Packer (plpack");
 
     bool pl_protected = false;
+    bool pl_theme     = false;
     std::string pl_name, pl_version, pl_uuid, pl_man, pl_min, pl_lib, pl_out_path;
+
+    std::vector<std::string> extra_files;
 
     std::map<std::string, std::string_view> ui_versions {
         {"0.1.0", cui_version}
     };
 
-    app.add_option("-n,--name", pl_name,
+    app.add_option("-n,--name",
+           pl_name,
            "Name of the plugin")
         ->required();
-    app.add_option("-v,--version", pl_version,
+    app.add_option("-v,--version",
+           pl_version,
            "Version of the plugin")
         ->required();
-    app.add_option("-u,--uuid", pl_uuid,
+    app.add_option("-u,--uuid",
+           pl_uuid,
            "Plugin identification string")
         ->required();
-    app.add_option("-m,--man", pl_man,
+    app.add_option("-m,--man",
+           pl_man,
            "Plugin Developer")
         ->required();
-    app.add_option("-i,--min", pl_min,
+    app.add_option("-i,--min",
+           pl_min,
            "Minimum UI version, if not specified, plpack will use the must recent version internally")
         ->transform(CLI::CheckedTransformer(ui_versions, CLI::ignore_case));
-    app.add_option("-l,--lib", pl_lib,
+    app.add_option("-l,--lib",
+           pl_lib,
            "The path where the actual plugin file is located. Beware that plpack will not check if it's a valid plugin")
         ->required()
         ->check(CLI::ExistingFile);
-    app.add_flag("-p", pl_protected,
+    app.add_flag("-p",
+        pl_protected,
         "Indicate that the plugin might store sensitive data that shall be encrypted");
-
-    app.add_option("-o,--out", pl_out_path,
-           "Output path for the resulting file. The name will be the {#1}-{#2}.cpk. Where #1 is the name with spaces replaced by '-' and #2 are the first 8 characteres of the uuid")
+    app.add_option("-o,--out",
+           pl_out_path,
+           "Output path for the resulting file. The output file name will have the format {#1}-{#2}.cpk. Where #1 is the name with spaces replaced by '-' and #2 are the first 8 characters of the uuid")
         ->required()
         ->check(CLI::ExistingPath);
+    app.add_flag("-t,--theme",
+        pl_theme,
+        "Indicates that the plugin is a theme plugin");
+    app.add_option("-e,--extra",
+           extra_files,
+           "A set of extra files that will be included in the package")
+        ->check(CLI::ExistingFile);
 
     CLI11_PARSE(app, argc, argv)
 
     std::string fileName = pl_name;
-    auto pos             = fileName.find(' ');
+
+    auto pos = fileName.find(' ');
 
     while (pos != std::string::npos)
     {
         fileName.replace(pos, 1, "-");
         pos = fileName.find(' ', pos);
     }
-
-    try
-    {
-        cen::uuid uid { pl_uuid, false };
-    } catch (const std::exception &ex)
-    {
-        fmt::print("{}: {}",
-            fmt::format(fmt::fg(fmt::color::red), "error"),
-            ex.what());
-        return EXIT_FAILURE;
-    }
+    /*
+        try
+        {
+            cen::uuid uid { pl_uuid, false };
+        } catch (const std::exception &ex)
+        {
+            fmt::print("{}: {}",
+                fmt::format(fmt::fg(fmt::color::red), "error"),
+                ex.what());
+            return EXIT_FAILURE;
+        }
+        */
 
     fileName += "-" + pl_uuid.substr(0, 8);
 
@@ -115,11 +139,16 @@ int main(int argc, char *argv[])
     fmt::print("Calculating checksum...\n");
     auto sha224 = add_library_file(pl_lib, zip_archive);
 
+    for (const auto &extras : extra_files)
+        add_extra_file(extras, zip_archive);
+
     if (sha224.empty())
         return EXIT_FAILURE;
 
     auto json = fmt::format(json_template,
         pl_name,
+        pl_theme,
+        !extra_files.empty(),
         pl_version,
         pl_uuid,
         pl_man,
@@ -198,7 +227,7 @@ std::string add_library_file(const std::string &file, zip_t *z_archive) noexcept
         stream.read(reinterpret_cast<char *>(file_data), static_cast<std::streamsize>(size));
         stream.close();
 
-        auto sha224 = SHA224(file_data, size, nullptr);
+        const auto sha224 = SHA224(file_data, size, nullptr);
 
         if (sha224 == nullptr)
         {
@@ -252,4 +281,78 @@ std::string add_library_file(const std::string &file, zip_t *z_archive) noexcept
             fmt::format(fmt::fg(fmt::color::red), "error"));
 
     return {};
+}
+
+void add_extra_file(const std::string &file, zip_t *z_archive) noexcept
+{
+    static zip_int64_t extraZipPath = -1;
+
+    if (extraZipPath == -1)
+    {
+        extraZipPath = zip_dir_add(z_archive, "extras", zip_flags_t(ZIP_FL_ENC_UTF_8));
+        if (extraZipPath == -1)
+        {
+            fmt::print("{}: failed to add the extra directory to the zip archive",
+                fmt::format(fmt::fg(fmt::color::red), "error"));
+            zip_close(z_archive);
+            return;
+        }
+    }
+
+    auto size = std::filesystem::file_size(file);
+    std::ifstream stream(file, std::ios::binary);
+    if (!stream.is_open())
+    {
+        fmt::print("{}: failed to read the file '{}' specified as an extra parameter",
+            fmt::format(fmt::fg(fmt::color::red), "error"), file);
+        zip_close(z_archive);
+        return;
+    }
+
+    struct wrapper
+    {
+        explicit wrapper(uint64_t size)
+        {
+            file_data = static_cast<unsigned char *>(malloc(size + 1));
+        }
+        wrapper(wrapper &&)      = delete;
+        wrapper(const wrapper &) = delete;
+        ~wrapper()
+        {
+            free(file_data);
+        }
+
+    public:
+        unsigned char *file_data { nullptr };
+    } wrp(size);
+
+    stream.read(reinterpret_cast<char *>(wrp.file_data), static_cast<std::streamsize>(size));
+    stream.close();
+
+    auto lib_source = zip_source_buffer(z_archive, wrp.file_data, size, 0);
+    if (lib_source == nullptr)
+    {
+        fmt::print("{}: plugin file was not added",
+            fmt::format(fmt::fg(fmt::color::red), "error"));
+
+        zip_close(z_archive);
+        return;
+    }
+
+    const std::string fileNameZip = [&file]() -> std::string {
+        return "extras/" + std::filesystem::path(file).filename().string();
+    }();
+
+    auto index = zip_file_add(z_archive, fileNameZip.c_str(), lib_source, ZIP_FL_ENC_UTF_8);
+
+    if (index == -1)
+    {
+        fmt::print("{}: plugin file was not indexed",
+            fmt::format(fmt::fg(fmt::color::red), "error"));
+
+        zip_close(z_archive);
+        return;
+    }
+
+    zip_set_file_compression(z_archive, static_cast<zip_uint64_t>(index), ZIP_CM_DEFLATE, 7);
 }

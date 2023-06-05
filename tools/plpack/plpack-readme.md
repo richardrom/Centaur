@@ -11,6 +11,8 @@ The way plpack works is to pack in a single mainly two files and generate an out
   "version": "0.1.0",
   "identification": {
     "name": "",
+    "theme": true/false,
+    "extras": true/false
     "version": "",
     "uuid": "",
     "manufacturer": "",
@@ -29,13 +31,15 @@ The way plpack works is to pack in a single mainly two files and generate an out
 * **version**: The version of the package, which as for the writing of this documentation is **0.1.0**.
 
 1. **name**: Name of the plugin
-2. **version**: Version of the plugin
-3. **uuid**: Identification string of the plugin without the curly braces
-4. **manufacturer**: Developer of the plugin
-5. **checksum**: Main SHA224 checksum of the **lib*****name***(.dylib)/(.dll) of the file[^1]
-6. **protected**: Indicate that the plugin might store sensitive data that shall be encrypted
-7. **dynamic**: Name of the dynamic library file
-8. **ui-version:uuid**: Minimum version of the CentaurUI that can be run
+2. **theme**: The plugin implements a theme
+3. **extras**: The package file contains extras
+4. **version**: Version of the plugin
+5. **uuid**: Identification string of the plugin without the curly braces
+6. **manufacturer**: Developer of the plugin
+7. **checksum**: Main SHA224 checksum of the **lib*****name***(.dylib)/(.dll) of the file[^1]
+8. **protected**: Indicate that the plugin might store sensitive data that shall be encrypted
+9. **dynamic**: Name of the dynamic library file
+10. **ui-version:min-uuid**: Minimum version of the CentaurUI that can be run
 
 [^1]: For Debugging and testing purposes if compile with _NO_PLUGIN_CHECKSUM_CHECK. The UI will ignore this parameter.
 This setup will be informed in the Settings page of the plugins.
@@ -51,8 +55,13 @@ This setup will be informed in the Settings page of the plugins.
 -l,--lib: The path where the actual plugin file is located. 
           Beware that plpack will not check if its a valid plugin
 -p: Protected
--o,--out: Output path for the resulting file. The name will be the {#1}-{#2}.cpk
-          Where #1 is the name with spaces replaced by '-' and #2 are the first 8 characteres of the uuid
+-o,--out: Output path for the resulting file. The file name will have the format {#1}-{#2}.cpk
+          Where #1 is '--name' with the spaces replaced by '-' and #2 are the first 8 characters of the uuid
+-t,--theme: The package is a plugin that implements a plugin
+-e,--extra: Specify a file that will added to the extra directory. For more than more file set this option as needed
+            example: plpack -e file1.txt -e file2.txt -e file3.txt 
+                     OR
+                     plpack --extra=file1.txt --extra=file2.txt --extra=file3.txt 
 ```
 
 ### Builtin Plugins
