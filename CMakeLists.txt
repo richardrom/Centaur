@@ -11,9 +11,15 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+SET(CENT_GLOBAL_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/include")
+
+
 OPTION(CNT_USE_PCH "Use precompiled headers" ON)
 OPTION(CNT_USE_TEST_LOGIN "Do not prompt the login dialog at startup (only for testing purposes)" ON)
 OPTION(CNT_AVOID_PLUGIN_CHECK "Do not check the checksum of a plugin at startup (only for testing purposes)" ON)
+OPTION(CNT_GENERATE_BUILTIN_PLPACK "Generate plpack for builtin plugins including themes" ON)
+OPTION(CNT_COPY_BUILTIN_PLUGIN " For testing purposes this will run scripts/builtin.py" ON)
+OPTION(CNT_COPY_THEME_PLUGIN "For testing purposes this will run scripts/theme.py " ON)
 
 
 IF (DEFINED ENV{QT6_INSTALLATION})
@@ -31,6 +37,15 @@ if (CNT_USE_TEST_LOGIN)
 ENDIF ()
 IF (CNT_AVOID_PLUGIN_CHECK)
     ADD_COMPILE_DEFINITIONS(NO_PLUGIN_CHECKSUM_CHECK)
+ENDIF ()
+
+IF (CNT_GENERATE_BUILTIN_PLPACK OR CNT_COPY_BUILTIN_PLUGIN OR CNT_COPY_THEME_PLUGIN)
+    IF (CNT_GENERATE_BUILTIN_PLPACK)
+        SET(PLPACK_OUTDIR "${CMAKE_BINARY_DIR}/plpack")
+        MESSAGE(STATUS "Creating: ${PLPACK_OUTDIR}")
+        FILE(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/plpack)
+    ENDIF ()
+    ADD_SUBDIRECTORY(tools/ctpath)
 ENDIF ()
 
 
