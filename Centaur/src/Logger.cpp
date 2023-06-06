@@ -98,7 +98,36 @@ void CENTAUR_NAMESPACE::CentaurLogger::process(const LogMessage &log) noexcept
         log.user.toStdString(),
         static_cast<int>(log.level),
         log.source.toStdString(),
-        log.msg.toStdString());
+        [message = log.msg]() mutable -> QString {
+            // IExchange plugin found in file: ##F2FEFF#libBinanceSPOT.dylib#
+            auto colorStarts = message.indexOf("##");
+
+            while (colorStarts >= 0)
+            {
+                const auto color = message.indexOf("#", colorStarts + 2);
+                if (color == -1)
+                {
+                    colorStarts = -1;
+                    continue;
+                }
+
+                const auto colorEnds = message.indexOf("#", color + 1);
+                if (colorEnds == -1)
+                {
+                    colorStarts = -1;
+                    continue;
+                }
+
+                message.erase(message.begin() + colorEnds, message.begin() + (colorEnds + 1));
+                message.erase(message.begin() + color, message.begin() + color + 1);
+                message.erase(message.begin() + colorStarts, message.begin() + color);
+
+                colorStarts = message.indexOf("##");
+            }
+
+            return message;
+        }()
+                                             .toStdString());
 
     char *errStr;
     int err = sqlite3_exec(m_sql, query.c_str(), sqlExec, nullptr, &errStr);
