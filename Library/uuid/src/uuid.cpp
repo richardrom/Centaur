@@ -192,6 +192,10 @@ cen::uuid::uuid(std::string uuidString, bool checkForBrackets) :
 cen::uuid::uuid(uint32_t u1, uint16_t w1, uint16_t w2, uint16_t w3, uint8_t b1, uint8_t b2, uint8_t b3, uint8_t b4, uint8_t b5, uint8_t b6, bool endiannessCheck) noexcept :
     data {}
 {
+#if defined(__clang__) || defined(__GNUC__)
+    CENTAUR_WARN_PUSH()
+    CENTAUR_WARN_OFF("-Wunreachable-code")
+#endif
     if (endiannessCheck)
     {
         if (std::endian::native == std::endian::big)
@@ -254,6 +258,10 @@ cen::uuid::uuid(uint32_t u1, uint16_t w1, uint16_t w2, uint16_t w3, uint8_t b1, 
         p8[14] = b5;
         p8[15] = b6;
     }
+
+#if defined(__clang__) || defined(__GNUC__)
+    CENTAUR_WARN_POP()
+#endif
 }
 
 cen::uuid::uuid(const cen::uuid &id) :
