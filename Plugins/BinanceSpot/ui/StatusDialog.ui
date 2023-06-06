@@ -1022,19 +1022,19 @@ Expiration Time:</string>
   <customwidget>
    <class>CENTAUR_NAMESPACE::MovableFrame</class>
    <extends>QFrame</extends>
-   <header>../../Library/cui/include/MovableFrame.hpp</header>
+   <header>../../../Library/cui/include/MovableFrame.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CENTAUR_NAMESPACE::ResizableFrame</class>
    <extends>QFrame</extends>
-   <header>../../Library/cui/include/ResizableFrame.hpp</header>
+   <header>../../../Library/cui/include/ResizableFrame.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CENTAUR_NAMESPACE::SystemPushButton</class>
    <extends>QPushButton</extends>
-   <header>../../Library/cui/include/SystemPushButton.hpp</header>
+   <header>../../../Library/cui/include/SystemPushButton.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

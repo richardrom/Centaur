@@ -249,7 +249,7 @@ QComboBox::drop-down {
   <customwidget>
    <class>CENTAUR_NAMESPACE::LinkedLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>../../Library/cui/include/LinkedLineEdit.hpp</header>
+   <header>../../../Library/cui/include/LinkedLineEdit.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

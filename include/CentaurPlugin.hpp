@@ -13,7 +13,7 @@
 #ifndef CENTAUR_CENTAURPLUGIN_HPP
 #define CENTAUR_CENTAURPLUGIN_HPP
 
-#include "../../Library/uuid/include/uuid.hpp"
+#include "../Library/uuid/include/uuid.hpp"
 #include "Centaur.hpp"
 #include <CentaurInterface.hpp>
 
