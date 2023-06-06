@@ -40,7 +40,7 @@
 
 namespace CENTAUR_NAMESPACE
 {
-
+    /// \brief A general UUID class to describe a 128-bit Universal Unique Identifiers
     struct uuid
     {
         /// \brief Construct an uuid from a string
