@@ -82,9 +82,8 @@ TARGET_INCLUDE_DIRECTORIES(BinanceSPOT PRIVATE
         include
         ../../Library/Exchanges/BinanceAPI/include
         ../../Library/Protocol/include
-        ../include
         ../../Library/cui/include
-        ../../include)
+        ${CENT_GLOBAL_INCLUDE_PATH})
 
 
 TARGET_LINK_LIBRARIES(BinanceSPOT PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)

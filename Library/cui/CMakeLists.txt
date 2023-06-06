@@ -49,7 +49,7 @@ SET(INCLUDE_FILES
         include/CandleChartScene.hpp
         include/CandlePriceAxisItem.hpp
         include/CandleTimeAxisItem.hpp
-        include/DeletableTable.hpp)
+        include/DeletableTable.hpp include/CtDialog.hpp)
 
 SET(SOURCE_FILES
         src/EditorDelegate.cpp
@@ -70,7 +70,7 @@ SET(SOURCE_FILES
         src/CandleChartScene.cpp
         src/CandlePriceAxisItem.cpp
         src/CandleTimeAxisItem.cpp
-        src/DeletableTable.cpp)
+        src/DeletableTable.cpp src/CtDialog.cpp)
 
 SET(UI_FILES
         rcc/resources.qrc
@@ -97,10 +97,17 @@ ADD_LIBRARY(${LIBCUI} SHARED
 
 TARGET_COMPILE_DEFINITIONS(${LIBCUI} PRIVATE CENTFIN_LIBRARY_)
 
-TARGET_INCLUDE_DIRECTORIES(${LIBCUI} PRIVATE ../../include)
-TARGET_INCLUDE_DIRECTORIES(${LIBCUI} PRIVATE include)
+TARGET_INCLUDE_DIRECTORIES(${LIBCUI} PRIVATE
+        include
+        ${CENT_GLOBAL_INCLUDE_PATH})
 
-TARGET_LINK_LIBRARIES(${LIBCUI} PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Sql Qt6::Concurrent)
+
+TARGET_LINK_LIBRARIES(${LIBCUI} PRIVATE
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        Qt6::Sql
+        Qt6::Concurrent)
 
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

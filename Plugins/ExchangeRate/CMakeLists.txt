@@ -49,11 +49,10 @@ ADD_LIBRARY(ExchangeRate SHARED
 
 TARGET_INCLUDE_DIRECTORIES(ExchangeRate PRIVATE
         include
-        ../include
         ../../Library/cui/include
         ../../Library/Protocol/include
         ../../Library/uuid/include
-        ../../include/)
+        ${CENT_GLOBAL_INCLUDE_PATH})
 
 TARGET_LINK_LIBRARIES(ExchangeRate PRIVATE Qt6::Gui)
 TARGET_LINK_LIBRARIES(ExchangeRate PRIVATE Qt6::Widgets)

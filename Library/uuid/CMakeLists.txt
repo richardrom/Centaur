@@ -25,7 +25,7 @@ TARGET_LINK_LIBRARIES(uuid PRIVATE re2::re2)
 
 TARGET_INCLUDE_DIRECTORIES(uuid PRIVATE
         include
-        ../../include/)
+        ${CENT_GLOBAL_INCLUDE_PATH})
 
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

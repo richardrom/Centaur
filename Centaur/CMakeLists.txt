@@ -90,8 +90,9 @@ SET(CENT_INCLUDE
         include/CandleViewWidget.hpp
         include/ProtocolClient.hpp
         include/CandleViewWidget.hpp
-        ../Plugins/include/CentaurPlugin.hpp
-        ../Plugins/include/CentaurInterface.hpp
+        ../include/CentaurPlugin.hpp
+        ../include/CentaurInterface.hpp
+        ../include/ThemePlugin.hpp
         include/LogDialog.hpp
         include/SplashDialog.hpp
         include/AddUserDialog.hpp
@@ -215,7 +216,6 @@ ENDIF ()
 
 
 IF (${APPLE_PLATFORM})
-
     # Remove all builtin plugins from the Bundle/Plugins directory
     LIST(APPEND BUILTIN_PLUGINS_FILES
             libExchangeRate.dylib
@@ -242,10 +242,9 @@ ENDIF ()
 target_include_directories(Centaur PRIVATE
         include
         ../Library/Protocol/include
-        ../Plugins/include
         ../Library/uuid/include
         ../Library/cui/include
-        ../include)
+        ${CENT_GLOBAL_INCLUDE_PATH})
 
 TARGET_LINK_LIBRARIES(Centaur PRIVATE fmt::fmt)
 TARGET_LINK_LIBRARIES(Centaur PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Charts Qt6::Sql Qt6::WebSockets Qt6::Concurrent)

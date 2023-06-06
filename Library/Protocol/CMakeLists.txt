@@ -27,7 +27,7 @@ ADD_LIBRARY(Protocol SHARED
 
 TARGET_INCLUDE_DIRECTORIES(Protocol PRIVATE
         include
-        ../../include)
+        ${CENT_GLOBAL_INCLUDE_PATH})
 
 
 TARGET_LINK_LIBRARIES(Protocol PRIVATE fmt::fmt)
