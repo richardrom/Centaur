@@ -63,14 +63,18 @@ INCLUDE_DIRECTORIES(Plugins/include)
 # Main Application
 ADD_SUBDIRECTORY(Centaur)
 
-#Clients
+# Clients
+ADD_SUBDIRECTORY(tools/btrader)
 
 #Libraries
 ADD_SUBDIRECTORY(Library/uuid)
 ADD_SUBDIRECTORY(Library/cui)
 ADD_SUBDIRECTORY(Library/Protocol)
 
-#Libraries for exchanges
+# Tools
+ADD_SUBDIRECTORY(tools/plpack)
+
+# Libraries for exchanges
 ADD_SUBDIRECTORY(Library/Exchanges/BinanceAPI)
 
 #Plugins
