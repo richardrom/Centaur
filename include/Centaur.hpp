@@ -84,37 +84,84 @@
 #define END_CENTAUR_NAMESPACE }
 #endif /*END_CENTAUR_NAMESPACE*/
 
+#if C_ALL_SUPPORTED
 #ifndef C_NODISCARD
-#if defined(__clang__) || defined(__GNU__) || defined(MSVC)
 #define C_NODISCARD [[nodiscard]]
 #else
 #define C_NODISCARD
-#endif /* defined ...*/
 #endif /*C_NODISCARD*/
 
 #ifndef C_UNUSED
-#if defined(__clang__) || defined(__GNU__) || defined(MSVC)
 #define C_UNUSED [[maybe_unused]]
 #else
 #define C_UNUSED
-#endif /* defined ...*/
-#endif /*C_UNUSED*/
+#endif /* C_UNUSED*/
 
 #ifndef C_NORETURN
-#if defined(__clang__) || defined(__GNU__) || defined(MSVC)
 #define C_NORETURN [[noreturn]]
 #else
 #define C_NORETURN
-#endif /* defined ...*/
-#endif /*C_NORETURN*/
+#endif /* C_NORETURN */
 
 #ifndef C_FALLTHROUGH
-#if defined(__clang__) || defined(__GNU__) || defined(MSVC)
 #define C_FALLTHROUGH [[fallthrough]]
 #else
 #define C_FALLTHROUGH
-#endif /* defined ...*/
 #endif /*C_FALLTHROUGH*/
+
+#endif /* defined ...*/
+
+#ifndef C_ALWAYS_INLINE
+#ifdef C_MSVC
+#define C_ALWAYS_INLINE __forceinline
+#elif defined(C_GNU_CLANG)
+#define C_ALWAYS_INLINE inline __attribute__((always_inline))
+#else
+#define C_ALWAYS_INLINE
+#endif
+#endif /*C_ALWAYS_INLINE*/
+
+#if C_GNU_CLANG
+#ifndef C_USED
+#define C_USED [[gnu::used]]
+#endif /*C_USED*/
+#endif
+
+#ifndef C_P_IMPL
+#define C_P_IMPL() \
+private:           \
+    struct Impl;   \
+    std::unique_ptr<Impl> _impl;
+#endif /*C_P_IMPL*/
+
+#ifndef P_IMPL
+#define P_IMPL() _impl
+#endif /*P_IMPL*/
+
+#ifdef USE_CENT_LIBRARY
+#if defined(_WIN32)
+#define CENT_LIBRARY_HIDDEN
+#if defined(C_MSVC)
+#define CENT_LIBRARY __declspec(dllexport)
+#else
+#define CENT_LIBRARY __attribute__((dllexport))
+#endif
+#else
+#define CENT_LIBRARY        __attribute__((visibility("default")))
+#define CENT_LIBRARY_HIDDEN __attribute__((visibility("hidden")))
+#endif
+#else
+#if defined(_WIN32)
+#if defined(C_MSVC)
+#define CENT_LIBRARY __declspec(dllimport)
+#else
+#define CENT_LIBRARY __attribute__((dllimport))
+#endif
+#else
+#define CENT_LIBRARY
+#endif
+#define CENT_LIBRARY_HIDDEN
+#endif /*USE_CENT_LIBRARY*/
 
 namespace CENTAUR_NAMESPACE
 {
