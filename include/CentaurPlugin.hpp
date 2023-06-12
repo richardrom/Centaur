@@ -42,11 +42,10 @@
 
 #ifndef DONT_INCLUDE_QT
 
-#if defined(__clang__) || defined(__GNUC__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wweak-vtables"
+#if defined(C_GNU_CLANG)
+CENTAUR_WARN_PUSH()
+CENTAUR_WARN_OFF("-Wweak-vtables")
 #endif /*__clang__*/
-
 /**
  * \brief
  * uuid namespace: a15c48b4-460b-4a79-a0a8-8ece90603f85
@@ -441,8 +440,8 @@ namespace CENTAUR_PLUGIN_NAMESPACE
 
 } // namespace CENTAUR_PLUGIN_NAMESPACE
 
-#if defined(__clang__) || defined(__GNUC__)
-#pragma clang diagnostic pop
+#if defined(C_GNU_CLANG)
+CENTAUR_WARN_POP()
 #endif /*__clang__*/
 
 #define IBase_iid "com.centaur-project.plugin.IBase/0.2"
