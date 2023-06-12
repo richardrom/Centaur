@@ -18,6 +18,9 @@
     {
       "name": "cryptopp",
       "version>=": "8.7.0#3"
+    }, {
+      "name": "pugixml",
+      "version>=": "1.13.0"
     }
   ],
   "overrides": [
