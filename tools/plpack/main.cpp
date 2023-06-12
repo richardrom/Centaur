@@ -110,18 +110,25 @@ int main(int argc, char *argv[])
         fileName.replace(pos, 1, "-");
         pos = fileName.find(' ', pos);
     }
-    /*
-        try
-        {
-            cen::uuid uid { pl_uuid, false };
-        } catch (const std::exception &ex)
-        {
-            fmt::print("{}: {}",
-                fmt::format(fmt::fg(fmt::color::red), "error"),
-                ex.what());
-            return EXIT_FAILURE;
-        }
-        */
+
+    try
+    {
+#if defined(__clang__) || defined(__GNUC__)
+        C_USED static cen::uuid uid { pl_uuid, false };
+#else
+        cen::uuid uid { pl_uuid, false };
+        // Prevent optimization to discard uid
+        do {
+            (void)uid;
+        } while (false);
+#endif
+    } catch (const std::exception &ex)
+    {
+        fmt::print("{}: {}",
+            fmt::format(fmt::fg(fmt::color::red), "error"),
+            ex.what());
+        return EXIT_FAILURE;
+    }
 
     fileName += "-" + pl_uuid.substr(0, 8);
 
