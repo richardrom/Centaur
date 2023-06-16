@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<theme name="theme name">
+    <render>
+        <type>antialias</type>
+    </render>
+    <colors>
+        <color name="color0"></color>
+        <color name="color1">
+            <r>255</r>
+        </color>
+        <color name="color2">
+            <r>0.5</r>
+        </color>
+        <color name="color3">
+            <g>255</g>
+        </color>
+        <color name="color4">
+            <g>0.5</g>
+        </color>
+        <color name="color5">
+            <b>255</b>
+        </color>
+        <color name="color6">
+            <b>0.5</b>
+        </color>
+        <color name="color7">
+            <r>128</r>
+            <g>90</g>
+            <b>43</b>
+            <a>56</a>
+        </color>
+        <color name="color8">
+            <r>0.3</r>
+            <g>0.89</g>
+            <b>.20</b>
+            <a>0.1</a>
+        </color>
+        <color name="color9">
+            <r>0.5</r>
+            <g>12</g>
+            <b>44</b>
+            <a>0.6</a>
+        </color>
+    </colors>
+</theme>
