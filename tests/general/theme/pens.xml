@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<theme name="theme name">
+    <render>
+        <type>antialias</type>
+    </render>
+    <colors>
+        <color name="white">
+            <r>1.0</r>
+            <g>1.0</g>
+            <b>1.0</b>
+        </color>
+    </colors>
+    <brushes>
+        <brush name="brush0" format="regular">
+            <color>white</color>
+            <pattern>solid</pattern>
+        </brush>
+    </brushes>
+    <pens>
+        <pen name="pen0" width="2.2" brush="brush0">
+            <cap>flat</cap>
+            <style>dash-dot</style>
+            <join>miter</join>
+            <miter-limit>12.3</miter-limit>
+        </pen>
+        <pen name="pen1" width="3.0" brush="brush0">
+            <cap>round</cap>
+            <style>custom</style>
+            <join>bevel</join>
+            <patterns>
+                <pattern>0.3</pattern>
+                <pattern>2.2</pattern>
+                <pattern>5.1</pattern>
+                <pattern>3.7</pattern>
+            </patterns>
+        </pen>
+    </pens>
+</theme>

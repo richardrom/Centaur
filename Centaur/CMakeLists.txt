@@ -23,7 +23,8 @@ SET(Qt6_Components
         Charts
         Sql
         WebSockets
-        Concurrent)
+        Concurrent
+        StateMachine)
 
 IF (DEFINED CENTAUR_ENV_DETECTED)
     MESSAGE(STATUS "Centaur: Qt6 package in environment variable")
@@ -92,7 +93,7 @@ SET(CENT_INCLUDE
         include/CandleViewWidget.hpp
         ../include/CentaurPlugin.hpp
         ../include/CentaurInterface.hpp
-        ../include/ThemePlugin.hpp
+        ../include/ThemeInterface.hpp
         include/LogDialog.hpp
         include/SplashDialog.hpp
         include/AddUserDialog.hpp
@@ -178,7 +179,8 @@ ADD_EXECUTABLE(Centaur ${CENTAUR_EXECUTABLE}
 
 ADD_DEPENDENCIES(Centaur
         BinanceSPOT
-        ExchangeRate)
+        ExchangeRate
+        CentTheme)
 
 IF (CNT_USE_PCH)
     TARGET_PRECOMPILE_HEADERS(Centaur
@@ -228,7 +230,7 @@ IF (${APPLE_PLATFORM})
                 PATHS ${PLUGINS_BUNDLE_PATH}
                 NO_CACHE)
         IF (NOT ${CURRENT_FOUND} STREQUAL "CURRENT_FOUND-NOTFOUND")
-            MESSAGE(STATUS "Plugin will be temporarly removed: ${fls}")
+            MESSAGE(STATUS "Plugin will be temporarily removed: ${fls}")
             ADD_CUSTOM_COMMAND(TARGET Centaur
                     PRE_BUILD
                     COMMAND ${CMAKE_COMMAND}
@@ -239,15 +241,24 @@ IF (${APPLE_PLATFORM})
 ENDIF ()
 
 
-target_include_directories(Centaur PRIVATE
+TARGET_INCLUDE_DIRECTORIES(Centaur PRIVATE
         include
-        ../Library/Protocol/include
-        ../Library/uuid/include
-        ../Library/cui/include
+        ${CENT_PROTOCOL_INCLUDE_PATH}
+        ${CENT_CUI_INCLUDE_PATH}
+        ${CENT_UUID_INCLUDE_PATH}
+        ${CENT_THEME_INCLUDE_PATH}
         ${CENT_GLOBAL_INCLUDE_PATH})
 
 TARGET_LINK_LIBRARIES(Centaur PRIVATE fmt::fmt)
-TARGET_LINK_LIBRARIES(Centaur PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Charts Qt6::Sql Qt6::WebSockets Qt6::Concurrent)
+TARGET_LINK_LIBRARIES(Centaur PRIVATE
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        Qt6::Charts
+        Qt6::Sql
+        Qt6::WebSockets
+        Qt6::Concurrent
+        Qt6::StateMachine)
 TARGET_LINK_LIBRARIES(Centaur PRIVATE SQLite3)
 TARGET_LINK_LIBRARIES(Centaur PRIVATE rapidjson)
 TARGET_LINK_LIBRARIES(Centaur PRIVATE ${QRENCODE_LIBRARIES})
@@ -256,6 +267,7 @@ TARGET_LINK_LIBRARIES(Centaur PRIVATE libzip::zip)
 # Local Libraries
 TARGET_LINK_LIBRARIES(Centaur PRIVATE Protocol)
 TARGET_LINK_LIBRARIES(Centaur PRIVATE uuid)
+TARGET_LINK_LIBRARIES(Centaur PRIVATE CentTheme)
 TARGET_LINK_LIBRARIES(Centaur PRIVATE cui)
 
 

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<theme name="Dark Theme">
+    <render>
+        <type>antialias</type>
+    </render>
+
+    <colors>
+        <color name="main">
+            <r>72</r>
+            <g>151</g>
+            <b>251</b>
+        </color>
+        <color name="highlight">
+            <r>75</r>
+            <g>153</g>
+            <b>251</b>
+        </color>
+        <color name="highlight2">
+            <r>77</r>
+            <g>154</g>
+            <b>251</b>
+        </color>
+
+    </colors>
+
+    <brushes>
+        <brush name="accent-brush" format="regular">
+            <color>main</color>
+            <pattern>solid</pattern>
+        </brush>
+        <brush name="highlight-brush" format="regular">
+            <color>highlight</color>
+            <pattern>solid</pattern>
+        </brush>
+        <brush name="highlight2-brush" format="regular">
+            <color>highlight2</color>
+            <pattern>solid</pattern>
+        </brush>
+    </brushes>
+
+    <pens>
+
+    </pens>
+
+
+    <animations>
+        <animation name="button-hover-enter">
+            <easing-curve>in-cubic</easing-curve>
+            <duration>200</duration>
+        </animation>
+        <animation name="button-hover-exit">
+            <easing-curve>out-cubic</easing-curve>
+            <duration>200</duration>
+        </animation>
+    </animations>
+
+    <!--
+    ui-elements control the behavior of all the general widgets deployed in Qt
+    Frames are the only that can be defined more than once since a several elements can have different geometries
+    -->
+    <ui-elements>
+        <frame name="button-frame">
+            <border-radius>5</border-radius>
+        </frame>
+
+        <button frame="button-frame">
+            <animations>
+                <hover-enter>button-hover-enter</hover-enter>
+                <hover-exit>button-hover-exit</hover-exit>
+            </animations>
+            <color>main</color>
+            <default-brush>highlight2-brush</default-brush>
+            <hover-brush>highlight-brush</hover-brush>
+            <click-brush>highlight2-brush</click-brush>
+        </button>
+    </ui-elements>
+
+    <!--
+    Usually all elements inherit properties from the ui-elements
+    However, custom widgets can have more properties and animations and or override their parent behavior and geometry,
+    Usually this custom widgets are implemented in the CUI (Centaur User Interface) library
+    -->
+    <ui>
+        <element name="exchange-name" parent="button">
+        </element>
+    </ui>
+</theme>

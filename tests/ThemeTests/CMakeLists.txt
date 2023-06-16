@@ -13,13 +13,13 @@ SET(Qt6_Components
         WebSockets)
 
 IF (DEFINED CENTAUR_ENV_DETECTED)
-    MESSAGE(STATUS "CandleWidgetTests: Qt6 package in environment variable")
+    MESSAGE(STATUS "ThemeTests: Qt6 package in environment variable")
     FIND_PACKAGE(Qt6 COMPONENTS
             ${Qt6_Components}
             REQUIRED
             PATHS ${CENTAUR_ENV_DETECTED})
 ELSE ()
-    MESSAGE(STATUS "CandleWidgetTests: Qt6 package in default paths")
+    MESSAGE(STATUS "ThemeTests: Qt6 package in default paths")
     FIND_PACKAGE(Qt6 COMPONENTS
             ${Qt6_Components}
             REQUIRED)
@@ -31,30 +31,38 @@ SET(CMAKE_AUTORCC ON)
 
 
 SET(SOURCE_FILES
-        main.cpp TestDialog.cpp TestData.cpp)
+        main.cpp
+        TestApplication.cpp)
 
 SET(INCLUDE_FILES
-        TestDialog.hpp)
+        TestApplication.hpp)
 
 SET(UI_FILES
-        )
+        window.ui)
 
 
-ADD_EXECUTABLE(CandleWidgetTest
+ADD_EXECUTABLE(ThemeTest
         ${INCLUDE_FILSE}
         ${SOURCE_FILES}
         ${UI_FILES}
         )
 
 
-TARGET_INCLUDE_DIRECTORIES(CandleWidgetTest PRIVATE
-        ../../Library/cui/include
-        ../../Plugins/include
-        ../../include)
+TARGET_INCLUDE_DIRECTORIES(ThemeTest PRIVATE
+        ${CENT_CUI_INCLUDE_PATH}
+        ${CENT_GLOBAL_INCLUDE_PATH}
+        )
 
+ADD_DEPENDENCIES(ThemeTest
+        CentTheme
+        cui)
 
-TARGET_LINK_LIBRARIES(CandleWidgetTest PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
-TARGET_LINK_LIBRARIES(CandleWidgetTest PRIVATE cui)
+TARGET_LINK_LIBRARIES(ThemeTest PRIVATE
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets)
+
+TARGET_LINK_LIBRARIES(ThemeTest PRIVATE cui)
 
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -72,6 +80,6 @@ IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             COMPILE_FLAGS "${COMPILER_OPTIONS}")
 
 
-    MESSAGE(STATUS "CandleWidgetTests: Clang detected - Warning Level Set")
+    MESSAGE(STATUS "ThemeTests: Clang detected - Warning Level Set")
 ENDIF ()
 

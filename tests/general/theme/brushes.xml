@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<theme name="theme name">
+    <render>
+        <type>antialias</type>
+    </render>
+    <colors>
+        <color name="white">
+            <r>1.0</r>
+            <g>1.0</g>
+            <b>1.0</b>
+        </color>
+        <color name="black">
+            <r>0.0</r>
+            <g>0.0</g>
+            <b>0.0</b>
+        </color>
+        <color name="blue">
+            <r>0.0</r>
+            <g>0.0</g>
+            <b>1.0</b>
+        </color>
+        <color name="green">
+            <r>0.0</r>
+            <g>1.0</g>
+            <b>0.0</b>
+        </color>
+        <color name="red">
+            <r>1.0</r>
+            <g>0.0</g>
+            <b>0.0</b>
+        </color>
+    </colors>
+
+    <brushes>
+        <brush name="brush0" format="regular">
+            <color>white</color>
+            <pattern>solid</pattern>
+        </brush>
+        <brush name="brush1" format="regular">
+            <color>black</color>
+            <pattern>diag-cross</pattern>
+        </brush>
+        <brush name="gradient0" format="linear-gradient">
+            <points>
+                <x-start>0</x-start>
+                <y-start>0</y-start>
+                <x-end>0.5</x-end>
+                <y-end>0.5</y-end>
+            </points>
+            <spread>reflect</spread>
+            <colors>
+                <color name="red">0</color>
+                <color name="blue">0.5</color>
+                <color name="green">1.0</color>
+            </colors>
+        </brush>
+        <brush name="gradient1" format="radial-gradient">
+            <center>
+                <x>0.5</x>
+                <y>0.5</y>
+            </center>
+            <focal>
+                <x>0.2</x>
+                <y>0.2</y>
+            </focal>
+            <radius>3.14</radius>
+            <focal-radius>2.718</focal-radius>
+            <colors>
+                <color name="red">0.2</color>
+                <color name="blue">0.4</color>
+                <color name="green">0.6</color>
+            </colors>
+        </brush>
+
+        <brush name="gradient2" format="conical-gradient">
+            <center>
+                <x>0.1</x>
+                <y>0.8</y>
+            </center>
+            <angle>45.0</angle>
+            <colors>
+                <color name="red">0.3</color>
+                <color name="blue">0.6</color>
+                <color name="green">0.9</color>
+            </colors>
+        </brush>
+    </brushes>
+</theme>

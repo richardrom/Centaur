@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<theme name="theme name">
+    <render>
+        <type>antialias</type>
+    </render>
+    <colors>
+        <color name="c">
+            <r>invalid</r>
+        </color>
+    </colors>
+</theme>

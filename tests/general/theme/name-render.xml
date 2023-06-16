@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<theme name="theme name">
+    <render>
+        <type>antialias</type>
+        <type>lossless</type>
+        <type>non-cosmetic</type>
+        <type>smooth</type>
+        <type>text-antialias</type>
+        <type>vertical</type>
+    </render>
+</theme>

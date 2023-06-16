@@ -12,6 +12,9 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 SET(CENT_GLOBAL_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/include")
+SET(CENT_CUI_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/Library/cui/include")
+SET(CENT_PROTOCOL_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/Library/Protocol/include")
+SET(CENT_UUID_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/Library/uuid/include")
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     ADD_COMPILE_DEFINITIONS(C_C_CLANG)
@@ -28,7 +31,8 @@ OPTION(CNT_USE_TEST_LOGIN "Do not prompt the login dialog at startup (only for t
 OPTION(CNT_AVOID_PLUGIN_CHECK "Do not check the checksum of a plugin at startup (only for testing purposes)" ON)
 OPTION(CNT_GENERATE_BUILTIN_PLPACK "Generate plpack for builtin plugins including themes" ON)
 OPTION(CNT_COPY_BUILTIN_PLUGIN " For testing purposes this will run scripts/builtin.py" ON)
-OPTION(CNT_COPY_THEME_PLUGIN "For testing purposes this will run scripts/theme.py " ON)
+OPTION(CNT_COPY_THEME_PLUGIN "For testing purposes this will run scripts/theme.py" ON)
+OPTION(CNT_THEME_TESTING "Include theme testing" ON)
 
 
 IF (DEFINED ENV{QT6_INSTALLATION})
@@ -58,6 +62,8 @@ IF (CNT_GENERATE_BUILTIN_PLPACK OR CNT_COPY_BUILTIN_PLUGIN OR CNT_COPY_THEME_PLU
 ENDIF ()
 
 
+SET(CENT_THEME_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/Themes/MainTheme/include")
+
 INCLUDE_DIRECTORIES(Plugins/include)
 
 # Main Application
@@ -66,7 +72,7 @@ ADD_SUBDIRECTORY(Centaur)
 # Clients
 ADD_SUBDIRECTORY(tools/btrader)
 
-#Libraries
+# Libraries
 ADD_SUBDIRECTORY(Library/uuid)
 ADD_SUBDIRECTORY(Library/cui)
 ADD_SUBDIRECTORY(Library/Protocol)
@@ -77,15 +83,17 @@ ADD_SUBDIRECTORY(tools/plpack)
 # Libraries for exchanges
 ADD_SUBDIRECTORY(Library/Exchanges/BinanceAPI)
 
-#Plugins
+# Plugins
 ADD_SUBDIRECTORY(Plugins/ExchangeRate)
 ADD_SUBDIRECTORY(Plugins/BinanceSpot)
 
+# Themes
+ADD_SUBDIRECTORY(Themes/MainTheme)
 
-#tests
+# tests
 ADD_SUBDIRECTORY(tests/general)
 ADD_SUBDIRECTORY(tests/CandleWidgetTest)
+ADD_SUBDIRECTORY(tests/ThemeTests)
 
-#Tools
-ADD_SUBDIRECTORY(tools/btrader)
-ADD_SUBDIRECTORY(tools/plpack)
+
+
