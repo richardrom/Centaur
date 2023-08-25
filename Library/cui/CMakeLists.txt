@@ -50,7 +50,8 @@ SET(INCLUDE_FILES
         include/CandleChartScene.hpp
         include/CandlePriceAxisItem.hpp
         include/CandleTimeAxisItem.hpp
-        include/DeletableTable.hpp include/CtDialog.hpp)
+        include/DeletableTable.hpp
+        include/CDialog.hpp)
 
 SET(SOURCE_FILES
         src/EditorDelegate.cpp
@@ -71,7 +72,8 @@ SET(SOURCE_FILES
         src/CandleChartScene.cpp
         src/CandlePriceAxisItem.cpp
         src/CandleTimeAxisItem.cpp
-        src/DeletableTable.cpp src/CtDialog.cpp)
+        src/DeletableTable.cpp
+        src/CDialog.cpp)
 
 SET(UI_FILES
         rcc/resources.qrc
