@@ -14,8 +14,7 @@
 #include <QFontDatabase>
 
 int main(int argc, char *argv[])
-try
-{
+try {
     QApplication app(argc, argv);
     QCoreApplication::setOrganizationName("CentaurProject");
     QCoreApplication::setOrganizationDomain("centaur.com");
@@ -29,26 +28,23 @@ try
 #endif
 
     const auto id = QFontDatabase::addApplicationFont(fontFile);
-    if (id != -1)
-    {
+    if (id != -1) {
         const auto families = QFontDatabase::applicationFontFamilies(id);
         QFont font(families);
         QApplication::setFont(font);
     }
 #ifndef QT_NO_DEBUG_OUTPUT
-    else
-    {
+    else {
         qDebug() << "Font could not be loaded";
     }
 #endif
 
     auto loader = std::make_unique<QPluginLoader>(themeLib);
 
-    auto instance = loader->instance();
+    auto *instance = loader->instance();
 
     if (auto *themeInstance = qobject_cast<CENTAUR_THEME_INTERFACE_NAMESPACE::ITheme *>(instance);
-        themeInstance != nullptr)
-    {
+        themeInstance != nullptr) {
         themeInstance->accessExtra(extraLocalPath);
         auto *style = themeInstance->create("centheme");
         assert(style != nullptr);
@@ -59,7 +55,6 @@ try
     wnd->show();
 
     return QApplication::exec();
-} catch (const QException &ex)
-{
+} catch (const QException &ex) {
     qDebug() << ex.what();
 }
