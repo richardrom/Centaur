@@ -8,7 +8,8 @@ SET(Qt6_Components
         Gui
         Widgets
         Sql
-        Concurrent)
+        Concurrent
+        StateMachine)
 
 IF (DEFINED CENTAUR_ENV_DETECTED)
     MESSAGE(STATUS "CUI: Qt6 package in environment variable")
@@ -107,7 +108,8 @@ TARGET_LINK_LIBRARIES(${LIBCUI} PRIVATE
         Qt6::Gui
         Qt6::Widgets
         Qt6::Sql
-        Qt6::Concurrent)
+        Qt6::Concurrent
+        Qt6::StateMachine)
 
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
