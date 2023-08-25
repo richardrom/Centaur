@@ -35,7 +35,7 @@ public:
     C_NODISCARD QString colorSchemeName() const noexcept override;
     C_NODISCARD const cen::theme::ColorScheme &colorScheme() const noexcept override;
     C_NODISCARD const cen::theme::UIElements &uiElements() const noexcept override;
-    C_NODISCARD int renderHint() const noexcept override;
+    C_NODISCARD QPainter::RenderHints renderHint() const noexcept override;
     QStyle *create(const QString &key) override;
 
 private:

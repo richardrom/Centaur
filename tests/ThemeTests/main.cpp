@@ -8,9 +8,13 @@
 #include <QPluginLoader>
 #include <ThemeInterface.hpp>
 
+#include "QtCore/qcoreapplication.h"
 #include "TestApplication.hpp"
+#include <QException>
+#include <QFontDatabase>
 
 int main(int argc, char *argv[])
+try
 {
     QApplication app(argc, argv);
     QCoreApplication::setOrganizationName("CentaurProject");
@@ -19,6 +23,24 @@ int main(int argc, char *argv[])
 
     const QString themeLib       = QApplication::applicationDirPath() + "/../lib/libCentTheme.dylib";
     const QString extraLocalPath = QApplication::applicationDirPath() + "/../../../local";
+
+#ifdef Q_OS_MAC
+    const QString fontFile = extraLocalPath + "/Inter-VariableFont_slnt,wght.ttf";
+#endif
+
+    const auto id = QFontDatabase::addApplicationFont(fontFile);
+    if (id != -1)
+    {
+        const auto families = QFontDatabase::applicationFontFamilies(id);
+        QFont font(families);
+        QApplication::setFont(font);
+    }
+#ifndef QT_NO_DEBUG_OUTPUT
+    else
+    {
+        qDebug() << "Font could not be loaded";
+    }
+#endif
 
     auto loader = std::make_unique<QPluginLoader>(themeLib);
 
@@ -37,4 +59,7 @@ int main(int argc, char *argv[])
     wnd->show();
 
     return QApplication::exec();
+} catch (const QException &ex)
+{
+    qDebug() << ex.what();
 }

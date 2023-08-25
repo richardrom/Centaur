@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/svg">
+        <file alias="search-gray">../res/svg/search_gray_48dp.svg</file>
+        <file alias="combo-down">../res/svg/arrow_drop_down_white_48dp.svg</file>
+        <file alias="combo-down-gray">../res/svg/arrow_drop_down_gray_48dp.svg</file>
+        <file alias="check-arrow">../res/svg/check_white_48dp.svg</file>
+        <file alias="check-arrow-gray">../res/svg/check_gray_48dp.svg</file>
+        <file alias="up-arrow-white">../res/svg/expand_less_white_48dp.svg</file>
+        <file alias="down-arrow-white">../res/svg/expand_more_white_48dp.svg</file>
+
+
+    </qresource>
+</RCC>

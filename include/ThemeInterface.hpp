@@ -7,6 +7,8 @@
 #pragma once
 
 #include "QtCore/qeasingcurve.h"
+#include "QtCore/qmargins.h"
+#include "QtCore/qnamespace.h"
 #ifndef __cplusplus
 #error "C++ compiler needed"
 #endif /*__cplusplus*/
@@ -37,16 +39,305 @@
 
 BEGIN_CENTAUR_THEME_NAMESPACE
 
+/// \brief At what element to apply the animation
+enum class AnimationElement
+{
+    Border,              /// \brief Apply to the pen color
+    Background,          /// \brief Apply to the brush color
+    uCheckBoxBackground, /// \brief Apply to the brush color of the checkbox (unchecked)
+    uCheckBoxBorder,     /// \brief Apply to the pen color of the checkbox (unchecked)
+    cCheckBoxBackground, /// \brief Apply to the brush color of the checkbox (checked)
+    cCheckBoxBorder,     /// \brief Apply to the pen color of the checkbox (checked)
+};
+
+/// \brief What kind of animation
+enum class AnimationApplication
+{
+    HoverIn,         /// \brief Apply the animation element to the UI hover in
+    HoverOut,        /// \brief Apply the animation element to the UI hover out
+    FocusIn,         /// \brief Apply the animation element to the UI focus in
+    FocusOut,        /// \brief Apply the animation element to the UI focus out
+    CheckBoxFocusIn, /// \brief Apply the animation to the hover-in checkbox
+    CheckBoxFocusOut /// \brief Apply the animation to the hover-out checkbox
+
+};
+
 struct ThemeAnimation
 {
     QEasingCurve easingCurve;
     int duration;
 };
 
-using ColorMap     = std::unordered_map<QString, QColor>;
-using BrushMap     = std::unordered_map<QString, QBrush>;
-using PenMap       = std::unordered_map<QString, QPen>;
-using AnimationMap = std::unordered_map<QString, ThemeAnimation>;
+struct FrameInformation
+{
+    QMargins margins { 0, 0, 0, 0 };
+    QMargins padding { 0, 0, 0, 0 };
+    qreal borderRadiusX { 0 };
+    qreal borderRadiusY { 0 };
+    qreal borderRadiusTopLeft { 0 };
+    qreal borderRadiusTopRight { 0 };
+    qreal borderRadiusBottomLeft { 0 };
+    qreal borderRadiusBottomRight { 0 };
+};
+
+struct FontStyle
+{
+    QString fontName;
+    qreal size { -1.0 };
+    qreal letterSpacing { -1.0 };
+    qreal wordSpacing { -1.0 };
+    int weight { QFont::Weight::Normal };
+    int stretchFactor { QFont::AnyStretch };
+    QFont::Capitalization caps { QFont::Capitalization::MixedCase };
+    QFont::SpacingType spacingType { QFont::SpacingType::PercentageSpacing };
+    bool italic { false };
+    bool kerning { false };
+    bool underline { false };
+};
+
+struct FontTextLayout
+{
+    QTextOption opts;
+    FontStyle style;
+};
+
+struct ElementState
+{
+    QPen pen { Qt::NoPen };
+    QPen fontPen { Qt::NoPen };
+    QBrush brush { Qt::NoBrush };
+    FrameInformation fi;
+    FontTextLayout fontInformation;
+};
+
+/// \brief Steps information
+using AnimationSteps = std::unordered_map<AnimationApplication, ThemeAnimation *>;
+
+/// \brief Information data
+struct Animation
+{
+    AnimationElement element;
+    QVariant start;
+    QVariant end;
+    AnimationSteps animationSteps;
+};
+
+/// \brief Animation type
+using AnimationInformation = std::vector<Animation>;
+
+struct Elements
+{
+    ElementState normal;
+    ElementState hover;
+    ElementState focus;
+    ElementState pressed;
+};
+
+struct UIElementBasis
+{
+    AnimationInformation animations;
+    Elements enabled;
+    Elements disabled;
+};
+
+struct PushButtonInformation : public UIElementBasis
+{
+    Elements defaultButton;
+};
+
+struct LineEditInformation : public UIElementBasis
+{
+    QColor textColor;
+    QColor disableTextColor;
+    QColor placeHolderColor;
+};
+
+struct ComboBoxInformation : public UIElementBasis
+{
+    QPen dropArrowPen { Qt::NoPen };
+    int dropArrowSize { -1 };
+};
+
+struct MenuInformation
+{
+    QBrush panelBrush { Qt::NoBrush };
+    QBrush emptyAreaBrush { Qt::NoBrush };
+    QBrush separatorBrush { Qt::NoBrush };
+    QBrush selectedBrush { Qt::NoBrush };
+
+    QPen separatorPen { Qt::NoPen };
+    QPen selectedPen { Qt::NoPen };
+    QPen enabledPen { Qt::NoPen };
+    QPen disabledPen { Qt::NoPen };
+
+    FontTextLayout selectedFont;
+    FontTextLayout enabledFont;
+    FontTextLayout disabledFont;
+
+    int itemHeight { -1 };
+    int separatorHeight { -1 };
+    int leftPadding { 0 };
+};
+
+struct ProgressBarInformation
+{
+    bool applyGlowEffect { false };
+
+    struct EffectInformation
+    {
+        QColor glowColor;
+        qreal xOffset;
+        qreal yOffset;
+        qreal blurRadius;
+    } effectInformation;
+
+    FrameInformation fi;
+    QBrush disableGrooveBrush { Qt::NoBrush };
+    QBrush enabledGrooveBrush { Qt::NoBrush };
+    QBrush disableBarBrush { Qt::NoBrush };
+    QBrush enabledBarBrush { Qt::NoBrush };
+};
+
+struct HeaderInformation
+{
+    QBrush emptyAreaBrush { Qt::NoBrush };
+    QBrush backgroundBrush { Qt::NoBrush };
+    QBrush hoverBrush { Qt::NoBrush };
+    QBrush sunkenBrush { Qt::NoBrush };
+    QBrush disableBackgroundBrush { Qt::NoBrush };
+    QBrush disableEmptyAreaBrush { Qt::NoBrush };
+
+    QPen sectionLinesPen { Qt::NoPen };
+    QPen disableSectionLinesPen { Qt::NoPen };
+
+    QPen disableFontPen { Qt::NoPen };
+    QPen fontPen { Qt::NoPen };
+    QPen hoverPen { Qt::NoPen };
+    QPen sunkenPen { Qt::NoPen };
+
+    FontTextLayout disableFont {};
+    FontTextLayout font {};
+    FontTextLayout hoverFont {};
+    FontTextLayout sunkenFont {};
+
+    QMargins sectionLinesMargins { 0, 0, 0, 0 };
+
+    bool showSectionLines { true };
+};
+
+struct CheckBoxInformation
+{
+    AnimationInformation animations;
+
+    struct CheckElementState
+    {
+        FrameInformation widgetFrame;
+        QBrush widgetBrush { Qt::NoBrush };
+        QPen widgetPen { Qt::NoPen };
+
+        FrameInformation checkedBoxFrame;
+        QBrush checkedBoxBrush { Qt::NoBrush };
+        QPen checkedBoxPen { Qt::NoPen };
+        QPen checkedBoxIndicatorPen { Qt::NoPen };
+        QPen uncheckedFontPen { Qt::NoPen };
+        FontTextLayout uncheckedFont {};
+
+        FrameInformation uncheckedBoxFrame;
+        QBrush uncheckedBoxBrush { Qt::NoBrush };
+        QPen uncheckedBoxPen { Qt::NoPen };
+        QPen uncheckedBoxIndicatorPen { Qt::NoPen };
+        QPen checkedFontPen { Qt::NoPen };
+        FontTextLayout checkedFont {};
+
+        FrameInformation undefinedBoxFrame;
+        QBrush undefinedBoxBrush { Qt::NoBrush };
+        QPen undefinedBoxPen { Qt::NoPen };
+        QPen undefinedBoxIndicatorPen { Qt::NoPen };
+        QPen undefinedFontPen { Qt::NoPen };
+        FontTextLayout undefinedFont {};
+    };
+
+    struct CheckElements
+    {
+        CheckElementState normal;
+        CheckElementState hover;
+        CheckElementState focus;
+    };
+
+    CheckElements disabled;
+    CheckElements enabled;
+};
+
+struct TableViewInformation
+{
+    QBrush paneBackgroundBrush { Qt::NoBrush };
+    QBrush backgroundBrush { Qt::NoBrush };
+    QBrush itemAltBackgroundBrush { Qt::NoBrush };
+    QBrush itemBackgroundBrush { Qt::NoBrush };
+    QBrush disableBackgroundBrush { Qt::NoBrush };
+    QBrush itemFocusBrush { Qt::NoBrush };
+    QBrush itemHoverBrush { Qt::NoBrush };
+    QBrush itemSelectedBrush { Qt::NoBrush };
+
+    QPen gridLinesPen { Qt::NoPen };
+
+    QPen disabledPen { Qt::NoPen };
+    QPen fontPen { Qt::NoPen };
+    QPen focusPen { Qt::NoPen };
+    QPen selectedPen { Qt::NoPen };
+    QPen hoverPen { Qt::NoPen };
+
+    FontTextLayout disabledFont {};
+    FontTextLayout fontFont {};
+    FontTextLayout focusFont {};
+    FontTextLayout selectedFont {};
+    FontTextLayout hoverFont {};
+
+    QMargins itemMargins { 0, 0, 0, 0 };
+
+    bool mouseOverItem { false };
+    bool gridLines { false };
+};
+
+struct GroupBoxInformation
+{
+    FrameInformation fi;
+    QBrush contentsBrush { Qt::NoBrush };
+    QBrush headerBrush { Qt::NoBrush };
+    QBrush indicatorBrush { Qt::NoBrush };
+    QBrush disabledIndicatorBrush { Qt::NoBrush };
+    QPen pen { Qt::NoPen };
+    QPen disabledPen { Qt::NoPen };
+    FontTextLayout font;
+    FontTextLayout disabledFont;
+    int indicatorWidth { 0 };
+    int headerHeight { -1 };
+};
+
+using ToolButtonInformation = PushButtonInformation;
+
+using ColorMap            = std::unordered_map<QString, QColor>;
+using BrushMap            = std::unordered_map<QString, QBrush>;
+using PenMap              = std::unordered_map<QString, QPen>;
+using FontStyleMap        = std::unordered_map<QString, FontTextLayout>;
+using AnimationMap        = std::unordered_map<QString, ThemeAnimation>;
+using FramesMap           = std::unordered_map<QString, FrameInformation>;
+using ButtonMap           = std::unordered_map<QString, PushButtonInformation>;
+using ToolButtonMap       = std::unordered_map<QString, ToolButtonInformation>;
+using LineEditMap         = std::unordered_map<QString, LineEditInformation>;
+using ComboBoxMap         = std::unordered_map<QString, ComboBoxInformation>;
+using ProgressBarMap      = std::unordered_map<QString, ProgressBarInformation>;
+using VerticalHeaderMap   = std::unordered_map<QString, HeaderInformation>;
+using HorizontalHeaderMap = std::unordered_map<QString, HeaderInformation>;
+using TableViewMap        = std::unordered_map<QString, TableViewInformation>;
+using CheckBoxMap         = std::unordered_map<QString, CheckBoxInformation>;
+using GroupBoxMap         = std::unordered_map<QString, GroupBoxInformation>;
+
+struct ThemeConstants
+{
+    QSize menuItemImage { 0, 0 };
+    std::unordered_map<QString, int> treeItemHeight;
+};
 
 /// \brief The theme color palette
 /// This structure holds every color and/or brush used by all Widgets in the Centaur UI interface
@@ -56,11 +347,34 @@ struct ColorScheme
     ColorMap colors;
     BrushMap brushes;
     PenMap pens;
+    FontStyleMap fonts;
 };
 
 struct UIElements
 {
     AnimationMap animations;
+    FramesMap frames;
+    ButtonMap pushButtonOverride;
+    ToolButtonMap toolButtonOverride;
+    LineEditMap lineEditOverride;
+    ComboBoxMap comboBoxOverride;
+    ProgressBarMap progressBarOverride;
+    VerticalHeaderMap verticalHeaderOverride;
+    HorizontalHeaderMap horizontalHeaderOverride;
+    TableViewMap tableViewOverride;
+    CheckBoxMap checkBoxOverride;
+    GroupBoxMap groupBoxOverride;
+    PushButtonInformation pushButtonInformation;
+    ToolButtonInformation toolButtonInformation;
+    LineEditInformation lineEditInformation;
+    ComboBoxInformation comboBoxInformation;
+    MenuInformation menuInformation;
+    ProgressBarInformation progressBarInformation;
+    HeaderInformation verticalHeaderInformation;
+    HeaderInformation horizontalHeaderInformation;
+    TableViewInformation tableViewInformation;
+    CheckBoxInformation checkBoxInformation;
+    GroupBoxInformation groupBoxInformation;
 };
 
 #if defined(C_GNU_CLANG)
@@ -69,19 +383,17 @@ CENTAUR_WARN_OFF("-Wweak-vtables")
 #endif /*__clang__*/
 
 /// \brief A description of a theme. <br>
-/// About the icons: A theme will not hold the icons for any tradeable symbol. This functionality is reserved for the main UI implementation itself
-/// only UI general icons will be hold and accessed through a theme. See \ref colorSchemeName for more details.<br>
-/// Currently all themes can be pack via the plpack tool.
+/// About the icons: A theme will not hold the icons for any tradeable symbol. This functionality is reserved for the main UI
+/// implementation itself only UI general icons will be hold and accessed through a theme. See \ref colorSchemeName for more
+/// details.<br> Currently all themes can be pack via the plpack tool.
 struct ITheme : public QStylePlugin
 {
     ~ITheme() override = default;
 
 public:
-    /// \brief After loading the theme plugin this function will be called from the UI to inform the plugin where the extra data path is located
-    /// \param pluginExtraPath The local path where the data is located
-    /// \code
-    /// static QString global_data_path;
-    /// class UuidThemeImpl : public cen::theme::CtTheme
+    /// \brief After loading the theme plugin this function will be called from the UI to inform the plugin where the extra data path
+    /// is located \param pluginExtraPath The local path where the data is located \code static QString global_data_path; class
+    /// UuidThemeImpl : public cen::theme::CtTheme
     /// {
     /// public:
     ///    inline void accessExtra(const QString &pluginExtraPath) const noexcept override
@@ -126,11 +438,11 @@ public:
     /// \remarks Name looking should be done ignoring the case
     virtual void setColorScheme(const QString &newColorScheme) noexcept = 0;
 
-    /// \brief Access the current color scheme. Assuming that the theme can implement several color schemes like a dark and, a light color scheme within the theme
-    /// \remarks In general, a UI plugin is not aware of the color schemes, but can access the current color scheme of the theme. <br>
-    /// So use keywords in the color scheme name to hint the plugins about the general color theme, for example, Dark Theme or Light Theme <br>
-    /// In this way a plugin can display icons properly according to the current color scheme from the current theme
-    /// \return A QString with color scheme name
+    /// \brief Access the current color scheme. Assuming that the theme can implement several color schemes like a dark and, a light
+    /// color scheme within the theme \remarks In general, a UI plugin is not aware of the color schemes, but can access the current
+    /// color scheme of the theme. <br> So use keywords in the color scheme name to hint the plugins about the general color theme, for
+    /// example, Dark Theme or Light Theme <br> In this way a plugin can display icons properly according to the current color scheme
+    /// from the current theme \return A QString with color scheme name
     C_NODISCARD virtual QString colorSchemeName() const noexcept = 0;
 
     /// \brief Access the color scheme object of the theme
@@ -143,7 +455,7 @@ public:
 
     /// \brief Return the plugin general render hint. It is not mandatory that every QPainter object be under this scheme
     /// \return A set of QPainter::RenderHint OR'ed values
-    C_NODISCARD virtual int renderHint() const noexcept = 0;
+    C_NODISCARD virtual QPainter::RenderHints renderHint() const noexcept = 0;
 };
 
 #if defined(C_GNU_CLANG)

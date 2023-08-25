@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "QtGui/qpainter.h"
 #ifndef __cplusplus
 #error "C++ compiler needed"
 #endif /*__cplusplus*/
@@ -59,10 +60,13 @@ namespace theme
         void loadTheme(const std::string &file);
 
     public:
-        std::string themeScheme;
-        int renderHints { 0 };
+        QStringList getErrors();
 
     public:
+        std::string themeScheme;
+        QPainter::RenderHints renderHints { 0 };
+
+        CENTAUR_THEME_INTERFACE_NAMESPACE::ThemeConstants constants;
         CENTAUR_THEME_INTERFACE_NAMESPACE::ColorScheme scheme;
         CENTAUR_THEME_INTERFACE_NAMESPACE::UIElements uiElements;
 

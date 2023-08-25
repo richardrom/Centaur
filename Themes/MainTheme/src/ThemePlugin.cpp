@@ -14,28 +14,26 @@
 #include "ThemePlugin.hpp"
 
 CentThemePlugin::CentThemePlugin() :
-    m_availableSchemes { "Dark", "Light" }
-{
-}
+    m_availableSchemes { "Dark", "Light" } { }
 
 bool CentThemePlugin::loadTheme(const QString &scheme) noexcept
 {
-    try
-    {
-        if (scheme == "dark")
-        {
+    try {
+        if (scheme == "dark") {
             m_parser.loadTheme(QString(m_extraPath + "/dark.theme.xml").toStdString());
         }
-        else if (scheme == "light")
-        {
+        else if (scheme == "light") {
             m_parser.loadTheme(QString(m_extraPath + "/light.theme.xml").toStdString());
+        }
+
+        if (!m_parser.getErrors().empty()) {
+            for (const auto &error : m_parser.getErrors()) { qDebug() << error; }
         }
     } catch (
 #ifndef DEBUG
         C_UNUSED
 #endif /*DEBUG*/
-        const std::runtime_error &ex)
-    {
+        const std::runtime_error &ex) {
 #ifdef DEBUG
         qDebug() << ex.what();
 #endif /*DEBUG*/
@@ -60,25 +58,13 @@ void CentThemePlugin::accessExtra(const QString &pluginExtraPath) noexcept
     settings.endGroup();
 }
 
-QString CentThemePlugin::themeName() const noexcept
-{
-    return { "Centaur Main Theme" };
-}
+QString CentThemePlugin::themeName() const noexcept { return { "Centaur Main Theme" }; }
 
-QString CentThemePlugin::uuid() const noexcept
-{
-    return "2df95e88-7eae-5940-ab0d-b53f2df855e2";
-}
+QString CentThemePlugin::uuid() const noexcept { return "2df95e88-7eae-5940-ab0d-b53f2df855e2"; }
 
-QWidget *CentThemePlugin::settingsWidget() const noexcept
-{
-    return nullptr;
-}
+QWidget *CentThemePlugin::settingsWidget() const noexcept { return nullptr; }
 
-QStringList CentThemePlugin::colorSchemes() const noexcept
-{
-    return m_availableSchemes;
-}
+QStringList CentThemePlugin::colorSchemes() const noexcept { return m_availableSchemes; }
 
 void CentThemePlugin::setColorScheme(const QString &newColorScheme) noexcept
 {
@@ -90,10 +76,8 @@ void CentThemePlugin::setColorScheme(const QString &newColorScheme) noexcept
     QSettings settings("CentaurProject", "CentTheme");
 
     const QString tempThemeName = [&]() -> QString {
-        for (const auto &scheme : std::as_const(m_availableSchemes))
-        {
-            if (scheme.toLower() == newColorWithoutCase)
-            {
+        for (const auto &scheme : std::as_const(m_availableSchemes)) {
+            if (scheme.toLower() == newColorWithoutCase) {
                 settings.setValue("name", scheme);
                 return scheme;
             }
@@ -111,31 +95,22 @@ void CentThemePlugin::setColorScheme(const QString &newColorScheme) noexcept
     settings.endGroup();
 }
 
-QString CentThemePlugin::colorSchemeName() const noexcept
-{
-    return m_currentColorScheme;
-}
+QString CentThemePlugin::colorSchemeName() const noexcept { return m_currentColorScheme; }
 
-const CENTAUR_THEME_INTERFACE_NAMESPACE::ColorScheme &CentThemePlugin::colorScheme() const noexcept
-{
-    return m_parser.scheme;
-}
+const CENTAUR_THEME_INTERFACE_NAMESPACE::ColorScheme &CentThemePlugin::colorScheme() const noexcept { return m_parser.scheme; }
 
-const CENTAUR_THEME_INTERFACE_NAMESPACE::UIElements &CentThemePlugin::uiElements() const noexcept
-{
-    return m_parser.uiElements;
-}
+const CENTAUR_THEME_INTERFACE_NAMESPACE::UIElements &CentThemePlugin::uiElements() const noexcept { return m_parser.uiElements; }
 
-int CentThemePlugin::renderHint() const noexcept
-{
-    return m_parser.renderHints;
-}
+QPainter::RenderHints CentThemePlugin::renderHint() const noexcept { return m_parser.renderHints; }
 
 QStyle *CentThemePlugin::create(const QString &key)
 {
-    if (key.toLower() == "centheme")
+    if (key.toLower() == "centheme") {
         return new CentTheme(
+            std::addressof(m_parser.constants),
             std::addressof(m_parser.scheme),
-            std::addressof(m_parser.uiElements));
+            std::addressof(m_parser.uiElements),
+            m_parser.renderHints);
+    }
     return nullptr;
 }

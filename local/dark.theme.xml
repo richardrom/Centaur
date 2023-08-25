@@ -5,84 +5,1102 @@
         <type>antialias</type>
     </render>
 
-    <colors>
-        <color name="main">
-            <r>72</r>
-            <g>151</g>
-            <b>251</b>
-        </color>
-        <color name="highlight">
-            <r>75</r>
-            <g>153</g>
-            <b>251</b>
-        </color>
-        <color name="highlight2">
-            <r>77</r>
-            <g>154</g>
-            <b>251</b>
-        </color>
+    <constants>
+        <menu-item-image>
+            <width>16</width>
+            <height>18</height>
+        </menu-item-image>
 
+        <tree-item name="">
+            <height>30</height>
+        </tree-item>
+    </constants>
+
+    <colors>
+        <color name="black">black</color>
+        <color name="white">white</color>
+        <color name="main-dark">#030507</color>
+        <color name="main-color">#4897fb</color>
+        <color name="main-lighten-10p">#5aa1fb</color>
+        <color name="main-lighten-15p">#63a7fc</color>
+        <color name="main-lighten-25p">#76b1fc</color>
+        <color name="main-lighten-50p">#a3cbfd</color>
+        <color name="main-darken-15p">#197cfa</color>
+        <color name="main-darken-20p">#0973fa</color>
+        <color name="main-darken-25p">#056ced</color>
+        <color name="main-darken-75p">#02244f</color>
+        <color name="main-darken-85p">#01152f</color>
+        <color name="main-darken-90p">#010e20</color>
+        <color name="main-darken-95p">#000710</color>
+        <color name="main-darken-40p-des-20p">#4d5e74</color>
+        <color name="main-darken-30p-des-20p">#5a6e87</color>
+        <color name="main-darken-85p-des-30p">#10171f</color>
+        <color name="main-darken-85p-des-50p">#0c1624</color>
+        <color name="main-darken-85p-des-50p-lighten-2p">#0e1a2a</color>
+        <color name="main-darken-85p-des-50p-lighten-5p">#112035</color>
+        <color name="main-darken-85p-des-50p-lighten-7p">#14243c</color>
+        <color name="main-darken-85p-des-50p-lighten-10p">#172b46</color>
+        <color name="main-darken-85p-des-50p-lighten-15p">#1d3557</color>
+        <color name="main-darken-85p-des-50p-lighten-20p">#234069</color>
+        <color name="main-darken-85p-des-50p-lighten-25p">#284a7a</color>
+        <color name="main-darken-85p-des-50p-lighten-30p">#2e558b</color>
+        <color name="main-dark-lighten-3p">#070c11</color>
+        <color name="main-dark-lighten-6p">#0c141c</color>
+        <color name="disable-color">#606060</color>
+        <color name="disable-text-color">#A8A8A8</color>
+        <color name="gray-e0">#E0E0E0</color>
+        <color name="gray-b0">#B0B0B0</color>
+        <color name="gray-78">#787878</color>
+        <color name="glow-green">#65ac46</color>
+        <color name="blue">blue</color>
+        <color name="red">red</color>
     </colors>
 
     <brushes>
-        <brush name="accent-brush" format="regular">
-            <color>main</color>
-            <pattern>solid</pattern>
+        <brush name="black-brush" format="regular" color="black"/>
+        <brush name="white-brush" format="regular" color="white"/>
+        <brush name="accent-brush" format="regular" color="main-color"/>
+        <brush name="main-lighten-10p-brush" format="regular" color="main-lighten-10p"/>
+        <brush name="main-lighten-15p-brush" format="regular" color="main-lighten-15p"/>
+        <brush name="main-lighten-25p-brush" format="regular" color="main-lighten-25p"/>
+        <brush name="main-lighten-50p-brush" format="regular" color="main-lighten-50p"/>
+        <brush name="main-darken-15p-brush" format="regular" color="main-darken-15p"/>
+        <brush name="main-darken-20p-brush" format="regular" color="main-darken-20p"/>
+        <brush name="main-darken-25p-brush" format="regular" color="main-darken-25p"/>
+        <brush name="main-darken-75p-brush" format="regular" color="main-darken-75p"/>
+        <brush name="main-darken-85p-brush" format="regular" color="main-darken-85p"/>
+        <brush name="main-darken-95p-brush" format="regular" color="main-darken-95p"/>
+        <brush name="main-darken-40p-des-20p-brush" format="regular" color="main-darken-40p-des-20p"/>
+        <brush name="main-darken-30p-des-20p-brush" format="regular" color="main-darken-30p-des-20p"/>
+        <brush name="main-darken-30p-des-30p-brush" format="regular" color="main-darken-85p-des-30p"/>
+        <brush name="main-darken-85p-des-50p-brush" format="regular" color="main-darken-85p-des-50p"/>
+        <brush name="main-darken-85p-des-50p-lighten-15p-brush" format="regular" color="main-darken-85p-des-50p-lighten-15p"/>
+        <brush name="main-darken-85p-des-50p-lighten-20p-brush" format="regular" color="main-darken-85p-des-50p-lighten-20p"/>
+        <brush name="main-darken-85p-des-50p-lighten-25p-brush" format="regular" color="main-darken-85p-des-50p-lighten-25p"/>
+        <brush name="main-dark-lighten-3p-brush" format="regular" color="main-dark-lighten-3p"/>
+        <brush name="main-dark-lighten-6p-brush" format="regular" color="main-dark-lighten-6p"/>
+        <brush name="disable-color-brush" format="regular" color="disable-color"/>
+        <brush name="disable-text-brush" format="regular" color="disable-text-color"/>
+        <brush name="gray-78-brush" format="regular" color="gray-78"/>
+        <brush name="gray-e0-brush" format="regular" color="gray-e0"/>
+        <brush name="gray-b0-brush" format="regular" color="gray-b0"/>
+
+
+        <brush name="progress-bar-brush" format="linear-gradient">
+            <points>
+                <x-start>0.5</x-start>
+                <y-start>0</y-start>
+                <x-end>0.5</x-end>
+                <y-end>1.0</y-end>
+            </points>
+            <colors>
+                <color name="main-color">0</color>
+                <color name="main-lighten-50p">0.5</color>
+                <color name="main-color">1.0</color>
+            </colors>
         </brush>
-        <brush name="highlight-brush" format="regular">
-            <color>highlight</color>
-            <pattern>solid</pattern>
+
+        <brush name="progress-bar-green-brush" format="linear-gradient">
+            <points>
+                <x-start>0.5</x-start>
+                <y-start>0</y-start>
+                <x-end>0.5</x-end>
+                <y-end>1.0</y-end>
+            </points>
+            <colors>
+                <color name="glow-green">0</color>
+                <color name="main-color">0.5</color>
+                <color name="glow-green">1.0</color>
+            </colors>
         </brush>
-        <brush name="highlight2-brush" format="regular">
-            <color>highlight2</color>
-            <pattern>solid</pattern>
+
+        <brush name="header-empty-area-brush" format="linear-gradient">
+            <points>
+                <x-start>0.5</x-start>
+                <y-start>0</y-start>
+                <x-end>0.5</x-end>
+                <y-end>1.0</y-end>
+            </points>
+            <colors>
+                <color name="main-darken-85p">0.0</color>
+                <color name="main-darken-95p">1.0</color>
+            </colors>
         </brush>
+
+        <brush name="table-view-item-background-brush" format="linear-gradient">
+            <points>
+                <x-start>.5</x-start>
+                <y-start>0</y-start>
+                <x-end>.5</x-end>
+                <y-end>1.0</y-end>
+            </points>
+            <colors>
+                <color name="main-darken-85p-des-50p">0.0</color>
+                <color name="main-darken-85p-des-50p-lighten-2p">1.0</color>
+            </colors>
+        </brush>
+
+        <brush name="table-view-alternate-item-background-brush" format="linear-gradient">
+            <points>
+                <x-start>.5</x-start>
+                <y-start>0</y-start>
+                <x-end>.5</x-end>
+                <y-end>1.0</y-end>
+            </points>
+            <colors>
+                <color name="main-darken-85p-des-50p-lighten-5p">0.0</color>
+                <color name="main-darken-85p-des-50p-lighten-7p">1.0</color>
+            </colors>
+        </brush>
+
     </brushes>
 
     <pens>
+        <pen name="black-pen" width="1" brush="black-brush"/>
+        <pen name="white-pen" width="1" brush="white-brush"/>
+
+        <pen name="check-box-pen" width="1.5" brush="accent-brush"/>
+        <pen name="unchecked-box-pen" width="1.5" brush="accent-brush"/>
+        <pen name="checked-box-pen" width="1.5" brush="accent-brush"/>
+
+        <pen name="checked-box-hover-pen" width="1.5" brush="main-lighten-15p-brush"/>
+        <pen name="checked-box-focus-pen" width="1.5" brush="main-lighten-10p-brush"/>
+
+        <pen name="check-box-indicator-pen" width="1.5" brush="white-brush"/>
+
+
+        <pen name="main-lighten-50p-pen" width="1.0" brush="main-lighten-50p-brush"/>
+        <pen name="main-darken-15p-pen" width="1.0" brush="main-darken-15p-brush"/>
+        <pen name="main-darken-15p-def-btn-pen" width="1.5" brush="main-darken-15p-brush"/>
+        <pen name="main-darken-40p-des-20p-pen" width="1.0" brush="main-darken-40p-des-20p-brush"/>
+        <pen name="main-darken-30p-des-20p-pen" width="1.0" brush="main-darken-30p-des-20p-brush"/>
+        <pen name="main-color-pen-3.0-pen" width="3.0" brush="accent-brush"/>
+        <pen name="main-color-pen-2.0-pen" width="2.0" brush="accent-brush"/>
+        <pen name="gray-78-pen" width="1.0" brush="gray-78-brush"/>
+        <pen name="gray-e0-pen" width="1.0" brush="gray-e0-brush"/>
+        <pen name="gray-b0-pen" width="1.0" brush="gray-b0-brush"/>
+        <pen name="disable-text-pen" width="1.0" brush="disable-text-brush"/>
+        <pen name="disable-pen" width="1.0" brush="disable-color-brush"/>
+        <pen name="table-grid-pen" width="0.2" brush="disable-text-brush">
+            <style>dash</style>
+        </pen>
 
     </pens>
 
+    <fonts>
+        <font name="button-font">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>center</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style>
+                <weight>medium</weight>
+            </style>
+        </font>
+        <font name="button-focus-font">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>center</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style underline="1">
+                <weight>demi-bold</weight>
+            </style>
+        </font>
+
+
+        <font name="regular-font">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+        </font>
+
+        <font name="regular-font-tree">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style size="15"/>
+        </font>
+
+        <font name="regular-font-medium">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style>
+                <weight>medium</weight>
+            </style>
+        </font>
+
+        <font name="regular-font-medium-tree">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style size="15">
+                <weight>medium</weight>
+            </style>
+        </font>
+
+        <font name="regular-font-demi">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style>
+                <weight>demi-bold</weight>
+            </style>
+        </font>
+
+        <font name="regular-font-demi-tree">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style size="15">
+                <weight>demi-bold</weight>
+            </style>
+        </font>
+
+        <font name="regular-selected-medium-font">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style underline="1" size="115%">
+                <weight>medium</weight>
+            </style>
+        </font>
+
+
+        <font name="regular-demi-bold-font">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>center</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style underline="1">
+                <weight>demi-bold</weight>
+            </style>
+        </font>
+
+        <font name="group-box-font">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style size="110%">
+                <weight>medium</weight>
+            </style>
+        </font>
+
+    </fonts>
 
     <animations>
-        <animation name="button-hover-enter">
-            <easing-curve>in-cubic</easing-curve>
+        <animation name="hover-enter">
+            <easing-curve>in-out-sine</easing-curve>
             <duration>200</duration>
         </animation>
-        <animation name="button-hover-exit">
-            <easing-curve>out-cubic</easing-curve>
+        <animation name="hover-exit">
+            <easing-curve>out-in-sine</easing-curve>
+            <duration>200</duration>
+        </animation>
+        <animation name="focus-in">
+            <easing-curve>in-out-sine</easing-curve>
+            <duration>200</duration>
+        </animation>
+        <animation name="focus-out">
+            <easing-curve>out-in-sine</easing-curve>
+            <duration>200</duration>
+        </animation>
+        <animation name="check-box-hover-in">
+            <easing-curve>out-in-sine</easing-curve>
+            <duration>200</duration>
+        </animation>
+        <animation name="check-box-hover-out">
+            <easing-curve>out-in-sine</easing-curve>
             <duration>200</duration>
         </animation>
     </animations>
-
     <!--
-    ui-elements control the behavior of all the general widgets deployed in Qt
+    <ui-elements>
+    Control the behavior of all the general widgets deployed in Qt
     Frames are the only that can be defined more than once since a several elements can have different geometries
     -->
     <ui-elements>
-        <frame name="button-frame">
-            <border-radius>5</border-radius>
-        </frame>
+        <frames>
+            <frame name="generic">
+                <!-- No properties on the generic frame -->
+            </frame>
+            <frame name="button-frame">
+                <border-radius-x>10.0</border-radius-x>
+                <border-radius-y>10.0</border-radius-y>
+                <margins>
+                    <top>3</top>
+                    <left>3</left>
+                    <bottom>3</bottom>
+                    <right>3</right>
+                </margins>
+                <padding>
+                    <left>10</left>
+                </padding>
+            </frame>
 
-        <button frame="button-frame">
-            <animations>
-                <hover-enter>button-hover-enter</hover-enter>
-                <hover-exit>button-hover-exit</hover-exit>
-            </animations>
-            <color>main</color>
-            <default-brush>highlight2-brush</default-brush>
-            <hover-brush>highlight-brush</hover-brush>
-            <click-brush>highlight2-brush</click-brush>
-        </button>
+            <frame name="button-frame-default">
+                <border-radius-x>10.0</border-radius-x>
+                <border-radius-y>10.0</border-radius-y>
+                <margins>
+                    <top>3</top>
+                    <left>3</left>
+                    <bottom>3</bottom>
+                    <right>3</right>
+                </margins>
+            </frame>
+
+            <frame name="button-frame-focus">
+                <border-radius-x>10.0</border-radius-x>
+                <border-radius-y>10.0</border-radius-y>
+                <margins>
+                    <top>3</top>
+                    <left>3</left>
+                    <bottom>3</bottom>
+                    <right>3</right>
+                </margins>
+            </frame>
+
+            <frame name="editor-frame">
+                <border-radius-x>3.0</border-radius-x>
+                <border-radius-y>3.0</border-radius-y>
+                <padding>
+                    <left>5</left>
+                </padding>
+            </frame>
+
+            <frame name="combo-frame">
+                <border-radius-x>3.0</border-radius-x>
+                <border-radius-y>3.0</border-radius-y>
+                <margins>
+                    <top>3</top>
+                    <left>3</left>
+                    <bottom>3</bottom>
+                    <right>3</right>
+                </margins>
+                <padding>
+                    <left>5</left>
+                </padding>
+            </frame>
+
+            <frame name="progress-bar-frame">
+                <!-- A -1 value indicate that the radius is MIN(width,height)/2-->
+                <border-radius-x>-1</border-radius-x>
+                <border-radius-y>-1</border-radius-y>
+                <margins>
+                    <top>6</top>
+                    <left>1</left>
+                    <bottom>6</bottom>
+                    <right>1</right>
+                </margins>
+            </frame>
+
+            <frame name="check-box-frame">
+                <!-- A -1 value indicate that the radius is MIN(width,height)/2-->
+                <border-radius-x>3</border-radius-x>
+                <border-radius-y>3</border-radius-y>
+                <margins>
+                    <top>1</top>
+                    <left>1</left>
+                    <bottom>1</bottom>
+                    <right>1</right>
+                </margins>
+            </frame>
+
+            <frame name="check-box-indicator-frame">
+                <!-- A -1 value indicate that the radius is MIN(width,height)/2-->
+                <border-radius-x>2</border-radius-x>
+                <border-radius-y>2</border-radius-y>
+                <margins>
+                    <top>1</top>
+                    <left>1</left>
+                    <bottom>1</bottom>
+                    <right>1</right>
+                </margins>
+            </frame>
+
+            <frame name="tool-button-frame">
+                <border-radius-x>3.0</border-radius-x>
+                <border-radius-y>3.0</border-radius-y>
+                <margins>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                </margins>
+                <padding>
+                    <left>0</left>
+                </padding>
+            </frame>
+            <frame name="group-box-frame">
+                <border-radius-x>0</border-radius-x>
+                <border-radius-y>0</border-radius-y>
+            </frame>
+        </frames>
+
+        <menus item-height="25" separator-height="10" left-padding="15">
+            <empty-area-brush>main-darken-85p-brush</empty-area-brush>
+            <panel-brush>main-darken-95p-brush</panel-brush>
+            <separator-pen>gray-e0-pen</separator-pen>
+            <separator-brush></separator-brush>
+            <selected-brush>main-darken-75p-brush</selected-brush>
+            <disabled-pen>gray-78-pen</disabled-pen>
+            <enabled-pen>gray-e0-pen</enabled-pen>
+            <selected-pen>white-pen</selected-pen>
+            <selected-font>regular-selected-medium-font</selected-font>
+            <disabled-font>regular-font</disabled-font>
+            <enabled-font>regular-font</enabled-font>
+        </menus>
+
+        <buttons>
+            <button name="pushButton">
+                <animations>
+                    <animation hint="color" to="background" start="main-lighten-10p" end="main-lighten-25p">
+                        <hover-in>hover-enter</hover-in>
+                        <hover-out>hover-exit</hover-out>
+                    </animation>
+
+                    <animation hint="color" to="border" start="main-darken-15p" end="main-darken-20p">
+                        <hover-in>hover-enter</hover-in>
+                        <hover-out>hover-exit</hover-out>
+                    </animation>
+
+                </animations>
+
+                <default>
+                    <state-normal>
+                        <frame>button-frame-default</frame>
+                        <frame-brush>main-lighten-10p-brush</frame-brush>
+                        <frame-pen>main-darken-15p-def-btn-pen</frame-pen>
+                        <font>button-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-normal>
+                    <state-hover>
+                        <frame>button-frame-default</frame>
+                        <frame-brush>main-lighten-25p-brush</frame-brush>
+                        <frame-pen>main-darken-15p-def-btn-pen</frame-pen>
+                        <font>button-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-hover>
+                    <state-focus>
+                        <frame>button-frame-default</frame>
+                        <frame-brush>main-lighten-50p-brush</frame-brush>
+                        <frame-pen>main-lighten-50p-pen</frame-pen>
+                        <font>button-focus-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-focus>
+                    <state-pressed>
+                        <frame>button-frame-focus</frame>
+                        <frame-brush>main-lighten-15p-brush</frame-brush>
+                        <font>button-focus-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-pressed>
+                </default>
+
+                <disabled>
+                    <state-normal>
+                        <frame>button-frame</frame>
+                        <frame-brush>disable-color-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>disable-text-pen</font-pen>
+                    </state-normal>
+                </disabled>
+
+            </button>
+
+            <button name="pushButton_6" copy="pushButton"/>
+
+            <button>
+                <animations>
+                    <animation hint="color" to="background" start="main-color" end="main-lighten-25p">
+                        <hover-in>hover-enter</hover-in>
+                        <hover-out>hover-exit</hover-out>
+                    </animation>
+                </animations>
+
+                <enabled>
+                    <state-normal>
+                        <frame>button-frame</frame>
+                        <frame-brush>accent-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-normal>
+                    <state-hover>
+                        <frame>button-frame</frame>
+                        <frame-brush>main-lighten-25p-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-hover>
+                    <state-focus>
+                        <frame>button-frame-focus</frame>
+                        <frame-brush>accent-brush</frame-brush>
+                        <frame-pen>main-darken-15p-def-btn-pen</frame-pen>
+                        <font>button-focus-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-focus>
+                    <state-pressed>
+                        <frame>button-frame-focus</frame>
+                        <frame-brush>main-lighten-15p-brush</frame-brush>
+                        <font>button-focus-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-pressed>
+                </enabled>
+
+                <disabled>
+                    <state-normal>
+                        <frame>button-frame</frame>
+                        <frame-brush>disable-color-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>disable-text-pen</font-pen>
+                    </state-normal>
+                </disabled>
+            </button>
+        </buttons>
+
+        <line-editors>
+            <editor text-color="white" disable-color="disable-text-color" placeholder-color="gray-b0">
+
+                <animations>
+                    <animation hint="color" to="background" start="main-darken-40p-des-20p" end="main-darken-30p-des-20p">
+                        <focus-in>focus-in</focus-in>
+                        <focus-out>focus-out</focus-out>
+                    </animation>
+
+                    <animation hint="color" to="border" start="main-darken-40p-des-20p" end="main-color">
+                        <focus-in>focus-in</focus-in>
+                        <focus-out>focus-out</focus-out>
+                    </animation>
+                </animations>
+
+                <enabled>
+                    <state-normal>
+                        <frame>editor-frame</frame>
+                        <frame-brush>main-darken-40p-des-20p-brush</frame-brush>
+                        <font>regular-font</font>
+                    </state-normal>
+                    <state-hover>
+                        <frame>editor-frame</frame>
+                        <frame-brush>main-darken-40p-des-20p-brush</frame-brush>
+                    </state-hover>
+                    <state-focus>
+                        <frame>editor-frame</frame>
+                        <frame-brush>main-darken-30p-des-20p-brush</frame-brush>
+                        <frame-pen>main-color-pen-3.0-pen</frame-pen>
+                    </state-focus>
+                </enabled>
+
+                <disabled>
+                    <state-normal>
+                        <frame>editor-frame</frame>
+                        <frame-brush>disable-color-brush</frame-brush>
+                    </state-normal>
+                </disabled>
+            </editor>
+        </line-editors>
+
+        <combo-boxes>
+            <combo-box drop-width="20" drop-pen="white-pen">
+                <animations>
+                    <animation hint="color" to="border" start="main-darken-30p-des-20p" end="main-color">
+                        <focus-in>focus-in</focus-in>
+                        <focus-out>focus-out</focus-out>
+                    </animation>
+
+                    <animation hint="color" to="background" start="main-darken-40p-des-20p" end="main-darken-30p-des-20p">
+                        <hover-in>hover-enter</hover-in>
+                        <hover-out>hover-exit</hover-out>
+                    </animation>
+
+                    <animation hint="color" to="border" start="main-darken-40p-des-20p" end="main-darken-30p-des-20p">
+                        <hover-in>hover-enter</hover-in>
+                        <hover-out>hover-exit</hover-out>
+                    </animation>
+
+                </animations>
+
+                <enabled>
+                    <state-normal>
+                        <frame>combo-frame</frame>
+                        <frame-brush>main-darken-40p-des-20p-brush</frame-brush>
+                        <font>regular-font</font>
+                        <font-pen>white-pen</font-pen>
+                        <frame-pen>main-darken-40p-des-20p-pen</frame-pen>
+                    </state-normal>
+
+                    <state-hover>
+                        <frame>combo-frame</frame>
+                        <frame-brush>main-darken-30p-des-20p-brush</frame-brush>
+                        <font>regular-font</font>
+                        <font-pen>white-pen</font-pen>
+                        <frame-pen>main-darken-30p-des-20p-pen</frame-pen>
+                    </state-hover>
+
+                    <state-focus>
+                        <frame>combo-frame</frame>
+                        <frame-brush>main-darken-30p-des-20p-brush</frame-brush>
+                        <frame-pen>main-color-pen-2.0-pen</frame-pen>
+                        <font>regular-font</font>
+                        <font-pen>white-pen</font-pen>
+                    </state-focus>
+                </enabled>
+                <disabled>
+                    <state-normal>
+                        <frame>combo-frame</frame>
+                        <frame-brush>disable-color-brush</frame-brush>
+                        <font-pen>gray-b0-pen</font-pen>
+                        <font>regular-font</font>
+                    </state-normal>
+                </disabled>
+            </combo-box>
+        </combo-boxes>
+
+        <progress-bar>
+            <bar glow-effect="1">
+                <effect>
+                    <!-- Is preferably to apply a margin to the brush-->
+                    <x-offset>0</x-offset>
+                    <y-offset>0</y-offset>
+                    <effect-color>main-color</effect-color>
+                    <blur-radius>20</blur-radius>
+                </effect>
+
+                <frame>progress-bar-frame</frame>
+                <disabled-groove-brush>disable-text-brush</disabled-groove-brush>
+                <disable-bar-brush>disable-color-brush</disable-bar-brush>
+                <groove-brush>progress-bar-brush</groove-brush>
+                <bar-brush>main-darken-40p-des-20p-brush</bar-brush>
+
+            </bar>
+
+            <bar name="progressBar_6" glow-effect="1">
+                <effect>
+                    <!-- Is preferably to apply a margin to the brush-->
+                    <x-offset>0</x-offset>
+                    <y-offset>0</y-offset>
+                    <effect-color>glow-green</effect-color>
+                    <blur-radius>20</blur-radius>
+                </effect>
+
+                <frame>progress-bar-frame</frame>
+                <disabled-groove-brush>disable-text-brush</disabled-groove-brush>
+                <disable-bar-brush>disable-color-brush</disable-bar-brush>
+                <groove-brush>progress-bar-green-brush</groove-brush>
+                <bar-brush>main-darken-40p-des-20p-brush</bar-brush>
+
+            </bar>
+        </progress-bar>
+
+        <headers>
+            <header orientation="horizontal">
+                <empty-area-brush>header-empty-area-brush</empty-area-brush>
+                <empty-area-disable-brush>black-brush</empty-area-disable-brush>
+                <background-brush>main-darken-20p-brush</background-brush>
+                <hover-brush>accent-brush</hover-brush>
+                <sunken-brush>main-lighten-10p-brush</sunken-brush>
+                <disable-background-brush>disable-color-brush</disable-background-brush>
+                <section-lines visible="true" pen="black-pen" disable-pen="disable-text-pen">
+                    <margins>
+                        <top>2</top>
+                        <bottom>2</bottom>
+                    </margins>
+                </section-lines>
+                <disable-font-pen>disable-text-pen</disable-font-pen>
+                <disable-font>regular-font</disable-font>
+                <font-pen>black-pen</font-pen>
+                <font>regular-font</font>
+                <hover-pen>black-pen</hover-pen>
+                <hover-font>regular-font-medium</hover-font>
+                <sunken-pen>black-pen</sunken-pen>
+                <sunken-font>regular-font-demi</sunken-font>
+            </header>
+            <header orientation="vertical">
+                <empty-area-brush>header-empty-area-brush</empty-area-brush>
+                <empty-area-disable-brush>black-brush</empty-area-disable-brush>
+                <background-brush>main-darken-20p-brush</background-brush>
+                <hover-brush>accent-brush</hover-brush>
+                <sunken-brush>main-lighten-10p-brush</sunken-brush>
+                <disable-background-brush>disable-color-brush</disable-background-brush>
+                <section-lines visible="true" pen="black-pen" disable-pen="disable-text-pen">
+                    <margins>
+                        <right>2</right>
+                        <left>2</left>
+                    </margins>
+                </section-lines>
+                <disable-font-pen>disable-text-pen</disable-font-pen>
+                <disable-font>regular-font</disable-font>
+                <font-pen>black-pen</font-pen>
+                <font>regular-font</font>
+                <hover-pen>black-pen</hover-pen>
+                <hover-font>regular-font-medium</hover-font>
+                <sunken-pen>black-pen</sunken-pen>
+                <sunken-font>regular-font-demi</sunken-font>
+            </header>
+        </headers>
+
+        <tables>
+            <table mouse-over-item="true" grid-lines="false" pane-brush="">
+                <!-- The grid pen only supports a pen with a solid pattern in the brush-->
+                <grid-line-pen>table-grid-pen</grid-line-pen>
+                <widget-background-brush>main-darken-85p-des-50p-brush</widget-background-brush>
+                <item-background-brush>table-view-item-background-brush</item-background-brush>
+                <item-alternate-background-brush>table-view-alternate-item-background-brush</item-alternate-background-brush>
+                <widget-disabled-background-brush>main-darken-30p-des-30p-brush</widget-disabled-background-brush>
+                <item-hover-brush>main-darken-85p-des-50p-lighten-15p-brush</item-hover-brush>
+                <item-selected-brush>main-darken-85p-des-50p-lighten-20p-brush</item-selected-brush>
+                <item-focus-brush>main-darken-85p-des-50p-lighten-25p-brush</item-focus-brush>
+                <font>regular-font</font>
+                <font-pen>white-pen</font-pen>
+                <hover-font>regular-font-medium</hover-font>
+                <hover-pen>white-pen</hover-pen>
+                <focus-font>regular-font-demi</focus-font>
+                <focus-pen>white-pen</focus-pen>
+                <selected-font>regular-font-medium</selected-font>
+                <selected-pen>white-pen</selected-pen>
+                <disabled-font>regular-font</disabled-font>
+                <disabled-font-pen>disable-text-pen</disabled-font-pen>
+                <item-margins>
+                    <margins>
+                        <left>5</left>
+                    </margins>
+                </item-margins>
+                <!-- If the tables uses check boxes, it is necessary to provide a generic check-box node-->
+            </table>
+
+            <table copy="*" name="treeWidget">
+                <item-background-brush>main-darken-85p-des-50p-brush</item-background-brush>
+                <font>regular-font-tree</font>
+                <focus-font>regular-font-demi-tree</focus-font>
+                <selected-font>regular-font-medium-tree</selected-font>
+                <disabled-font>regular-font-tree</disabled-font>
+            </table>
+        </tables>
+
+        <check-boxes>
+            <box>
+                <animations>
+                    <animation hint="color" to="unchecked-background" start="main-darken-40p-des-20p" end="main-darken-30p-des-20p">
+                        <checkbox-hover-in>check-box-hover-in</checkbox-hover-in>
+                        <checkbox-hover-out>check-box-hover-out</checkbox-hover-out>
+                    </animation>
+
+                    <animation hint="color" to="unchecked-border" start="main-color" end="main-lighten-15p">
+                        <checkbox-hover-in>check-box-hover-in</checkbox-hover-in>
+                        <checkbox-hover-out>check-box-hover-out</checkbox-hover-out>
+                    </animation>
+
+                    <animation hint="color" to="checked-background" start="main-color" end="main-lighten-10p">
+                        <checkbox-hover-in>check-box-hover-in</checkbox-hover-in>
+                        <checkbox-hover-out>check-box-hover-out</checkbox-hover-out>
+                    </animation>
+
+                    <animation hint="color" to="checked-border" start="main-color" end="main-lighten-15p">
+                        <checkbox-hover-in>check-box-hover-in</checkbox-hover-in>
+                        <checkbox-hover-out>check-box-hover-out</checkbox-hover-out>
+                    </animation>
+
+                </animations>
+
+                <enabled>
+                    <state-normal>
+                        <!--<widget-frame>check-box-frame</widget-frame>
+                        <widget-frame-brush>black-brush</widget-frame-brush>
+                        <widget-frame-pen>white-pen</widget-frame-pen>-->
+
+                        <unchecked-box-frame>check-box-indicator-frame</unchecked-box-frame>
+                        <unchecked-box-frame-brush>main-darken-40p-des-20p-brush</unchecked-box-frame-brush>
+                        <unchecked-box-frame-pen>unchecked-box-pen</unchecked-box-frame-pen>
+                        <unchecked-box-indicator-pen>check-box-indicator-pen</unchecked-box-indicator-pen>
+
+
+                        <checked-box-frame>check-box-indicator-frame</checked-box-frame>
+                        <checked-box-frame-brush>accent-brush</checked-box-frame-brush>
+                        <checked-box-frame-pen>checked-box-pen</checked-box-frame-pen>
+                        <checked-box-indicator-pen>check-box-indicator-pen</checked-box-indicator-pen>
+
+                        <undefined-box-frame>check-box-indicator-frame</undefined-box-frame>
+                        <undefined-box-frame-brush>accent-brush</undefined-box-frame-brush>
+                        <undefined-box-frame-pen>checked-box-pen</undefined-box-frame-pen>
+                        <undefined-box-indicator-pen>check-box-indicator-pen</undefined-box-indicator-pen>
+
+                        <unchecked-font>regular-font</unchecked-font>
+                        <unchecked-font-pen>white-pen</unchecked-font-pen>
+
+                        <checked-font>regular-font</checked-font>
+                        <checked-font-pen>white-pen</checked-font-pen>
+
+                        <undefined-font>regular-font</undefined-font>
+                        <undefined-font-pen>white-pen</undefined-font-pen>
+
+                    </state-normal>
+
+                    <state-focus>
+                        <!--
+                        <widget-frame>check-box-frame</widget-frame>
+                        <widget-frame-brush>accent-brush</widget-frame-brush>
+                        <widget-frame-pen>checked-box-pen</widget-frame-pen>-->
+
+                        <unchecked-box-frame>check-box-indicator-frame</unchecked-box-frame>
+                        <unchecked-box-frame-brush>black-brush</unchecked-box-frame-brush>
+                        <unchecked-box-frame-pen>checked-box-focus-pen</unchecked-box-frame-pen>
+                        <unchecked-box-indicator-pen>check-box-indicator-pen</unchecked-box-indicator-pen>
+
+
+                        <checked-box-frame>check-box-indicator-frame</checked-box-frame>
+                        <checked-box-frame-brush>main-lighten-10p-brush</checked-box-frame-brush>
+                        <checked-box-frame-pen>checked-box-focus-pen</checked-box-frame-pen>
+                        <checked-box-indicator-pen>check-box-indicator-pen</checked-box-indicator-pen>
+
+                        <undefined-box-frame>check-box-indicator-frame</undefined-box-frame>
+                        <undefined-box-frame-brush>main-lighten-10p-brush</undefined-box-frame-brush>
+                        <undefined-box-frame-pen>checked-box-hover-pen</undefined-box-frame-pen>
+                        <undefined-box-indicator-pen>check-box-indicator-pen</undefined-box-indicator-pen>
+
+                        <unchecked-font>regular-font-demi</unchecked-font>
+                        <unchecked-font-pen>white-pen</unchecked-font-pen>
+
+                        <checked-font>regular-font-demi</checked-font>
+                        <checked-font-pen>white-pen</checked-font-pen>
+
+                        <undefined-font>regular-font-demi</undefined-font>
+                        <undefined-font-pen>white-pen</undefined-font-pen>
+
+                    </state-focus>
+
+                    <state-hover>
+                        <!--<widget-frame>check-box-frame</widget-frame>
+                        <widget-frame-brush>progress-bar-brush</widget-frame-brush>
+                        <widget-frame-pen>checked-box-pen</widget-frame-pen>-->
+
+                        <unchecked-box-frame>check-box-indicator-frame</unchecked-box-frame>
+                        <unchecked-box-frame-brush>main-darken-30p-des-20p-brush</unchecked-box-frame-brush>
+                        <unchecked-box-frame-pen>checked-box-hover-pen</unchecked-box-frame-pen>
+                        <unchecked-box-frame-pen>checked-box-hover-pen</unchecked-box-frame-pen>
+                        <unchecked-box-indicator-pen>check-box-indicator-pen</unchecked-box-indicator-pen>
+
+                        <checked-box-frame>check-box-indicator-frame</checked-box-frame>
+                        <checked-box-frame-brush>main-lighten-10p-brush</checked-box-frame-brush>
+                        <checked-box-frame-pen>checked-box-hover-pen</checked-box-frame-pen>
+                        <checked-box-indicator-pen>check-box-indicator-pen</checked-box-indicator-pen>
+
+                        <undefined-box-frame>check-box-indicator-frame</undefined-box-frame>
+                        <undefined-box-frame-brush>main-lighten-10p-brush</undefined-box-frame-brush>
+                        <undefined-box-frame-pen>checked-box-hover-pen</undefined-box-frame-pen>
+                        <undefined-box-indicator-pen>check-box-indicator-pen</undefined-box-indicator-pen>
+
+                        <unchecked-font>regular-font-medium</unchecked-font>
+                        <unchecked-font-pen>white-pen</unchecked-font-pen>
+
+                        <checked-font>regular-font-medium</checked-font>
+                        <checked-font-pen>white-pen</checked-font-pen>
+
+                        <undefined-font>regular-font-medium</undefined-font>
+                        <undefined-font-pen>white-pen</undefined-font-pen>
+
+                    </state-hover>
+                </enabled>
+                <disabled>
+                    <state-normal>
+                        <frame>check-box-frame</frame>
+                        <frame-brush>disable-color-brush</frame-brush>
+                        <font-pen>gray-b0-pen</font-pen>
+                        <font>regular-font</font>
+
+                        <unchecked-font>regular-font-medium</unchecked-font>
+                        <unchecked-font-pen>gray-b0-pen</unchecked-font-pen>
+
+                        <checked-font>regular-font-medium</checked-font>
+                        <checked-font-pen>gray-b0-pen</checked-font-pen>
+
+                        <undefined-font>regular-font-medium</undefined-font>
+                        <undefined-font-pen>gray-b0-pen</undefined-font-pen>
+
+                        <unchecked-box-frame>check-box-indicator-frame</unchecked-box-frame>
+                        <unchecked-box-frame-brush>gray-78-brush</unchecked-box-frame-brush>
+                        <unchecked-box-frame-pen>gray-78-pen</unchecked-box-frame-pen>
+                        <unchecked-box-indicator-pen>gray-b0-pen</unchecked-box-indicator-pen>
+
+
+                        <checked-box-frame>check-box-indicator-frame</checked-box-frame>
+                        <checked-box-frame-brush>gray-78-brush</checked-box-frame-brush>
+                        <checked-box-frame-pen>gray-78-pen</checked-box-frame-pen>
+                        <checked-box-indicator-pen>gray-b0-pen</checked-box-indicator-pen>
+
+                        <undefined-box-frame>check-box-indicator-frame</undefined-box-frame>
+                        <undefined-box-frame-brush>gray-78-brush</undefined-box-frame-brush>
+                        <undefined-box-frame-pen>gray-78-pen</undefined-box-frame-pen>
+                        <undefined-box-indicator-pen>gray-b0-pen</undefined-box-indicator-pen>
+
+                    </state-normal>
+                </disabled>
+
+            </box>
+
+
+            <box name="tableWidget">
+                <enabled>
+                    <state-normal>
+                        <widget-frame>check-box-frame</widget-frame>
+                        <widget-frame-brush>white-brush</widget-frame-brush>
+                        <widget-frame-pen>checked-box-pen</widget-frame-pen>
+
+                        <unchecked-box-frame>check-box-indicator-frame</unchecked-box-frame>
+                        <unchecked-box-frame-brush>main-darken-40p-des-20p-brush</unchecked-box-frame-brush>
+                        <unchecked-box-frame-pen>unchecked-box-pen</unchecked-box-frame-pen>
+
+                        <checked-box-frame>check-box-indicator-frame</checked-box-frame>
+                        <checked-box-frame-brush>accent-brush</checked-box-frame-brush>
+                        <checked-box-frame-pen>checked-box-pen</checked-box-frame-pen>
+                        <checked-box-indicator-pen>check-box-indicator-pen</checked-box-indicator-pen>
+
+                        <undefined-box-frame>check-box-indicator-frame</undefined-box-frame>
+                        <undefined-box-frame-brush>accent-brush</undefined-box-frame-brush>
+                        <undefined-box-frame-pen>checked-box-pen</undefined-box-frame-pen>
+                        <undefined-box-indicator-pen>check-box-indicator-pen</undefined-box-indicator-pen>
+                    </state-normal>
+
+                    <state-hover>
+                        <widget-frame>check-box-frame</widget-frame>
+                        <widget-frame-brush>white-brush</widget-frame-brush>
+                        <widget-frame-pen>checked-box-pen</widget-frame-pen>
+
+
+                        <unchecked-box-frame>check-box-indicator-frame</unchecked-box-frame>
+                        <unchecked-box-frame-brush>main-darken-30p-des-20p-brush</unchecked-box-frame-brush>
+                        <unchecked-box-frame-pen>checked-box-hover-pen</unchecked-box-frame-pen>
+
+                        <checked-box-frame>check-box-indicator-frame</checked-box-frame>
+                        <checked-box-frame-brush>main-lighten-10p-brush</checked-box-frame-brush>
+                        <checked-box-frame-pen>checked-box-hover-pen</checked-box-frame-pen>
+                        <checked-box-indicator-pen>check-box-indicator-pen</checked-box-indicator-pen>
+
+                        <undefined-box-frame>check-box-indicator-frame</undefined-box-frame>
+                        <undefined-box-frame-brush>main-lighten-10p-brush</undefined-box-frame-brush>
+                        <undefined-box-frame-pen>checked-box-hover-pen</undefined-box-frame-pen>
+                        <undefined-box-indicator-pen>check-box-indicator-pen</undefined-box-indicator-pen>
+                    </state-hover>
+
+                    <state-focus>
+                        <widget-frame>check-box-frame</widget-frame>
+                        <widget-frame-brush>white-brush</widget-frame-brush>
+                        <widget-frame-pen>checked-box-pen</widget-frame-pen>
+
+                        <unchecked-box-frame>check-box-indicator-frame</unchecked-box-frame>
+                        <unchecked-box-frame-brush>black-brush</unchecked-box-frame-brush>
+                        <unchecked-box-frame-pen>checked-box-hover-pen</unchecked-box-frame-pen>
+
+                        <checked-box-frame>check-box-indicator-frame</checked-box-frame>
+                        <checked-box-frame-brush>main-lighten-10p-brush</checked-box-frame-brush>
+                        <checked-box-frame-pen>checked-box-focus-pen</checked-box-frame-pen>
+                        <checked-box-indicator-pen>check-box-indicator-pen</checked-box-indicator-pen>
+
+                        <undefined-box-frame>check-box-indicator-frame</undefined-box-frame>
+                        <undefined-box-frame-brush>main-lighten-10p-brush</undefined-box-frame-brush>
+                        <undefined-box-frame-pen>checked-box-hover-pen</undefined-box-frame-pen>
+                        <undefined-box-indicator-pen>check-box-indicator-pen</undefined-box-indicator-pen>
+                    </state-focus>
+
+                </enabled>
+                <disabled>
+                    <state-normal>
+                        <frame>check-box-frame</frame>
+                        <frame-brush>disable-color-brush</frame-brush>
+                        <font-pen>gray-b0-pen</font-pen>
+                        <font>regular-font</font>
+                    </state-normal>
+                </disabled>
+            </box>
+        </check-boxes>
+
+        <tool-buttons>
+            <button>
+                <animations>
+                    <animation hint="color" to="background" start="main-color" end="main-lighten-25p">
+                        <hover-in>hover-enter</hover-in>
+                        <hover-out>hover-exit</hover-out>
+                    </animation>
+                </animations>
+
+                <enabled>
+                    <state-normal>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>accent-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-normal>
+                    <state-hover>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>main-lighten-25p-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-hover>
+                    <state-focus>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>accent-brush</frame-brush>
+                        <frame-pen>main-darken-15p-def-btn-pen</frame-pen>
+                        <font>button-focus-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-focus>
+                    <state-pressed>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>main-lighten-15p-brush</frame-brush>
+                        <font>button-focus-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-pressed>
+                </enabled>
+
+                <disabled>
+                    <state-normal>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>disable-color-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>disable-text-pen</font-pen>
+                    </state-normal>
+                </disabled>
+            </button>
+        </tool-buttons>
+
+        <groupbox>
+            <box>
+                <frame>group-box-frame</frame>
+                <contents-brush>main-dark-lighten-3p-brush</contents-brush>
+                <header-brush>main-dark-lighten-6p-brush</header-brush>
+                <header-height>25</header-height>
+                <header-indicator-width>1</header-indicator-width>
+                <header-indicator-brush>accent-brush</header-indicator-brush>
+                <header-indicator-brush-disabled>disable-color-brush</header-indicator-brush-disabled>
+                <font>group-box-font</font>
+                <font-pen>white-pen</font-pen>
+                <font-disabled>group-box-font</font-disabled>
+                <font-pen-disable>disable-text-pen</font-pen-disable>
+            </box>
+        </groupbox>
+
+
     </ui-elements>
+
 
     <!--
     Usually all elements inherit properties from the ui-elements
     However, custom widgets can have more properties and animations and or override their parent behavior and geometry,
     Usually this custom widgets are implemented in the CUI (Centaur User Interface) library
     -->
-    <ui>
-        <element name="exchange-name" parent="button">
-        </element>
-    </ui>
+
 </theme>
