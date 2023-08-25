@@ -84,6 +84,8 @@ void LoginDialog::onAccept() noexcept
 
     if (!_impl->tfaMode && _impl->pswMode)
     {
+        ui()->passwordEdit->setFocus();
+
         if (registeredPassword != hashedPassword)
         {
             ui()->errLabel->setText(tr("Wrong password"));
@@ -101,8 +103,8 @@ void LoginDialog::onAccept() noexcept
 
     if (!_impl->pswMode && !_impl->tfaMode)
     {
+        ui()->userEdit->setFocus();
         // Normal mode
-
 #ifndef TEST_LOGIN_MODE // Avoid do all the testing
         if (ui()->userEdit->text() != registeredUser)
         {
@@ -169,6 +171,8 @@ void LoginDialog::onAccept() noexcept
 
     if (_impl->tfaMode)
     {
+        ui()->tfaEdit->setFocus();
+        
         if (g_globals->session.userTFA.isEmpty())
         {
             if (registeredPassword != registeredUser)
