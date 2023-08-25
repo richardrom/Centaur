@@ -79,13 +79,8 @@ int main(int argc, char *argv[])
            "spaces replaced by '-' and #2 are the first 8 characters of the uuid")
         ->required()
         ->check(CLI::ExistingPath);
-    app.add_flag("-t,--theme",
-        pl_theme,
-        "Indicates that the plugin is a theme plugin");
-    app.add_option("-e,--extra",
-           extra_files,
-           "A set of extra files that will be included in the package")
-        ->check(CLI::ExistingFile);
+    app.add_flag("-t,--theme", pl_theme, "Indicates that the plugin is a theme plugin");
+    app.add_option("-e,--extra", extra_files, "A set of extra files that will be included in the package")->check(CLI::ExistingFile);
 
     CLI11_PARSE(app, argc, argv)
 
@@ -311,5 +306,5 @@ void add_extra_file(const std::string &file, zip_t *z_archive) noexcept
         return;
     }
 
-    zip_set_file_compression(z_archive, static_cast<zip_uint64_t>(index), ZIP_CM_DEFLATE, 7);
+    zip_set_file_compression(z_archive, static_cast<zip_uint64_t>(index), ZIP_CM_DEFLATE, compressionValueLevel);
 }
