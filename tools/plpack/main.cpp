@@ -50,7 +50,13 @@ int main(int argc, char *argv[])
 
     bool pl_protected = false;
     bool pl_theme     = false;
-    std::string pl_name, pl_version, pl_uuid, pl_man, pl_min, pl_lib, pl_out_path;
+    std::string pl_name;
+    std::string pl_version;
+    std::string pl_uuid;
+    std::string pl_man;
+    std::string pl_min;
+    std::string pl_lib;
+    std::string pl_out_path;
 
     std::vector<std::string> extra_files;
 
@@ -58,37 +64,19 @@ int main(int argc, char *argv[])
         {"0.1.0", cui_version}
     };
 
-    app.add_option("-n,--name",
-           pl_name,
-           "Name of the plugin")
-        ->required();
-    app.add_option("-v,--version",
-           pl_version,
-           "Version of the plugin")
-        ->required();
-    app.add_option("-u,--uuid",
-           pl_uuid,
-           "Plugin identification string")
-        ->required();
-    app.add_option("-m,--man",
-           pl_man,
-           "Plugin Developer")
-        ->required();
-    app.add_option("-i,--min",
-           pl_min,
-           "Minimum UI version, if not specified, plpack will use the must recent version internally")
+    app.add_option("-n,--name", pl_name, "Name of the plugin")->required();
+    app.add_option("-v,--version", pl_version, "Version of the plugin")->required();
+    app.add_option("-u,--uuid", pl_uuid, "Plugin identification string")->required();
+    app.add_option("-m,--man", pl_man, "Plugin Developer")->required();
+    app.add_option("-i,--min", pl_min, "Minimum UI version, if not specified, plpack will use the must recent version internally")
         ->transform(CLI::CheckedTransformer(ui_versions, CLI::ignore_case));
-    app.add_option("-l,--lib",
-           pl_lib,
-           "The path where the actual plugin file is located. Beware that plpack will not check if it's a valid plugin")
+    app.add_option("-l,--lib", pl_lib, "The path where the actual plugin file is located. Beware that plpack will not check if it's a valid plugin")
         ->required()
         ->check(CLI::ExistingFile);
-    app.add_flag("-p",
-        pl_protected,
-        "Indicate that the plugin might store sensitive data that shall be encrypted");
-    app.add_option("-o,--out",
-           pl_out_path,
-           "Output path for the resulting file. The output file name will have the format {#1}-{#2}.cpk. Where #1 is the name with spaces replaced by '-' and #2 are the first 8 characters of the uuid")
+    app.add_flag("-p", pl_protected, "Indicate that the plugin might store sensitive data that shall be encrypted");
+    app.add_option("-o,--out", pl_out_path,
+           "Output path for the resulting file. The output file name will have the format {#1}-{#2}.cpk. Where #1 is the name with "
+           "spaces replaced by '-' and #2 are the first 8 characters of the uuid")
         ->required()
         ->check(CLI::ExistingPath);
     app.add_flag("-t,--theme",
@@ -105,14 +93,12 @@ int main(int argc, char *argv[])
 
     auto pos = fileName.find(' ');
 
-    while (pos != std::string::npos)
-    {
+    while (pos != std::string::npos) {
         fileName.replace(pos, 1, "-");
         pos = fileName.find(' ', pos);
     }
 
-    try
-    {
+    try {
 #if defined(__clang__) || defined(__GNUC__)
         C_USED static cen::uuid uid { pl_uuid, false };
 #else
@@ -122,11 +108,8 @@ int main(int argc, char *argv[])
             (void)uid;
         } while (false);
 #endif
-    } catch (const std::exception &ex)
-    {
-        fmt::print("{}: {}",
-            fmt::format(fmt::fg(fmt::color::red), "error"),
-            ex.what());
+    } catch (const std::exception &ex) {
+        fmt::print("{}: {}", fmt::format(fmt::fg(fmt::color::red), "error"), ex.what());
         return EXIT_FAILURE;
     }
 
@@ -135,19 +118,15 @@ int main(int argc, char *argv[])
     int zip_error    = ZIP_ER_OK;
     auto zip_archive = zip_open(fmt::format("{}/{}.cpk", pl_out_path, fileName).c_str(), ZIP_CREATE | ZIP_TRUNCATE, &zip_error);
 
-    if (zip_error != ZIP_ER_OK)
-    {
-        fmt::print("{} ({}): can not create the output file",
-            fmt::format(fmt::fg(fmt::color::red), "error"),
-            zip_error);
+    if (zip_error != ZIP_ER_OK) {
+        fmt::print("{} ({}): can not create the output file", fmt::format(fmt::fg(fmt::color::red), "error"), zip_error);
         return EXIT_FAILURE;
     }
 
     fmt::print("Calculating checksum...\n");
     auto sha224 = add_library_file(pl_lib, zip_archive);
 
-    for (const auto &extras : extra_files)
-        add_extra_file(extras, zip_archive);
+    for (const auto &extras : extra_files) add_extra_file(extras, zip_archive);
 
     if (sha224.empty())
         return EXIT_FAILURE;
@@ -168,10 +147,8 @@ int main(int argc, char *argv[])
 
     auto json_source = zip_source_buffer(zip_archive, json.c_str(), json.size(), 0);
 
-    if (json_source == nullptr)
-    {
-        fmt::print("{}: JSON-metadata file was not added",
-            fmt::format(fmt::fg(fmt::color::red), "error"));
+    if (json_source == nullptr) {
+        fmt::print("{}: JSON-metadata file was not added", fmt::format(fmt::fg(fmt::color::red), "error"));
 
         zip_close(zip_archive);
         return EXIT_FAILURE;
@@ -179,10 +156,8 @@ int main(int argc, char *argv[])
 
     auto json_index = zip_file_add(zip_archive, "plugin.json", json_source, ZIP_FL_ENC_UTF_8);
 
-    if (json_index == -1)
-    {
-        fmt::print("{}: JSON-metadata file was not indexed",
-            fmt::format(fmt::fg(fmt::color::red), "error"));
+    if (json_index == -1) {
+        fmt::print("{}: JSON-metadata file was not indexed", fmt::format(fmt::fg(fmt::color::red), "error"));
 
         zip_close(zip_archive);
         return EXIT_FAILURE;
@@ -191,10 +166,8 @@ int main(int argc, char *argv[])
 
     fmt::print("Creating package...\n");
     auto z_close = zip_close(zip_archive);
-    if (z_close == -1)
-    {
-        fmt::print("{}: Package coult not be created",
-            fmt::format(fmt::fg(fmt::color::red), "error"));
+    if (z_close == -1) {
+        fmt::print("{}: Package coult not be created", fmt::format(fmt::fg(fmt::color::red), "error"));
         return EXIT_FAILURE;
     }
 
@@ -228,18 +201,15 @@ std::string add_library_file(const std::string &file, zip_t *z_archive) noexcept
     auto size = std::filesystem::file_size(file);
 
     std::ifstream stream(file, std::ios::binary);
-    if (stream.is_open())
-    {
+    if (stream.is_open()) {
         auto file_data = static_cast<unsigned char *>(malloc(size + 1));
         stream.read(reinterpret_cast<char *>(file_data), static_cast<std::streamsize>(size));
         stream.close();
 
         const auto sha224 = SHA224(file_data, size, nullptr);
 
-        if (sha224 == nullptr)
-        {
-            fmt::print("{}: could not calculate SHA224",
-                fmt::format(fmt::fg(fmt::color::red), "error"));
+        if (sha224 == nullptr) {
+            fmt::print("{}: could not calculate SHA224", fmt::format(fmt::fg(fmt::color::red), "error"));
             free(file_data);
             return {};
         }
@@ -247,19 +217,13 @@ std::string add_library_file(const std::string &file, zip_t *z_archive) noexcept
         std::string sh224_string;
         sh224_string.reserve(SHA224_DIGEST_LENGTH);
 
-        for (auto i = 0u; i < hashSize; ++i)
-        {
-            sh224_string += toString[sha224[i]];
-        }
+        for (auto i = 0u; i < hashSize; ++i) { sh224_string += toString[sha224[i]]; }
 
-        fmt::print("SHA224: {}\n",
-            fmt::format(fmt::fg(fmt::color::dodger_blue), "{}", sh224_string));
+        fmt::print("SHA224: {}\n", fmt::format(fmt::fg(fmt::color::dodger_blue), "{}", sh224_string));
 
         auto lib_source = zip_source_buffer(z_archive, file_data, size, 0);
-        if (lib_source == nullptr)
-        {
-            fmt::print("{}: plugin file was not added",
-                fmt::format(fmt::fg(fmt::color::red), "error"));
+        if (lib_source == nullptr) {
+            fmt::print("{}: plugin file was not added", fmt::format(fmt::fg(fmt::color::red), "error"));
 
             free(file_data);
             zip_close(z_archive);
@@ -268,10 +232,8 @@ std::string add_library_file(const std::string &file, zip_t *z_archive) noexcept
 
         auto lib_index = zip_file_add(z_archive, std::filesystem::path(file).filename().c_str(), lib_source, ZIP_FL_ENC_UTF_8);
 
-        if (lib_index == -1)
-        {
-            fmt::print("{}: plugin file was not indexed",
-                fmt::format(fmt::fg(fmt::color::red), "error"));
+        if (lib_index == -1) {
+            fmt::print("{}: plugin file was not indexed", fmt::format(fmt::fg(fmt::color::red), "error"));
 
             free(file_data);
             zip_close(z_archive);
@@ -284,23 +246,20 @@ std::string add_library_file(const std::string &file, zip_t *z_archive) noexcept
         return sh224_string;
     }
     else
-        fmt::print("{}: could not open the file",
-            fmt::format(fmt::fg(fmt::color::red), "error"));
+        fmt::print("{}: could not open the file", fmt::format(fmt::fg(fmt::color::red), "error"));
 
     return {};
 }
 
 void add_extra_file(const std::string &file, zip_t *z_archive) noexcept
 {
-    static zip_int64_t extraZipPath = -1;
+    static constinit zip_uint32_t compressionValueLevel = 7;
+    static zip_int64_t extraZipPath                     = -1;
 
-    if (extraZipPath == -1)
-    {
+    if (extraZipPath == -1) {
         extraZipPath = zip_dir_add(z_archive, "extras", zip_flags_t(ZIP_FL_ENC_UTF_8));
-        if (extraZipPath == -1)
-        {
-            fmt::print("{}: failed to add the extra directory to the zip archive",
-                fmt::format(fmt::fg(fmt::color::red), "error"));
+        if (extraZipPath == -1) {
+            fmt::print("{}: failed to add the extra directory to the zip archive", fmt::format(fmt::fg(fmt::color::red), "error"));
             zip_close(z_archive);
             return;
         }
@@ -308,26 +267,21 @@ void add_extra_file(const std::string &file, zip_t *z_archive) noexcept
 
     auto size = std::filesystem::file_size(file);
     std::ifstream stream(file, std::ios::binary);
-    if (!stream.is_open())
-    {
-        fmt::print("{}: failed to read the file '{}' specified as an extra parameter",
-            fmt::format(fmt::fg(fmt::color::red), "error"), file);
+    if (!stream.is_open()) {
+        fmt::print("{}: failed to read the file '{}' specified as an extra parameter", fmt::format(fmt::fg(fmt::color::red), "error"),
+            file);
         zip_close(z_archive);
         return;
     }
 
     struct wrapper
     {
-        explicit wrapper(uint64_t size)
-        {
-            file_data = static_cast<unsigned char *>(malloc(size + 1));
-        }
+        explicit wrapper(uint64_t size) { file_data = static_cast<unsigned char *>(malloc(size + 1)); }
+
         wrapper(wrapper &&)      = delete;
         wrapper(const wrapper &) = delete;
-        ~wrapper()
-        {
-            free(file_data);
-        }
+
+        ~wrapper() { free(file_data); }
 
     public:
         unsigned char *file_data { nullptr };
@@ -337,10 +291,8 @@ void add_extra_file(const std::string &file, zip_t *z_archive) noexcept
     stream.close();
 
     auto lib_source = zip_source_buffer(z_archive, wrp.file_data, size, 0);
-    if (lib_source == nullptr)
-    {
-        fmt::print("{}: plugin file was not added",
-            fmt::format(fmt::fg(fmt::color::red), "error"));
+    if (lib_source == nullptr) {
+        fmt::print("{}: plugin file was not added", fmt::format(fmt::fg(fmt::color::red), "error"));
 
         zip_close(z_archive);
         return;
@@ -352,10 +304,8 @@ void add_extra_file(const std::string &file, zip_t *z_archive) noexcept
 
     auto index = zip_file_add(z_archive, fileNameZip.c_str(), lib_source, ZIP_FL_ENC_UTF_8);
 
-    if (index == -1)
-    {
-        fmt::print("{}: plugin file was not indexed",
-            fmt::format(fmt::fg(fmt::color::red), "error"));
+    if (index == -1) {
+        fmt::print("{}: plugin file was not indexed", fmt::format(fmt::fg(fmt::color::red), "error"));
 
         zip_close(z_archive);
         return;
