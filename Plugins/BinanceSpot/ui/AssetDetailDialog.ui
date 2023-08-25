@@ -17,39 +17,164 @@
    <string>Asset detail</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QLineEdit {
-    border: 0px;
-    background-color: rgb(25, 25, 25);
-    border-radius: 5px;
-    min-height: 25px;
-    padding: 0 0 0 10;
-}
-
-
-
-QLineEdit:hover {
-    background-color: rgb(35, 35, 35);
-}
-
-QLineEdit:focus {
-    background-color: rgb(45, 45, 45);
-}
-
-
-QDialog{
-background-color: rgb(22,22,22);
-border-radius: 2px;
-border-left: 0px;
-border-right: 0px;
-border-top: 0px;
-border-bottom: 0px;
+   <string notr="true">QDialog{
+background-color:  rgb(3,12,19);
+border: 0px;
+border-top-left-radius: 0px;
+border-top-right-radius: 0px;
+border-bottom-left-radius: 0px;
+border-bottom-right-radius: 0px;
 }
 
 QLabel{
-border:0px;
+font-size:  14px;
+}
+QLabel#serverLabel{
+font-size:  25px;
 }
 
-/*border-left: 20px solid */
+
+QPushButton{
+font-size: 14px;
+font-weight: 600;
+color:  #0D3C61;
+border: 0px;
+border-radius:  5px;
+background-color: #2196f3;
+}
+
+QPushButton:default{
+font-size: 14px;
+font-weight: 800;
+color:  #0d3C61;
+border: 0px;
+border-radius:  5px;
+border: 2px solid rgba(144,203,249,100);
+background-color: #2196f3;
+}
+
+
+
+QPushButton:hover, QPushButton:hover:default{
+	background-color:  #339EF4;
+}
+
+QPushButton:pressed{
+background-color:  #68B8F7;
+}
+
+QPushButton:pressed:default{
+background-color:  #68B8F7;
+}
+
+QPushButton:disabled{
+color: #c0c0c0;
+background-color: #9D9EA4;
+}
+
+QLineEdit{
+font-size: 14px;
+border: 0px;
+color: rgb(225,225,255);
+background-color: rgb(63,70,76);
+border-radius:  0px;
+border-bottom: 2px solid  rgb(63,70,76);
+min-height: 25px;
+padding: 0 0 0 5;
+}
+
+
+QLineEdit:hover{
+background-color:  rgb(78,85,90);
+border-bottom: 2px solid #6ec6ff;
+}
+
+QLineEdit:focus{
+color: white;
+background-color:  rgb(94,100,105);
+border-bottom: 2px solid rgb(33,150,243);
+}
+
+QGroupBox {
+	font-size: 14px;
+    background-color: rgb(26,34,40);
+    border-radius: 5px;
+    margin-top: 18px; /* leave space at the top for the title */
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left; /* position at the top center */
+    padding: 0 3px;
+}
+
+QComboBox {
+    border: 1px solid gray;
+    min-width: 6em;
+	font-size: 14px;
+	border: 0px;
+	color: rgb(225,225,255);
+	background-color: rgb(63,70,76);
+	border-radius:  0px;
+	border-bottom: 2px solid  rgb(63,70,76);
+	min-height: 25px;
+	padding: 0 0 0 5;
+}
+
+
+QComboBox:editable {
+    color: black;
+}
+
+
+
+QComboBox::down-arrow {
+    border-image: url(:/ui/global/drop-down) 5 5 5 5 stretch stretch;
+}
+
+QComboBox:hover{
+background-color:  rgb(78,85,90);
+border: 2px solid #6ec6ff;
+}
+
+QComboBox:focus{
+color: white;
+background-color:  rgb(94,100,105);
+border: 2px solid rgb(33,150,243);
+}
+
+QComboBox:editable {
+    background: white;
+}
+
+QComboBox:!editable, QComboBox::drop-down:editable {
+   background-color:  rgb(94,100,105);
+}
+
+/* QComboBox gets the &quot;on&quot; state when the popup is open */
+QComboBox:!editable:on, QComboBox::drop-down:editable:on {
+    background-color: rgb(63,70,76)
+}
+
+QComboBox:on { /* shift the text when the popup opens */
+    padding-top: 3px;
+    padding-left: 4px;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+
+    border-left-width: 1px;
+    border-left-color: darkgray;
+    border-left-style: solid; /* just a single line */
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+}
+
+
+
 </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -99,7 +224,7 @@ border:0px;
        </property>
        <property name="font">
         <font>
-         <pointsize>30</pointsize>
+         <pointsize>-1</pointsize>
         </font>
        </property>
        <property name="text">
@@ -245,7 +370,7 @@ QTextEdit:focus {
        <property name="minimumSize">
         <size>
          <width>100</width>
-         <height>0</height>
+         <height>25</height>
         </size>
        </property>
        <property name="text">
