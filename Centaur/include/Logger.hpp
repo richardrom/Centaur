@@ -26,7 +26,7 @@
 
 struct LogMessage
 {
-    std::size_t date;
+    qint64 date;
     int session;
     CENTAUR_INTERFACE_NAMESPACE::LogLevel level;
     QString user;
@@ -37,26 +37,23 @@ struct LogMessage
 namespace CENTAUR_NAMESPACE
 {
     class CentaurApp;
+
     class CentaurLogger : public CENTAUR_NAMESPACE::interface::ILogger
     {
     public:
         CentaurLogger();
         ~CentaurLogger() override;
 
-    public:
         void run() noexcept;
         void terminate() noexcept;
+
+        void setApplication(CentaurApp *app);
+        void setUser(const QString &user) noexcept;
 
     protected:
         void process(const LogMessage &log) noexcept;
         void dispatch() noexcept;
-
-    public:
-        void setApplication(CentaurApp *app);
-        void setUser(const QString &user);
-
-    protected:
-        void updateSession();
+        void updateSession() noexcept;
 
     public:
         /// \brief Send a log message to the application
@@ -125,6 +122,7 @@ namespace CENTAUR_NAMESPACE
         std::mutex m_dataProtect;
         std::atomic_bool m_terminateSignal { false };
     };
+
     extern CentaurLogger *g_logger;
 } // namespace CENTAUR_NAMESPACE
 

@@ -15,8 +15,6 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 #include <QTranslator>
-#include <fmt/chrono.h>
-#include <fmt/core.h>
 #include <string>
 
 #ifdef __clang__
@@ -33,19 +31,15 @@ CENTAUR_NAMESPACE::CentaurLogger *CENTAUR_NAMESPACE::g_logger { nullptr };
 
 namespace
 {
-    constexpr std::string_view insertDb
-        = { R"(INSERT INTO log (date, session, user, level, source, message) VALUES ('{}', {}, '{}', {}, '{}', '{}'); )" };
+    using namespace Qt::Literals::StringLiterals;
 
-    constexpr std::string_view sessionDb
-        = { R"(SELECT max(session) AS mx FROM log;)" };
+    auto sqlExec(void *, int, char **, char **) -> int
+    {
+        // The database function does not really care about selecting data
+        // We only do inserts
+        return 0;
+    }
 } // namespace
-
-static auto sqlExec(void *, int, char **, char **) -> int
-{
-    // The database function does not really care about selecting data
-    // We only do inserts
-    return 0;
-}
 
 CENTAUR_NAMESPACE::CentaurLogger::CentaurLogger()
 {
@@ -62,8 +56,7 @@ CENTAUR_NAMESPACE::CentaurLogger::~CentaurLogger()
 
 void CENTAUR_NAMESPACE::CentaurLogger::run() noexcept
 {
-    while (!m_terminateSignal)
-    {
+    while (!m_terminateSignal) {
         // Protect Race Conditions
         std::unique_lock<std::mutex> lock { m_dataProtect };
         // Wait for the termination flag or input data
@@ -72,6 +65,7 @@ void CENTAUR_NAMESPACE::CentaurLogger::run() noexcept
         dispatch();
     }
 }
+
 void CENTAUR_NAMESPACE::CentaurLogger::terminate() noexcept
 {
     m_terminateSignal = true;
@@ -82,58 +76,55 @@ void CENTAUR_NAMESPACE::CentaurLogger::process(const LogMessage &log) noexcept
 {
     QMetaObject::invokeMethod(m_app->logDialog(), "onLog",
         Qt::QueuedConnection,
-        Q_ARG(unsigned long long, log.date),
+        Q_ARG(qint64, log.date),
         Q_ARG(int, log.session),
         Q_ARG(int, static_cast<int>(log.level)),
         Q_ARG(QString, log.user),
         Q_ARG(QString, log.source),
         Q_ARG(QString, log.msg));
 
-    const auto thisTime = static_cast<std::time_t>(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+    //  Insert into database
+    const auto query = QString(R"(INSERT INTO log (date, session, user, level, source, message) VALUES ('%1', %2, '%3', %4, '%5', '%6');)")
+                           .arg(QDateTime::fromSecsSinceEpoch(log.date).toString("dd-MM-yyyy hh:mm:ss.zzz"))
+                           .arg(log.session)
+                           .arg(log.user)
+                           .arg(static_cast<int>(log.level))
+                           .arg(log.source, [message = log.msg]() mutable -> QString {
+                               auto colorStarts = message.indexOf("##");
 
-    // Insert into database
-    const auto query = fmt::format(insertDb,
-        fmt::format("{:%d-%m-%Y %H:%M:%S}", *std::localtime(&thisTime)),
-        log.session,
-        log.user.toStdString(),
-        static_cast<int>(log.level),
-        log.source.toStdString(),
-        [message = log.msg]() mutable -> QString {
-            // IExchange plugin found in file: ##F2FEFF#libBinanceSPOT.dylib#
-            auto colorStarts = message.indexOf("##");
+                               while (colorStarts >= 0) {
+                                   const auto color = message.indexOf("#", colorStarts + 2);
+                                   if (color == -1) {
+                                       colorStarts = -1;
+                                       continue;
+                                   }
 
-            while (colorStarts >= 0)
-            {
-                const auto color = message.indexOf("#", colorStarts + 2);
-                if (color == -1)
-                {
-                    colorStarts = -1;
-                    continue;
-                }
+                                   const auto colorEnds = message.indexOf("#", color + 1);
+                                   if (colorEnds == -1) {
+                                       colorStarts = -1;
+                                       continue;
+                                   }
 
-                const auto colorEnds = message.indexOf("#", color + 1);
-                if (colorEnds == -1)
-                {
-                    colorStarts = -1;
-                    continue;
-                }
+                                   message.erase(
+                                       std::next(message.cbegin(), colorEnds),
+                                       std::next(message.cbegin(), (colorEnds + 1)));
+                                   message.erase(
+                                       std::next(message.cbegin(), color),
+                                       std::next(message.cbegin(), color + 1));
+                                   message.erase(
+                                       std::next(message.cbegin(), colorStarts),
+                                       std::next(message.cbegin(), color));
 
-                message.erase(message.begin() + colorEnds, message.begin() + (colorEnds + 1));
-                message.erase(message.begin() + color, message.begin() + color + 1);
-                message.erase(message.begin() + colorStarts, message.begin() + color);
+                                   colorStarts = message.indexOf("##");
+                               }
 
-                colorStarts = message.indexOf("##");
-            }
+                               return message;
+                           }());
 
-            return message;
-        }()
-                                             .toStdString());
+    char *errStr  = nullptr;
+    const int err = sqlite3_exec(m_sql, qPrintable(query), sqlExec, nullptr, &errStr);
 
-    char *errStr;
-    int err = sqlite3_exec(m_sql, query.c_str(), sqlExec, nullptr, &errStr);
-
-    if (err != SQLITE_OK)
-    {
+    if (err != SQLITE_OK) {
         QMetaObject::invokeMethod(m_app->logDialog(), "onLog",
             Qt::QueuedConnection,
             Q_ARG(unsigned long long, log.date),
@@ -146,41 +137,39 @@ void CENTAUR_NAMESPACE::CentaurLogger::process(const LogMessage &log) noexcept
     }
 }
 
-void CENTAUR_NAMESPACE::CentaurLogger::setUser(const QString &user)
+void CENTAUR_NAMESPACE::CentaurLogger::setUser(const QString &user) noexcept
 {
-    std::unique_lock<std::mutex> lock { m_dataProtect };
+    const std::unique_lock<std::mutex> lock { m_dataProtect };
     m_user = user;
 }
 
-void CENTAUR_NAMESPACE::CentaurLogger::updateSession()
+void CENTAUR_NAMESPACE::CentaurLogger::updateSession() noexcept
 {
-    const auto query = fmt::format(sessionDb);
-
+    // Lint on this code is primarily due to the mix of the C-style code in sqlite3 interface
+    // NOLINTBEGIN
     auto callback = [](void *param, int argc, char **data, char **cols) -> int {
         int *session = reinterpret_cast<int *>(param);
-        if (argc == 1 && strcmp(cols[0], "mx") == 0)
-        {
+        if (argc == 1 && strcmp(cols[0], "mx") == 0) {
             *session = std::stoi(data[0]) + 1;
         }
 
         return 0;
     };
 
-    char *errStr;
-    int err = sqlite3_exec(m_sql, sessionDb.data(), callback, reinterpret_cast<void *>(&m_session), &errStr);
+    char *errStr  = nullptr;
+    const int err = sqlite3_exec(m_sql, R"(SELECT max(session) AS mx FROM log;)", callback, reinterpret_cast<void *>(&m_session), &errStr);
 
-    if (err != SQLITE_OK)
-    {
+    if (err != SQLITE_OK) {
         log("internal", interface::LogLevel::error, "Session id was not retrieved");
         sqlite3_free(errStr);
     }
+    // NOLINTEND
 }
 
 void CENTAUR_NAMESPACE::CentaurLogger::dispatch() noexcept
 {
     // Process all queries
-    while (!m_messages.empty())
-    {
+    while (!m_messages.empty()) {
         // Get Data
         const LogMessage msg = m_messages.front();
         // Process Data
@@ -198,23 +187,22 @@ void CENTAUR_NAMESPACE::CentaurLogger::setApplication(CENTAUR_NAMESPACE::Centaur
 
     bool recoverDb = false;
 
-    if (!QFileInfo::exists(logFile))
-    {
-        int iResult = QMessageBox::warning(app,
+    if (!QFileInfo::exists(logFile)) {
+        const int iResult = QMessageBox::warning(app,
             QApplication::tr("Error"),
             QApplication::tr("Could not locate logging file\nWould you like to try to recover?"),
             QMessageBox::Yes | QMessageBox::No);
 
-        if (iResult == QMessageBox::Yes)
+        if (iResult == QMessageBox::Yes) {
             recoverDb = true;
+        }
         else
             throw std::runtime_error("file not located");
     }
 
     QString recoverQuery;
-    if (recoverDb)
-    {
-        QFileInfo fileInformation(logFile);
+    if (recoverDb) {
+        const QFileInfo fileInformation(logFile);
         auto logFileInfoDir = fileInformation.dir();
 
         logFileInfoDir.mkpath(logFileInfoDir.absolutePath());
@@ -228,17 +216,15 @@ void CENTAUR_NAMESPACE::CentaurLogger::setApplication(CENTAUR_NAMESPACE::Centaur
         recoverQuery = text.readAll();
     }
 
-    if (int err = sqlite3_open(logFile.toStdString().c_str(), &m_sql); err != SQLITE_OK)
+    if (const int err = sqlite3_open(logFile.toStdString().c_str(), &m_sql); err != SQLITE_OK)
         throw(std::runtime_error(sqlite3_errstr(err)));
 
-    if (recoverDb)
-    {
-        char *errStr;
-        int err = sqlite3_exec(m_sql, recoverQuery.toStdString().c_str(), sqlExec, nullptr, &errStr);
+    if (recoverDb) {
+        char *errStr  = nullptr;
+        const int err = sqlite3_exec(m_sql, recoverQuery.toStdString().c_str(), sqlExec, nullptr, &errStr);
 
-        if (err != SQLITE_OK)
-        {
-            std::string str { errStr };
+        if (err != SQLITE_OK) {
+            const std::string str { errStr };
             sqlite3_free(errStr);
             throw std::runtime_error(str);
         }
@@ -249,8 +235,8 @@ void CENTAUR_NAMESPACE::CentaurLogger::setApplication(CENTAUR_NAMESPACE::Centaur
 
 void CENTAUR_NAMESPACE::CentaurLogger::log(const QString &source, CENTAUR_NAMESPACE::interface::LogLevel level, const QString &msg) noexcept
 {
-    std::lock_guard<std::mutex> lock { m_dataProtect };
-    m_messages.push({ static_cast<std::size_t>(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()),
+    const std::lock_guard<std::mutex> lock { m_dataProtect };
+    m_messages.push({ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count(),
         m_session,
         level,
         m_user,
