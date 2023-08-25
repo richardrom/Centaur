@@ -6,6 +6,7 @@
 #include "TOTP.hpp"
 #include <bit>
 #include <chrono>
+#include <span>
 
 #if defined(__clang__) || defined(__GNUC__)
 CENTAUR_WARN_PUSH()
@@ -32,31 +33,44 @@ namespace
 
 int CENTAUR_NAMESPACE::getTOTPCode(const std::string &secret)
 {
-    auto current = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) / 30;
+    quint64 current = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() / 30LL;
 
-    if constexpr (std::endian::native == std::endian::little)
-    {
+    if constexpr (std::endian::native == std::endian::little) {
         // This integer needs to be in the big-endian format
         // in order for the authenticator to work
-        auto toBE = [](uint64_t e) {
-            return ((e & 0xFF00000000000000ull) >> 56) | ((e & 0x00FF000000000000ull) >> 40) | ((e & 0x0000FF0000000000ull) >> 24) | ((e & 0x000000FF00000000ull) >> 8) | ((e & 0x00000000FF000000ull) << 8) | ((e & 0x0000000000FF0000ull) << 24) | ((e & 0x000000000000FF00ull) << 40) | ((e & 0x00000000000000FFull) << 56);
+        auto toBE = [](quint64 e) {
+            return ((e & 0xFF00000000000000ULL) >> 56)
+                   | ((e & 0x00FF000000000000ULL) >> 40)
+                   | ((e & 0x0000FF0000000000ULL) >> 24)
+                   | ((e & 0x000000FF00000000ULL) >> 8)
+                   | ((e & 0x00000000FF000000ULL) << 8)
+                   | ((e & 0x0000000000FF0000ULL) << 24)
+                   | ((e & 0x000000000000FF00ULL) << 40)
+                   | ((e & 0x00000000000000FFULL) << 56);
         };
         current = toBE(current);
     }
 
     unsigned int locHashSize = hashSize;
 
-    unsigned char *hash = ::HMAC(EVP_sha1(),
-        secret.c_str(),
-        static_cast<int>(secret.size()),
-        reinterpret_cast<const unsigned char *>(&current),
-        sizeof(current),
-        nullptr,
-        &locHashSize);
+    const std::span<unsigned char, EVP_MAX_MD_SIZE>
+        _hash {
+            ::HMAC(EVP_sha1(),
+                secret.c_str(),
+                static_cast<int>(secret.size()),
+                reinterpret_cast<const unsigned char *>(&current),
+                sizeof(current),
+                nullptr,
+                &locHashSize),
+            EVP_MAX_MD_SIZE
+        };
 
-    int offset = hash[locHashSize - 1] & 0xf;
+    const auto offset = static_cast<unsigned long>(_hash[locHashSize - 1] & 0xf);
 
-    int binary = ((hash[offset] & 0x7f) << 24) | ((hash[offset + 1] & 0xff) << 16) | ((hash[offset + 2] & 0xff) << 8) | (hash[offset + 3] & 0xff);
+    const int binary = ((_hash[offset] & 0x7f) << 24)
+                       | ((_hash[offset + 1] & 0xff) << 16)
+                       | ((_hash[offset + 2] & 0xff) << 8)
+                       | (_hash[offset + 3] & 0xff);
 
     return binary % 1000000;
 }
