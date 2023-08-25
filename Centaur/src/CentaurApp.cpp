@@ -33,16 +33,15 @@
 #include <QProcess>
 #include <QResizeEvent>
 #include <QShortcut>
-#include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlField>
-#include <QSqlQuery>
-#include <QSqlRecord>
 #include <QStandardPaths>
 #include <QTextStream>
 #include <QTimer>
 #include <QtCharts/QValueAxis>
 #include <utility>
+
+#include "ThemeParser.hpp"
 
 /// \brief This structure hold the 'data' set to Impl::orderbookDepth and Impl::depthChart to properly
 /// handle the visualization of data
@@ -230,12 +229,10 @@ CentaurApp::CentaurApp(QWidget *parent) :
 
 CentaurApp::~CentaurApp()
 {
-    for (auto &pli : _impl->configurationInterface)
-    {
+    for (auto &pli : _impl->configurationInterface) {
         delete pli.second;
     }
-    if (g_logger != nullptr)
-    {
+    if (g_logger != nullptr) {
         g_logger->terminate();
         _impl->loggerThread->join();
     }
@@ -248,15 +245,12 @@ CentaurApp::~CentaurApp()
 
 void CentaurApp::initSession()
 {
-    if (SettingsDialog::isFirstTimeStarted())
-    {
+    if (SettingsDialog::isFirstTimeStarted()) {
         const auto res = QMessageBox::question(this, tr("User"), tr("There is no user information. Would you like to set it?"), QMessageBox::Yes | QMessageBox::No);
-        if (res == QMessageBox::No)
-        {
+        if (res == QMessageBox::No) {
             exit(EXIT_FAILURE);
         }
-        else
-        {
+        else {
             onShowSettings();
 
             QMessageBox::warning(this,
@@ -269,14 +263,12 @@ void CentaurApp::initSession()
             exit(EXIT_SUCCESS);
         }
     }
-    else
-    {
+    else {
 
         LoginDialog dlg;
         dlg.setNormalMode();
 #ifndef TEST_LOGIN_MODE
-        if (dlg.exec() != QDialog::Accepted)
-        {
+        if (dlg.exec() != QDialog::Accepted) {
             exit(EXIT_FAILURE);
         }
 
@@ -303,8 +295,7 @@ void CentaurApp::keepAliveCredentialStatus() noexcept
     const auto time = settings.value("__securing_time__", 300'000).toInt();
     settings.endGroup();
 
-    if (_impl->credentialsTimer == nullptr)
-    {
+    if (_impl->credentialsTimer == nullptr) {
         _impl->credentialsTimer = new QTimer(this);
         _impl->credentialsTimer->setSingleShot(true);
         connect(_impl->credentialsTimer, &QTimer::timeout, this, &CentaurApp::credentialsStatus);
@@ -373,15 +364,13 @@ PluginConfiguration *CentaurApp::getPluginConfig(const uuid &id) const noexcept
 
 void CentaurApp::closeEvent(QCloseEvent *event)
 {
-    if (_impl->server)
-    {
+    if (_impl->server) {
         // Stop the server
         _impl->server->close();
         _impl->server.reset();
     }
 
-    for (const auto &plugins : _impl->pluginInstances)
-    {
+    for (const auto &plugins : _impl->pluginInstances) {
         if (plugins->isLoaded())
             plugins->unload();
     }
@@ -396,8 +385,7 @@ void CentaurApp::initializeDatabaseServices() noexcept
     using namespace dal;
     auto status = DataAccess::openDatabase(this);
 
-    switch (status)
-    {
+    switch (status) {
         case OpenDatabaseCode::Fatal:
             {
                 QMessageBox::critical(this, tr("Error"), tr("The Centaur database could not be opened."));
@@ -434,8 +422,7 @@ void CentaurApp::initializeInterface() noexcept
     connect(ui()->pluginsViewButton, &QPushButton::released, this, &CentaurApp::onShowPlugins);
     connect(ui()->logsViewButtton, &QPushButton::released, this, &CentaurApp::onShowLogDialog);
 
-    for (auto &action : _impl->candleActions->actions)
-    {
+    for (auto &action : _impl->candleActions->actions) {
         auto &[tf, act] = action;
         connect(act, &QAction::triggered, this, [&, tf = tf]() {
             const auto actionData = _impl->orderbookDepth->data().value<OrderBookDepthInformation>();
@@ -463,14 +450,12 @@ void CentaurApp::initializeInterface() noexcept
         QString objectName    = QString("%1%2orderbook").arg(actionData.source, actionData.symbol);
 
         auto *dlgExists = this->findChild<OrderbookDialog *>(objectName);
-        if (dlgExists != nullptr)
-        {
+        if (dlgExists != nullptr) {
             // Bring upfront
             dlgExists->show();
             dlgExists->setWindowState(Qt::WindowState::WindowActive);
         }
-        else
-        {
+        else {
             auto *dlg = new OrderbookDialog(actionData.symbol, _impl->exchangeList[uuid(actionData.source.toStdString(), false)].exchange, this);
             dlg->setObjectName(objectName);
             connect(dlg, &OrderbookDialog::closeButtonPressed, this, [&, dlg]() {
@@ -486,22 +471,19 @@ void CentaurApp::initializeInterface() noexcept
         QString orderBookObjectName = QString("%1%2orderbook").arg(actionData.source, actionData.symbol);
 
         auto *orderBookExists = this->findChild<OrderbookDialog *>(orderBookObjectName);
-        if (orderBookExists == nullptr)
-        {
+        if (orderBookExists == nullptr) {
             QMessageBox::warning(this, tr("Warning"), tr("The orderbook has to be displayed"), QMessageBox::Ok);
             return;
         }
 
         QString objectName = QString("%1%2depth").arg(actionData.source, actionData.symbol);
         auto *dlgExists    = this->findChild<DepthChartDialog *>(objectName);
-        if (dlgExists != nullptr)
-        {
+        if (dlgExists != nullptr) {
             // Bring upfront
             dlgExists->show();
             dlgExists->setWindowState(Qt::WindowState::WindowActive);
         }
-        else
-        {
+        else {
             auto *dlg = new DepthChartDialog(actionData.symbol, this);
             dlg->setObjectName(objectName);
 
@@ -562,23 +544,18 @@ void CentaurApp::initializeInterface() noexcept
         menu.addAction(_impl->depthChart);
         menu.addSeparator();
 
-        if (exchBase != nullptr)
-        {
+        if (exchBase != nullptr) {
             const auto pluginInformation = pluginInformationFromBase(exchBase);
             auto candleView              = exchBase->supportedTimeFrames();
-            if (!candleView.empty())
-            {
+            if (!candleView.empty()) {
                 QMenu *candleMenu = menu.addMenu("Charts");
 
-                for (const auto &cd : candleView)
-                {
+                for (const auto &cd : candleView) {
                     if (cd == plugin::TimeFrame::nullTime)
                         candleMenu->addSeparator();
-                    else
-                    {
+                    else {
                         auto iter = _impl->candleActions->actions.find(cd);
-                        if (iter != _impl->candleActions->actions.end())
-                        {
+                        if (iter != _impl->candleActions->actions.end()) {
                             iter->second->setData(QVariant::fromValue(obdi));
                             candleMenu->addAction(iter->second);
                         }
@@ -588,14 +565,12 @@ void CentaurApp::initializeInterface() noexcept
             }
         }
 
-        for (auto &action : actions)
-        {
+        for (auto &action : actions) {
             // Update the symbol name
 
             if (action->isSeparator())
                 menu.addSeparator();
-            else
-            {
+            else {
                 action->setData(symbol);
                 menu.addAction(action);
             }
@@ -623,15 +598,13 @@ border: 0px;
 #endif
 
     connect(ui()->watchListWidget, &WatchlistWidget::itemHover, this, [&](const QString &symbol, const QString &source) {
-        if (symbol.isEmpty() || source.isEmpty())
-        {
+        if (symbol.isEmpty() || source.isEmpty()) {
             _impl->sevenDayGraph->hide();
             return;
         }
 
         auto itemIter = _impl->exchangeList.find(uuid(source.toStdString(), false));
-        if (itemIter == _impl->exchangeList.end())
-        {
+        if (itemIter == _impl->exchangeList.end()) {
             logError("wlOrderbookSend", QString("Watchlist item for the symbol %1 was not found").arg(symbol));
             return;
         }
@@ -701,8 +674,7 @@ void CentaurApp::initializeShortcuts() noexcept
     // Load the schema file
     const QString schemaJSONKeymap = g_globals->paths.resPath + "/Schema/keymap.schema.json";
     QFile file(schemaJSONKeymap);
-    if (!file.open(QIODevice::ReadOnly))
-    {
+    if (!file.open(QIODevice::ReadOnly)) {
         const QString message = tr("An internal file is missing for the keyboard shortcuts. Reinstalling the application might solve the problem");
 
         logError("initializeShortcuts", message);
@@ -718,8 +690,7 @@ void CentaurApp::initializeShortcuts() noexcept
     QTextStream textStream(&file);
     json::Document schemaJSONDoc;
     schemaJSONDoc.Parse(textStream.readAll().toUtf8().constData());
-    if (schemaJSONDoc.HasParseError())
-    {
+    if (schemaJSONDoc.HasParseError()) {
         const QString message = tr("An internal file is corrupted for the keyboard shortcuts. Reinstalling the application might solve the problem");
 
         logError("initializeShortcuts", message);
@@ -741,21 +712,17 @@ void CentaurApp::initializeShortcuts() noexcept
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/keymap/" // user defined
     };
 
-    for (const auto &path : searchPaths)
-    {
+    for (const auto &path : searchPaths) {
         QDirIterator it(path, QDirIterator::NoIteratorFlags);
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             QFileInfo nfo(it.next());
-            if (nfo.completeSuffix() != "keymap.json")
-            {
+            if (nfo.completeSuffix() != "keymap.json") {
                 logWarn("initializeShortcuts", tr("An extraneous file (%1) in a keymap path (%2) was found").arg(nfo.fileName(), path));
                 continue;
             }
 
             QFile jsonKeymap(nfo.absoluteFilePath());
-            if (!jsonKeymap.open(QIODevice::ReadOnly))
-            {
+            if (!jsonKeymap.open(QIODevice::ReadOnly)) {
                 logWarn("initializeShortcuts", tr("File %1 in the keymap path (%2) could not be opened").arg(nfo.fileName(), path));
                 continue;
             }
@@ -765,22 +732,19 @@ void CentaurApp::initializeShortcuts() noexcept
             json::Document jsonDoc;
             jsonDoc.Parse(jsonFileData.readAll().toUtf8().constData());
 
-            if (jsonDoc.HasParseError())
-            {
+            if (jsonDoc.HasParseError()) {
                 logWarn("initializeShortcuts", tr("File %1 in the keymap path (%2) is not a valid JSON file").arg(nfo.fileName(), path));
                 continue;
             }
 
-            if (!jsonDoc.Accept(schemaValidator))
-            {
+            if (!jsonDoc.Accept(schemaValidator)) {
                 logWarn("initializeShortcuts", tr("File %1 in the keymap path (%2) is not a valid keymap json file").arg(nfo.fileName(), path));
                 continue;
             }
 
             const QString keymapName { jsonDoc["name"].GetString() };
 
-            if (savedKeymap == keymapName)
-            {
+            if (savedKeymap == keymapName) {
                 loadShortcuts(jsonDoc);
                 return;
             }
@@ -797,22 +761,17 @@ void CentaurApp::loadShortcuts(const rapidjson::Document &document) noexcept
         this->connect(shortcut, &QShortcut::activated, this, func);
     };
 
-    for (const auto &wnd : document["keymap"]["Window"].GetArray())
-    {
-        if (wnd["id"] == "open-settings")
-        {
+    for (const auto &wnd : document["keymap"]["Window"].GetArray()) {
+        if (wnd["id"] == "open-settings") {
             doConnection(wnd, &CentaurApp::onShowSettings);
         }
     }
 
-    for (const auto &tls : document["keymap"]["Tools"].GetArray())
-    {
-        if (tls["id"] == "open-plugins-info")
-        {
+    for (const auto &tls : document["keymap"]["Tools"].GetArray()) {
+        if (tls["id"] == "open-plugins-info") {
             doConnection(tls, &CentaurApp::onShowPlugins);
         }
-        else if (tls["id"] == "open-log-window")
-        {
+        else if (tls["id"] == "open-log-window") {
             doConnection(tls, &CentaurApp::onShowLogDialog);
         }
     }
@@ -868,12 +827,10 @@ void CentaurApp::loadInterfaceState() noexcept
     // Always write the default
     settings.setValue("default", QPixmapCache::cacheLimit());
     int pixCacheValue = settings.value("size", -1).toInt();
-    if (pixCacheValue == -1 || pixCacheValue > 1'073'741'824 || pixCacheValue < 10'240'000)
-    {
+    if (pixCacheValue == -1 || pixCacheValue > 1'073'741'824 || pixCacheValue < 10'240'000) {
         logError("loadInterfaceState", QString(tr("Pixmap Cache Memory Value is not correct (%1)")).arg(pixCacheValue));
     }
-    else
-    {
+    else {
         QPixmapCache::setCacheLimit(pixCacheValue);
     }
     settings.endGroup();
@@ -885,22 +842,19 @@ void CentaurApp::onStatusDisplayChanged(plugin::IStatus::DisplayRole mode)
 {
     using namespace CENTAUR_PLUGIN_NAMESPACE;
     plugin::IStatus *sndr = qobject_cast<plugin::IStatus *>(sender());
-    if (sndr == nullptr)
-    {
+    if (sndr == nullptr) {
         logError("IStatus", "The IStatus sender could not be determinate");
         return;
     }
 
     auto data = _impl->statusPlugins.find(sndr->getPluginUUID());
-    if (data == _impl->statusPlugins.end())
-    {
+    if (data == _impl->statusPlugins.end()) {
         logError("IStatus", "The IStatus data could not be found");
         return;
     }
 
     QToolButton *button = std::get<1>(data->second);
-    if (mode == plugin::IStatus::DisplayRole::Foreground)
-    {
+    if (mode == plugin::IStatus::DisplayRole::Foreground) {
         button->setFont(sndr->font());
         button->setText(sndr->text());
 
@@ -912,25 +866,21 @@ QToolButton:pressed{background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:
         const auto backgroundBrush = sndr->brush(IStatus::DisplayRole::Background);
 
         QPalette palette = button->palette();
-        if (foregroundBrush != Qt::NoBrush)
-        {
+        if (foregroundBrush != Qt::NoBrush) {
             palette.setBrush(QPalette::ColorRole::ButtonText, sndr->brush(IStatus::DisplayRole::Foreground));
         }
-        if (backgroundBrush != Qt::NoBrush)
-        {
+        if (backgroundBrush != Qt::NoBrush) {
             button->setStyleSheet("");
             button->setAutoFillBackground(true);
             palette.setBrush(QPalette::ColorRole::Button, sndr->brush(IStatus::DisplayRole::Background));
         }
-        else
-        {
+        else {
             button->setStyleSheet(stylesheet);
             button->setAutoFillBackground(false);
         }
         button->setPalette(palette);
     }
-    else if (mode == plugin::IStatus::DisplayRole::Text)
-    {
+    else if (mode == plugin::IStatus::DisplayRole::Text) {
         button->setText(sndr->text());
     }
     // TODO: all other modes
@@ -940,22 +890,18 @@ void CentaurApp::loadFavoritesWatchList() noexcept
 {
     auto data = dal::DataAccess::selectFavoriteSymbols();
 
-    if (data->empty())
-    {
+    if (data->empty()) {
         logInfo("app", tr("No favorites in the list"));
         return;
     }
 
-    for (const auto &[sym, plid] : *data)
-    {
-        if (sym.isEmpty())
-        {
+    for (const auto &[sym, plid] : *data) {
+        if (sym.isEmpty()) {
             logWarn("app", tr("The symbol name in the favorites DB is empty"));
             continue;
         }
 
-        if (plid.isEmpty())
-        {
+        if (plid.isEmpty()) {
             logWarn("app", tr("The symbol id in the favorites DB is empty"));
             continue;
         }
@@ -970,14 +916,12 @@ void CentaurApp::startLoggingService() noexcept
     g_logger = new CentaurLogger;
     // Init the logger
     _impl->loggerThread = std::make_unique<std::thread>(&CentaurLogger::run, g_logger);
-    try
-    {
+    try {
         const auto &user = g_globals->session.user;
         g_logger->setApplication(this);
         g_logger->setUser(user.isEmpty() ? "root" : user);
         logInfo("app", QString("TraderSys ") + QString(CentaurVersionString));
-    } catch (const std::runtime_error &ex)
-    {
+    } catch (const std::runtime_error &ex) {
         QMessageBox::critical(this,
             tr("Fatal error"),
             ex.what());
@@ -989,13 +933,11 @@ void CentaurApp::startCommunicationsServer() noexcept
 {
     _impl->server = std::make_unique<ProtocolServer>(this);
     QIcon icon;
-    if (_impl->server->isListening())
-    {
+    if (_impl->server->isListening()) {
         icon.addFile(QString::fromUtf8(":/img/server_green"), QSize(), QIcon::Normal, QIcon::Off);
         ui()->serverStatusButton->setIcon(icon);
     }
-    else
-    {
+    else {
 
         icon.addFile(QString::fromUtf8(":/img/server_red"), QSize(), QIcon::Normal, QIcon::Off);
         ui()->serverStatusButton->setIcon(icon);
@@ -1008,8 +950,7 @@ void CentaurApp::onAddToWatchList(const QString &symbol, const QString &sender, 
 
     auto interface = _impl->exchangeList.find(uuid { sender.toStdString(), false });
 
-    if (interface == _impl->exchangeList.end())
-    {
+    if (interface == _impl->exchangeList.end()) {
         logError("watchlist", QString(tr("The sender '%1' is not registered.")).arg(sender));
         return;
     }
@@ -1018,8 +959,7 @@ void CentaurApp::onAddToWatchList(const QString &symbol, const QString &sender, 
 
     // Generate a unique-id
     const auto [addSuccess, symbolWatchlistPixmap] = watchInterface->addSymbolToWatchlist(symbol);
-    if (addSuccess)
-    {
+    if (addSuccess) {
         // QPixmap icon;
         // qDebug() << icon << watchInterface->getBaseFromSymbol(symbol);
         ui()->watchListWidget->insertItem(symbolWatchlistPixmap, symbol, sender, 0.0, 0.0, 0);
@@ -1055,8 +995,7 @@ void CentaurApp::onAddToWatchList(const QString &symbol, const QString &sender, 
 
         ui()->widget->setData(dataList, gr_n, gr_p);
     }
-    else
-    {
+    else {
         logError("watchlist", QString("Symbol %1 was not added to the watchlist").arg(symbol));
     }
 }
@@ -1086,8 +1025,7 @@ void CentaurApp::onRemoveWatchList(const QString &itemSource, const QString &ite
     // Retrieve the IExchange from the row based on the 5 column, which has the PluginUUID Source
 
     auto interfaceIter = _impl->exchangeList.find(uuid(itemSource.toStdString(), false));
-    if (interfaceIter == _impl->exchangeList.end())
-    {
+    if (interfaceIter == _impl->exchangeList.end()) {
         QString message = QString(tr("Failed to locate the symbol interface."));
         logError("wlRemove", message);
         QMessageBox box;
@@ -1106,6 +1044,34 @@ void CentaurApp::onRemoveWatchList(const QString &itemSource, const QString &ite
     // Remove the row
     ui()->watchListWidget->removeItem(itemSymbol, itemSource);
 
+    { // TODO: find a better way to remove from the squarify
+        QLinearGradient gr_p({ 0, 0 }, { 1, 1 });
+        gr_p.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
+        gr_p.setColorAt(0, QColor(1, 166, 7));
+        gr_p.setColorAt(0.5, QColor(26, 175, 32));
+        gr_p.setColorAt(1, QColor(1, 133, 6));
+
+        QLinearGradient gr_n({ 0, 0 }, { 1, 1 });
+        gr_n.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
+        gr_n.setColorAt(0, QColor(167, 29, 7));
+        gr_n.setColorAt(0.5, QColor(176, 52, 32));
+        gr_n.setColorAt(1, QColor(134, 23, 6));
+
+        auto dataList = exchInfo.exchange->getWatchlist24hrPriceChange();
+
+        std::transform(dataList.begin(), dataList.end(), dataList.begin(),
+            [&exchInfo, &ui = _impl->ui](const std::tuple<qreal, qreal, QString> &data) -> std::tuple<qreal, qreal, QString> {
+                ui->watchListWidget->updateDifference(std::get<2>(data), exchInfo.exchange->getPluginUUID().to_qstring(false), std::get<1>(data));
+                return { std::get<0>(data),
+                    std::get<1>(data),
+                    QString(R"(<font size="12"><b>%1</b></font><br><font size="11"><b>$ %2</b><br>%3 %</font>)")
+                        .arg(std::get<2>(data), QLocale(QLocale::English).toString(std::get<0>(data), 'f', 2))
+                        .arg(std::get<1>(data), 'f', '2') };
+            });
+
+        ui()->widget->setData(dataList, gr_n, gr_p);
+    }
+
     logInfo("watchlist", QString(tr("%1 was removed from the UI list")).arg(itemSymbol));
     dal::DataAccess::deleteFavoritesSymbol(itemSymbol, itemSource);
 }
@@ -1118,8 +1084,7 @@ void CentaurApp::onSetWatchlistSelection(const QString &source, const QString &s
         return;
 
     auto itemIter = _impl->exchangeList.find(uuid(source.toStdString(), false));
-    if (itemIter == _impl->exchangeList.end())
-    {
+    if (itemIter == _impl->exchangeList.end()) {
         logError("wlOrderbookSend", QString("Watchlist item for the symbol %1 was not found").arg(symbol));
         return;
     }
@@ -1133,14 +1098,12 @@ void CentaurApp::onSetWatchlistSelection(const QString &source, const QString &s
 void CentaurApp::plotSevenDaysChart(const QString &symbol, const QList<std::pair<quint64, qreal>> &values) noexcept
 {
     // Prepare the data
-    if (values.size() < 7)
-    {
+    if (values.size() < 7) {
         logWarn("7plot", "items less than 7");
         return;
     }
 
-    if (values.size() > 7)
-    {
+    if (values.size() > 7) {
         logWarn("7plot", "list is larger than 7; data will be truncated");
     }
 
@@ -1176,24 +1139,21 @@ void CentaurApp::plotSevenDaysChart(const QString &symbol, const QList<std::pair
         *_impl->last7SevenLowSeries << QPointF { static_cast<qreal>(time), minPos };
         *_impl->last7SevenUpSeries << QPointF { static_cast<qreal>(time), price };
 
-        if (i > 0)
-        {
+        if (i > 0) {
             averageChange += price - values[i - 1].second;
         }
     }
 
     averageChange /= 6;
 
-    if (averageChange > 0)
-    {
+    if (averageChange > 0) {
         QLinearGradient gr_p({ 0.5, 0 }, { 0.5, 1 });
         gr_p.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
         gr_p.setColorAt(0, QColor(1, 166, 7, 255));
         gr_p.setColorAt(.8, QColor(1, 133, 6, 128));
         _impl->last7SevenAreaSeries->setBrush(gr_p);
     }
-    else
-    {
+    else {
         QLinearGradient gr_n({ 0.5, 0 }, { 0.5, 1 });
         gr_n.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
         gr_n.setColorAt(0, QColor(167, 29, 7, 255));
@@ -1235,29 +1195,28 @@ void CentaurApp::onShowSettings() noexcept
 
     SettingsDialog dlg(this);
 
-    if (dlg.exec() == QDialog::Accepted)
-    {
+    if (dlg.exec() == QDialog::Accepted) {
         updateUserInformationStatus();
     }
 }
 
 void CentaurApp::updateUserInformationStatus() noexcept
 {
-    if (!g_globals->session.image.isNull())
-    {
+    static constexpr const int g_radius = 24;
+    if (!g_globals->session.image.isNull()) {
         QPixmap displayedImage = QPixmap::fromImage(g_globals->session.image.scaled({ 48, 48 }));
         QBitmap map(48, 48);
         map.fill(Qt::color0);
         QPainter painter(&map);
         painter.setBrush(Qt::color1);
         painter.setRenderHint(QPainter::RenderHint::Antialiasing);
-        painter.drawRoundedRect(0, 0, 48, 48, 24, 24);
+        painter.drawRoundedRect(0, 0, 48, 48, g_radius, g_radius);
         displayedImage.setMask(map);
 
         ui()->userImage->setPixmap(displayedImage);
     }
 
-    QString userDataString = QString("%1 (%2)").arg(g_globals->session.display, g_globals->session.email);
+    const QString userDataString = QString("%1 (%2)").arg(g_globals->session.display, g_globals->session.email);
     ui()->userData->setText(userDataString);
 }
 
@@ -1266,13 +1225,11 @@ void CentaurApp::onViewCandleChart(const QString &symbol, const QString &source,
     const QString dlgName = QString("chart_%1_%2_%3").arg(symbol, source).arg(static_cast<int>(tf));
 
     auto *dlg = this->findChild<CandleChartDialog *>(dlgName);
-    if (dlg != nullptr)
-    {
+    if (dlg != nullptr) {
         dlg->show();
         dlg->setWindowState(Qt::WindowState::WindowActive);
     }
-    else
-    {
+    else {
         auto *newDlg = new CandleChartDialog(tf, symbol, source, this);
 
         newDlg->setObjectName(dlgName);
