@@ -15,6 +15,7 @@
 #include <QTextDocument>
 
 BEGIN_CENTAUR_NAMESPACE
+
 namespace
 {
     class HTMLDelegate : public QStyledItemDelegate
@@ -39,9 +40,9 @@ namespace
             options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
 
             // shift text right to make icon visible
-            QSize iconSize = options.icon.actualSize(options.rect.size());
+            const QSize iconSize = options.icon.actualSize(options.rect.size());
             painter->translate(options.rect.left() + iconSize.width(), options.rect.top());
-            QRect clip(0, 0, options.rect.width() + iconSize.width(), options.rect.height());
+            const QRect clip(0, 0, options.rect.width() + iconSize.width(), options.rect.height());
 
             painter->setClipRect(clip);
             QAbstractTextDocumentLayout::PaintContext ctx;
@@ -69,6 +70,7 @@ struct LogDialog::Impl
 {
     inline Impl() :
         ui { new Ui::LogDialog } { }
+
     inline ~Impl() = default;
 
     std::unique_ptr<Ui::LogDialog> ui;
@@ -140,7 +142,7 @@ QTableWidget *LogDialog::tableWidget()
     return ui()->logsTable;
 }
 
-void LogDialog::onLog(unsigned long long date, int session, int level, const QString &usr, const QString &source, const QString &msg) noexcept
+void LogDialog::onLog(qint64 date, int session, int level, const QString &usr, const QString &source, const QString &msg) noexcept
 {
     QTableWidget *logger = ui()->logsTable;
     if (logger->rowCount() > 2000)
@@ -160,15 +162,14 @@ void LogDialog::onLog(unsigned long long date, int session, int level, const QSt
         return item;
     };
 
-    auto insertedItem = insertItem(0,
-        QDateTime::fromSecsSinceEpoch(static_cast<qint64>(date)).toString("dd-MM-yyyy hh:mm:ss"),
+    auto *insertedItem = insertItem(0,
+        QDateTime::fromSecsSinceEpoch(static_cast<qint64>(date)).toString("dd-MM-yyyy hh:mm:ss.zzz"),
         QColor(0xA2A2A2), Qt::AlignLeft | Qt::AlignVCenter);
 
     insertItem(1, usr, Qt::white);
     insertItem(2, QString("%1").arg(session), Qt::white);
 
-    switch (logLevel)
-    {
+    switch (logLevel) {
         case CENTAUR_NAMESPACE::interface::LogLevel::fatal:
             insertItem(3, "fatal", Qt::red);
             break;
@@ -194,17 +195,15 @@ void LogDialog::onLog(unsigned long long date, int session, int level, const QSt
     QString newMsg { msg };
 
     newMsg.prepend("<span style=\"font-size: 11px;font-family: arial;vertical-align: middle\">");
-    auto i = newMsg.indexOf("#", 0);
-    if (i != -1)
-    { // Honestly this is if is put here because  I wanted to use the do/while syntax. Because it's not necessary
-        do
-        {
-            newMsg.replace(i, 1, "<span style=\"color:");
-            i = newMsg.indexOf("#", i + static_cast<int>(QString("<span style=\"color:").size()) + 1);
-            newMsg.replace(i, 1, "\">");
-            i = newMsg.indexOf("#", i + static_cast<int>(QString("\">").size()));
-            newMsg.replace(i, 1, "</span>");
-        } while ((i = newMsg.indexOf("#", i)) != -1);
+    auto idx = newMsg.indexOf("#", 0);
+    if (idx != -1) {
+        do {
+            newMsg.replace(idx, 1, "<span style=\"color:");
+            idx = newMsg.indexOf("#", idx + static_cast<int>(QString("<span style=\"color:").size()) + 1);
+            newMsg.replace(idx, 1, "\">");
+            idx = newMsg.indexOf("#", idx + static_cast<int>(QString("\">").size()));
+            newMsg.replace(idx, 1, "</span>");
+        } while ((idx = newMsg.indexOf("#", idx)) != -1);
     }
     newMsg.append("</span>");
 

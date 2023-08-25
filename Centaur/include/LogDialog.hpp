@@ -23,6 +23,7 @@ namespace Ui
 {
     class LogDialog;
 }
+
 class LogDialog : public QDialog
 {
     Q_OBJECT
@@ -31,7 +32,7 @@ public:
     ~LogDialog() override;
 
 protected slots:
-    void onLog(unsigned long long date, int session, int level, const QString &usr, const QString &source, const QString &msg) noexcept;
+    void onLog(qint64 date, int session, int level, const QString &usr, const QString &source, const QString &msg) noexcept;
 
 public:
     QTableWidget *tableWidget();
