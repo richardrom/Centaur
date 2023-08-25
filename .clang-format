@@ -1,5 +1,7 @@
 BasedOnStyle: WebKit
 
+PenaltyBreakBeforeFirstCallParameter: 100
+PenaltyBreakOpenParenthesis: 20
 AlignArrayOfStructures: Right
 AlignConsecutiveAssignments: Consecutive
 AlignConsecutiveBitFields: AcrossComments
@@ -25,7 +27,7 @@ BreakBeforeBraces: Custom
 BraceWrapping:
   AfterCaseLabel: true
   AfterClass: true
-  AfterControlStatement: Always
+  AfterControlStatement: Never
   AfterEnum: true
   AfterFunction: true
   AfterNamespace: true
@@ -56,3 +58,5 @@ EmptyLineBeforeAccessModifier: LogicalBlock
 IndentRequiresClause: true
 InsertNewlineAtEOF: true
 LambdaBodyIndentation: Signature
+SeparateDefinitionBlocks: Always
+QualifierAlignment: Left
