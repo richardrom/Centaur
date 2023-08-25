@@ -4,12 +4,13 @@ SET(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FIND_PACKAGE(pugixml CONFIG REQUIRED)
+FIND_PACKAGE(FMT REQUIRED)
 SET(Qt6_Components
         Gui
         LinguistTools
         Widgets
-        StateMachine)
+        StateMachine
+        Xml)
 
 IF (DEFINED CENTAUR_ENV_DETECTED)
     MESSAGE(STATUS "CtTheme: Qt6 package in environment variable")
@@ -37,16 +38,17 @@ SET(INCLUDE_FILES
 
 SET(SOURCE_FILES
         src/ThemeParser.cpp
-        src/ThemePlugin.cpp)
+        src/ThemePlugin.cpp
+        src/CentTheme.cpp)
 
 SET(RESOURCE_FILES
-        src/CentTheme.cpp)
+        qrc/resources.qrc)
 
 ADD_LIBRARY(CentTheme SHARED
         ${INCLUDE_FILES}
         ${SOURCE_FILES}
         ${RESOURCE_FILES}
-        )
+)
 
 TARGET_COMPILE_DEFINITIONS(CentTheme PRIVATE USE_CENT_LIBRARY)
 
@@ -58,12 +60,13 @@ TARGET_INCLUDE_DIRECTORIES(CentTheme PRIVATE
         include
         ${CENT_GLOBAL_INCLUDE_PATH})
 
+TARGET_LINK_LIBRARIES(CentTheme PRIVATE fmt::fmt)
 TARGET_LINK_LIBRARIES(CentTheme PRIVATE
         Qt6::Gui
         Qt6::Widgets
-        Qt6::StateMachine)
+        Qt6::StateMachine
+        Qt6::Xml)
 
-TARGET_LINK_LIBRARIES(CentTheme PRIVATE pugixml::static pugixml::pugixml)
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     # Control clang warnings
