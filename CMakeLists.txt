@@ -37,9 +37,9 @@ OPTION(CNT_THEME_TESTING "Include theme testing" ON)
 
 IF (DEFINED ENV{QT6_INSTALLATION})
     SET(CENTAUR_ENV_DETECTED $ENV{QT6_INSTALLATION})
-    MESSAGE(STATUS " QT6 FOUND in environment variable ${CENTAUR_ENV_DETECTED} ")
+    MESSAGE(STATUS "QT6 FOUND in environment variable ${CENTAUR_ENV_DETECTED} ")
 ELSE ()
-    MESSAGE(STATUS " QT6 NOT FOUND in environment variable ")
+    MESSAGE(STATUS "QT6 NOT FOUND in environment variable ")
 ENDIF ()
 
 
