@@ -1138,53 +1138,201 @@ void CentTheme::drawFrameAnimation(QPainter *painter, const QWidget *widget, con
 
 void CentTheme::drawFrame(QPainter *painter, const cen::theme::FrameInformation &frameInformation, const QRect &widgetRect)
 {
-    static constexpr const int g_angle270 = 270;
-    static constexpr const int g_angle180 = 180;
-    static constexpr const int g_angle90  = 90;
+    static constexpr int g_angle270 = 270;
+    static constexpr int g_angle180 = 180;
+    static constexpr int g_angle90  = 90;
+    static constexpr int g_angle45  = 45;
+    static constexpr int g_angle135 = 135;
+    static constexpr int g_angle225 = 225;
+    static constexpr int g_angle315 = 315;
+    static constexpr int g_angle0   = 0;
+
     if (qFuzzyCompare(frameInformation.borderRadiusX, 0.0) || qFuzzyCompare(frameInformation.borderRadiusY, 0.0)) {
         if (frameInformation.borderRadiusTopLeft > 0.0 || frameInformation.borderRadiusBottomLeft > 0.0
             || frameInformation.borderRadiusTopRight > 0.0 || frameInformation.borderRadiusBottomRight > 0.0) {
+
             const qreal widgetX = widgetRect.x();
             const qreal widgetY = widgetRect.y();
             const qreal width   = widgetRect.width();
             const qreal height  = widgetRect.height();
 
-            QPainterPath path;
+            QPainterPath leftBorderPath;
             if (frameInformation.borderRadiusTopLeft > 0.0) {
                 path.moveTo(widgetX + frameInformation.borderRadiusTopLeft, widgetY);
                 path.arcTo(widgetX, widgetY, widgetX + (frameInformation.borderRadiusTopLeft * 2),
                     widgetY + (frameInformation.borderRadiusTopLeft * 2), g_angle90, g_angle90);
+                leftBorderPath.moveTo(
+                    widgetX + frameInformation.borderRadiusTopLeft,
+                    widgetY);
+                leftBorderPath.arcMoveTo(
+                    widgetX,
+                    widgetY,
+                    widgetX + (frameInformation.borderRadiusTopLeft * 2),
+                    widgetY + (frameInformation.borderRadiusTopLeft * 2),
+                    g_angle135);
+                leftBorderPath.arcTo(
+                    widgetX,
+                    widgetY,
+                    widgetX + (frameInformation.borderRadiusTopLeft * 2),
+                    widgetY + (frameInformation.borderRadiusTopLeft * 2),
+                    g_angle135,
+                    g_angle45);
             }
             else
-                path.moveTo(widgetX, widgetY);
+                leftBorderPath.moveTo(widgetX, widgetY);
 
-            if (frameInformation.borderRadiusBottomLeft > 0) {
-                path.lineTo(widgetX, widgetY + height - frameInformation.borderRadiusBottomLeft);
-                path.arcTo(widgetX, widgetY + height - (frameInformation.borderRadiusBottomLeft * 2),
-                    frameInformation.borderRadiusBottomLeft * 2, frameInformation.borderRadiusBottomLeft * 2, g_angle180, g_angle90);
+            if (frameInformation.borderRadiusBottomLeft > 0.0) {
+                leftBorderPath.lineTo(
+                    widgetX,
+                    widgetY + height - frameInformation.borderRadiusBottomLeft);
+                leftBorderPath.arcTo(widgetX,
+                    widgetY + height - (frameInformation.borderRadiusBottomLeft * 2),
+                    frameInformation.borderRadiusBottomLeft * 2,
+                    frameInformation.borderRadiusBottomLeft * 2,
+                    g_angle180,
+                    g_angle45);
             }
             else
-                path.lineTo(widgetX, widgetY + height);
+                leftBorderPath.lineTo(widgetX, widgetY + height);
 
-            if (frameInformation.borderRadiusBottomRight > 0) {
-                path.lineTo(widgetX - frameInformation.borderRadiusBottomRight, widgetY + height);
-                path.arcTo(widgetX + width - (frameInformation.borderRadiusBottomRight * 2),
+            QPainterPath bottomBorderPath;
+            if (frameInformation.borderRadiusBottomLeft > 0.0) {
+                bottomBorderPath.moveTo(
+                    widgetX,
+                    widgetY);
+                bottomBorderPath.arcMoveTo(
+                    widgetX,
+                    widgetY + height - (frameInformation.borderRadiusBottomLeft * 2),
+                    frameInformation.borderRadiusBottomLeft * 2,
+                    frameInformation.borderRadiusBottomLeft * 2,
+                    g_angle225);
+                bottomBorderPath.arcTo(widgetX,
+                    widgetY + height - (frameInformation.borderRadiusBottomLeft * 2),
+                    frameInformation.borderRadiusBottomLeft * 2,
+                    frameInformation.borderRadiusBottomLeft * 2,
+                    g_angle225,
+                    g_angle45);
+            }
+            else
+                bottomBorderPath.moveTo(widgetX, widgetY + height);
+
+            if (frameInformation.borderRadiusBottomRight > 0.0) {
+                bottomBorderPath.lineTo(
+                    widgetX + width - frameInformation.borderRadiusBottomRight,
+                    widgetY + height);
+                bottomBorderPath.arcTo(
+                    widgetX + width - (frameInformation.borderRadiusBottomRight * 2),
+                    widgetY + height - (frameInformation.borderRadiusBottomRight * 2),
+                    frameInformation.borderRadiusBottomRight * 2,
+                    frameInformation.borderRadiusBottomRight * 2,
+                    g_angle270,
+                    g_angle45);
+            }
+            else
+                bottomBorderPath.lineTo(widgetX + width, widgetY + height);
+
+            QPainterPath rightBorderPath;
+
+            if (frameInformation.borderRadiusBottomRight > 0.0) {
+                rightBorderPath.moveTo(
+                    widgetX + width - frameInformation.borderRadiusBottomRight,
+                    widgetY + height - frameInformation.borderRadiusBottomRight);
+                rightBorderPath.arcMoveTo(
+                    widgetX + width - (frameInformation.borderRadiusBottomRight * 2),
                     widgetY + height - (frameInformation.borderRadiusBottomRight * 2), frameInformation.borderRadiusBottomRight * 2,
-                    frameInformation.borderRadiusBottomRight * 2, g_angle270, g_angle90);
+                    frameInformation.borderRadiusBottomRight * 2,
+                    g_angle315);
+                rightBorderPath.arcTo(
+                    widgetX + width - (frameInformation.borderRadiusBottomRight * 2),
+                    widgetY + height - (frameInformation.borderRadiusBottomRight * 2), frameInformation.borderRadiusBottomRight * 2,
+                    frameInformation.borderRadiusBottomRight * 2,
+                    g_angle315,
+                    g_angle45);
             }
             else
-                path.lineTo(widgetX + width, widgetY + height);
+                rightBorderPath.moveTo(widgetX + width, widgetY + height);
 
-            if (frameInformation.borderRadiusTopRight > 0) {
-                path.lineTo(widgetX + width, widgetY + frameInformation.borderRadiusTopRight);
-                path.arcTo(widgetX + width - (frameInformation.borderRadiusTopRight * 2), widgetY,
-                    frameInformation.borderRadiusTopRight * 2, frameInformation.borderRadiusTopRight * 2, 0, g_angle90);
+            if (frameInformation.borderRadiusTopRight > 0.0) {
+                rightBorderPath.lineTo(
+                    widgetX + width,
+                    widgetY + frameInformation.borderRadiusTopRight);
+                rightBorderPath.arcTo(
+                    widgetX + width - (frameInformation.borderRadiusTopRight * 2),
+                    widgetY,
+                    frameInformation.borderRadiusTopRight * 2,
+                    frameInformation.borderRadiusTopRight * 2,
+                    g_angle0,
+                    g_angle45);
+            }
+            else {
+                rightBorderPath.lineTo(
+                    widgetX + width,
+                    widgetY);
+            }
+
+            QPainterPath topBorderPath;
+
+            if (frameInformation.borderRadiusTopRight > 0.0) {
+                topBorderPath.moveTo(
+                    widgetX + width,
+                    widgetY + frameInformation.borderRadiusTopRight);
+                topBorderPath.arcMoveTo(
+                    widgetX + width - (frameInformation.borderRadiusTopRight * 2),
+                    widgetY,
+                    frameInformation.borderRadiusTopRight * 2,
+                    frameInformation.borderRadiusTopRight * 2,
+                    g_angle45);
+                topBorderPath.arcTo(
+                    widgetX + width - (frameInformation.borderRadiusTopRight * 2),
+                    widgetY,
+                    frameInformation.borderRadiusTopRight * 2,
+                    frameInformation.borderRadiusTopRight * 2,
+                    g_angle45,
+                    g_angle45);
             }
             else
-                path.lineTo(widgetX + width, widgetY);
+                topBorderPath.moveTo(widgetX + width, widgetY);
 
-            path.closeSubpath();
+            if (frameInformation.borderRadiusTopLeft > 0.0) {
+                topBorderPath.lineTo(
+                    widgetX + frameInformation.borderRadiusTopLeft,
+                    widgetY);
+                topBorderPath.arcTo(
+                    widgetX,
+                    widgetY,
+                    widgetX + (frameInformation.borderRadiusTopLeft * 2),
+                    widgetY + (frameInformation.borderRadiusTopLeft * 2),
+                    g_angle90,
+                    g_angle45);
+            }
+            else
+                topBorderPath.lineTo(widgetX, widgetY);
+
+            QPainterPath path = topBorderPath;
+
+            const QPen prevPen = painter->pen();
+            painter->setPen(Qt::NoPen);
+            path.connectPath(leftBorderPath);
+            path.connectPath(bottomBorderPath);
+            path.connectPath(rightBorderPath);
             painter->drawPath(path);
+
+            painter->setPen(prevPen);
+            if (frameInformation.topBorderPen != Qt::NoPen)
+                painter->setPen(frameInformation.topBorderPen);
+            painter->drawPath(topBorderPath);
+
+            if (frameInformation.leftBorderPen != Qt::NoPen)
+                painter->setPen(frameInformation.leftBorderPen);
+            painter->drawPath(leftBorderPath);
+
+            if (frameInformation.bottomBorderPen != Qt::NoPen)
+                painter->setPen(frameInformation.bottomBorderPen);
+            painter->drawPath(bottomBorderPath);
+
+            if (frameInformation.rightBorderPen != Qt::NoPen)
+                painter->setPen(frameInformation.rightBorderPen);
+            painter->drawPath(rightBorderPath);
         }
         else
             painter->drawRect(widgetRect);
