@@ -59,7 +59,6 @@ enum class AnimationApplication
     FocusOut,        /// \brief Apply the animation element to the UI focus out
     CheckBoxFocusIn, /// \brief Apply the animation to the hover-in checkbox
     CheckBoxFocusOut /// \brief Apply the animation to the hover-out checkbox
-
 };
 
 struct ThemeAnimation
@@ -78,6 +77,10 @@ struct FrameInformation
     qreal borderRadiusTopRight { 0 };
     qreal borderRadiusBottomLeft { 0 };
     qreal borderRadiusBottomRight { 0 };
+    QPen leftBorderPen { Qt::NoPen };
+    QPen rightBorderPen { Qt::NoPen };
+    QPen bottomBorderPen { Qt::NoPen };
+    QPen topBorderPen { Qt::NoPen };
 };
 
 struct FontStyle

@@ -1311,6 +1311,22 @@ auto theme::ThemeParser::Impl::parseFrames(const QDomElement &element) -> void
             else if (nodeName == "border-radius-bottom-right") {
                 fifo.borderRadiusBottomRight = nodeValue.toDouble();
             }
+            else if (nodeName == "border-left-pen") {
+                if (!nodeValue.isEmpty())
+                    fifo.leftBorderPen = getPen(nodeValue);
+            }
+            else if (nodeName == "border-right-pen") {
+                if (!nodeValue.isEmpty())
+                    fifo.rightBorderPen = getPen(nodeValue);
+            }
+            else if (nodeName == "border-bottom-pen") {
+                if (!nodeValue.isEmpty())
+                    fifo.bottomBorderPen = getPen(nodeValue);
+            }
+            else if (nodeName == "border-top-pen") {
+                if (!nodeValue.isEmpty())
+                    fifo.topBorderPen = getPen(nodeValue);
+            }
             else if (nodeName == "margins") {
                 NODE_ITERATOR(marginsChildNode, frameChildNode)
                 {
@@ -1360,7 +1376,7 @@ auto theme::ThemeParser::Impl::parseFrames(const QDomElement &element) -> void
                 }
             }
             else {
-                errors.emplace_back(u"node '%2' in frame '%2' is not recognize"_s.arg(nodeName, frameName));
+                errors.emplace_back(u"node '%1' in frame '%2' was not recognized"_s.arg(nodeName, frameName));
             }
         }
         if (iErrors == errors.size()) {
