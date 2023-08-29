@@ -1158,9 +1158,6 @@ void CentTheme::drawFrame(QPainter *painter, const cen::theme::FrameInformation 
 
             QPainterPath leftBorderPath;
             if (frameInformation.borderRadiusTopLeft > 0.0) {
-                path.moveTo(widgetX + frameInformation.borderRadiusTopLeft, widgetY);
-                path.arcTo(widgetX, widgetY, widgetX + (frameInformation.borderRadiusTopLeft * 2),
-                    widgetY + (frameInformation.borderRadiusTopLeft * 2), g_angle90, g_angle90);
                 leftBorderPath.moveTo(
                     widgetX + frameInformation.borderRadiusTopLeft,
                     widgetY);
