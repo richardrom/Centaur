@@ -219,15 +219,13 @@ void helper::AnimationBase::setupAnimation(const CENTAUR_THEME_INTERFACE_NAMESPA
                 property += "border";
                 redrawWidget = true;
                 // The widget does not havc this internal property
-                widget->setProperty(qPrintable(property),
-                    ifo.start); // and the property needs to be created
+                widget->setProperty(qPrintable(property), ifo.start); // and the property needs to be created
                 break;
             case theme::AnimationElement::Background:
                 property += "background";
                 redrawWidget = true;
                 // The widget does not havc this internal property
-                widget->setProperty(qPrintable(property),
-                    ifo.start); // and the property needs to be created
+                widget->setProperty(qPrintable(property), ifo.start); // and the property needs to be created
                 break;
             case theme::AnimationElement::uCheckBoxBackground:
                 property += "u-checkbox-background";
@@ -1105,24 +1103,24 @@ void CentTheme::drawFrameAnimation(QPainter *painter, const QWidget *widget, con
 
     painter->save();
     {
-        if (widget->isEnabled() & !isSunken) {
-            if (widget->hasFocus()) {
-                const auto focusBackgroundPropertyAnimation = widget->property(_focus_background_property);
-                if (focusBackgroundPropertyAnimation.isValid())
-                    brush.setColor(focusBackgroundPropertyAnimation.value<QColor>());
-
-                const auto focusBorderPropertyAnimation = widget->property(_focus_border_property);
-                if (focusBorderPropertyAnimation.isValid())
-                    pen.setColor(focusBorderPropertyAnimation.value<QColor>());
-            }
-            else {
+        if (widget->isEnabled() && !isSunken) {
+            if (!widget->hasFocus()) {
                 const auto hoverBackgroundPropertyAnimation = widget->property(_hover_background_property);
-                if (hoverBackgroundPropertyAnimation.isValid())
+                if (hoverBackgroundPropertyAnimation.isValid()) {
                     brush.setColor(hoverBackgroundPropertyAnimation.value<QColor>());
-
+                }
                 const auto hoverBorderPropertyAnimation = widget->property(_hover_border_property);
                 if (hoverBorderPropertyAnimation.isValid())
                     pen.setColor(hoverBorderPropertyAnimation.value<QColor>());
+            }
+
+            const auto focusBackgroundPropertyAnimation = widget->property(_focus_background_property);
+            if (focusBackgroundPropertyAnimation.isValid())
+                brush.setColor(focusBackgroundPropertyAnimation.value<QColor>());
+
+            const auto focusBorderPropertyAnimation = widget->property(_focus_border_property);
+            if (focusBorderPropertyAnimation.isValid()) {
+                pen.setColor(focusBorderPropertyAnimation.value<QColor>());
             }
         }
 

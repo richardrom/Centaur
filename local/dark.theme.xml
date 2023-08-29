@@ -173,6 +173,8 @@
         <pen name="main-darken-15p-pen" width="1.0" brush="main-darken-15p-brush"/>
         <pen name="main-darken-15p-def-btn-pen" width="1.5" brush="main-darken-15p-brush"/>
         <pen name="main-darken-40p-des-20p-pen" width="1.0" brush="main-darken-40p-des-20p-brush"/>
+        <pen name="main-darken-40p-des-20p-pen-3.0-pen" width="3.0" brush="main-darken-40p-des-20p-brush"/>
+
         <pen name="main-darken-30p-des-20p-pen" width="1.0" brush="main-darken-30p-des-20p-brush"/>
         <pen name="main-color-pen-3.0-pen" width="3.0" brush="accent-brush"/>
         <pen name="main-color-pen-2.0-pen" width="2.0" brush="accent-brush"/>
@@ -318,11 +320,11 @@
         </animation>
         <animation name="focus-in">
             <easing-curve>in-out-sine</easing-curve>
-            <duration>200</duration>
+            <duration>250</duration>
         </animation>
         <animation name="focus-out">
             <easing-curve>out-in-sine</easing-curve>
-            <duration>200</duration>
+            <duration>250</duration>
         </animation>
         <animation name="check-box-hover-in">
             <easing-curve>out-in-sine</easing-curve>
@@ -595,6 +597,7 @@
                         <frame>editor-frame</frame>
                         <frame-brush>main-darken-40p-des-20p-brush</frame-brush>
                         <font>regular-font</font>
+                        <frame-pen>main-darken-40p-des-20p-pen-3.0-pen</frame-pen>
                     </state-normal>
                     <state-hover>
                         <frame>editor-frame</frame>
