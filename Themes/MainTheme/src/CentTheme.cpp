@@ -980,7 +980,10 @@ void CentTheme::polish(QWidget *widget)
         auto &pbi = getPushButtonInformation(widget);
         animInfo  = pbi.animations;
     }
-    else if (strcmp(className, "QLineEdit") == 0) {
+    else if (strcmp(className, "QLineEdit") == 0
+             || strcmp(className, "cen::PasswordLineEdit") == 0
+             || strcmp(className, "cen::UserLineEdit") == 0
+             || strcmp(className, "cen::SearchLineEdit") == 0) {
         auto &lei = getLineEditInformation(widget);
         animInfo  = lei.animations;
 
