@@ -41,7 +41,6 @@ SET(INCLUDE_FILES
         include/PasswordLineEdit.hpp
         include/SearchLineEdit.hpp
         include/UserLineEdit.hpp
-        include/CentaurLibrary.hpp
         include/ChevronButton.hpp
         include/AnimatedButton.hpp
         include/SquarifyWidget.hpp
@@ -51,7 +50,8 @@ SET(INCLUDE_FILES
         include/CandlePriceAxisItem.hpp
         include/CandleTimeAxisItem.hpp
         include/DeletableTable.hpp
-        include/CDialog.hpp)
+        include/CDialog.hpp
+        include/cui.hpp)
 
 SET(SOURCE_FILES
         src/EditorDelegate.cpp
@@ -73,7 +73,8 @@ SET(SOURCE_FILES
         src/CandlePriceAxisItem.cpp
         src/CandleTimeAxisItem.cpp
         src/DeletableTable.cpp
-        src/CDialog.cpp)
+        src/CDialog.cpp
+        src/cui.cpp)
 
 SET(UI_FILES
         rcc/resources.qrc
@@ -98,7 +99,7 @@ ADD_LIBRARY(${LIBCUI} SHARED
         ${SOURCE_FILES}
         ${UI_FILES})
 
-TARGET_COMPILE_DEFINITIONS(${LIBCUI} PRIVATE CENTFIN_LIBRARY_)
+TARGET_COMPILE_DEFINITIONS(${LIBCUI} PRIVATE USE_CENT_LIBRARY)
 
 TARGET_INCLUDE_DIRECTORIES(${LIBCUI} PRIVATE
         include
