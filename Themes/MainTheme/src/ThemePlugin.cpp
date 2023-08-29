@@ -48,6 +48,17 @@ void CentThemePlugin::accessExtra(const QString &pluginExtraPath) noexcept
 {
     m_extraPath = pluginExtraPath;
 
+#ifdef Q_OS_WIN
+    QChar pathSeparator = '\\';
+#else
+    QChar pathSeparator = '/';
+#endif
+
+    // Append the UUID to the directory
+    if (!m_extraPath.isEmpty() && m_extraPath.back() != pathSeparator)
+        m_extraPath.append(pathSeparator);
+    m_extraPath.append(QString("%2").arg(uuid()));
+
     QSettings settings("CentaurProject", "CentTheme");
     settings.beginGroup("color.scheme");
 
