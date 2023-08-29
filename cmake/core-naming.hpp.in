@@ -1,0 +1,21 @@
+/////////////////////////////////////////////////////////////////////////////////////
+//
+// Created by Ricardo Romero on 25/08/23.
+// Copyright (c) 2023 Ricardo Romero.  All rights reserved.
+//
+
+#ifndef CORE_NAMING_HPP
+#define CORE_NAMING_HPP
+
+#cmakedefine NAMING_ORGANIZATION_NAME "@NAMING_ORGANIZATION_NAME@"
+#cmakedefine NAMING_ORGANIZATION_DOMAIN "@NAMING_ORGANIZATION_DOMAIN@"
+#cmakedefine NAMING_APPLICATION_NAME "@NAMING_APPLICATION_NAME@"
+
+namespace cen::defines
+{
+    constexpr char _organization_Name[] = NAMING_ORGANIZATION_NAME;
+    constexpr char _organization_Domain[] = NAMING_ORGANIZATION_DOMAIN;
+    constexpr char _application_Name[] = NAMING_APPLICATION_NAME;
+}
+
+#endif /*CORE_NAMING_HPP*/

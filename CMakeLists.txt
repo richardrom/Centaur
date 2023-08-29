@@ -26,6 +26,7 @@ ELSE ()
     ADD_COMPILE_DEFINITIONS(C_C_UNKNOWN)
 ENDIF ()
 
+
 OPTION(CNT_USE_PCH "Use precompiled headers" ON)
 OPTION(CNT_USE_TEST_LOGIN "Do not prompt the login dialog at startup (only for testing purposes)" ON)
 OPTION(CNT_AVOID_PLUGIN_CHECK "Do not check the checksum of a plugin at startup (only for testing purposes)" ON)
@@ -52,22 +53,27 @@ IF (CNT_AVOID_PLUGIN_CHECK)
     ADD_COMPILE_DEFINITIONS(NO_PLUGIN_CHECKSUM_CHECK)
 ENDIF ()
 
+
+# Naming configuration in order that ctpath and centaur does not mismatch names
+# So, the internal testing installation can find the necessary files
+SET(NAMING_ORGANIZATION_NAME "CentaurProject")
+SET(NAMING_ORGANIZATION_DOMAIN "centaur.com")
+SET(NAMING_APPLICATION_NAME "Centaur")
+CONFIGURE_FILE(cmake/core-naming.hpp.in config/core-naming.hpp @ONLY)
+
 IF (CNT_GENERATE_BUILTIN_PLPACK OR CNT_COPY_BUILTIN_PLUGIN OR CNT_COPY_THEME_PLUGIN)
+    SET(CENT_LOCAL_PATH "${PROJECT_SOURCE_DIR}/local")
     IF (CNT_GENERATE_BUILTIN_PLPACK)
         SET(PLPACK_OUTDIR "${CMAKE_BINARY_DIR}/plpack")
-        MESSAGE(STATUS "Creating: ${PLPACK_OUTDIR}")
+        MESSAGE(STATUS "Creating: ${PLPACK_OUTDIR} ")
         FILE(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/plpack)
-
-        IF (WIN32)
-            STRING(CONCAT PLPACK_OUTDIR ".exe")
-        ENDIF ()
-
     ENDIF ()
     ADD_SUBDIRECTORY(tools/ctpath)
 ENDIF ()
 
 
-SET(CENT_THEME_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/Themes/MainTheme/include")
+SET(CENT_THEME_INCLUDE_PATH " ${PROJECT_SOURCE_DIR}/Themes/MainTheme/include ")
+
 
 INCLUDE_DIRECTORIES(Plugins/include)
 

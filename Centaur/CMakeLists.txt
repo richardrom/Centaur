@@ -134,7 +134,8 @@ ELSEIF (WIN32)
     SET(CENTAUR_EXECUTABLE WIN32)
 ELSEIF (UNIX AND APPLE)
     MESSAGE(STATUS "Centaur: Apple Detected")
-    SET(CENTAUR_EXECUTABLE MACOSX_BUNDLE)
+    SET(CENTAUR_EXECUTABLE MACOSX_BUNDLE
+            ../cmake/core-naming.hpp.in)
     SET(APPLE_PLATFORM TRUE)
     SET(CMAKE_MACOSX_RPATH 1)
     SET(CMAKE_INSTALL_RPATH "${CMAKE_BINARY_DIR}/lib")
@@ -240,6 +241,8 @@ IF (${APPLE_PLATFORM})
 ENDIF ()
 
 
+TARGET_INCLUDE_DIRECTORIES(Centaur PRIVATE "${CMAKE_BINARY_DIR}/config")
+
 TARGET_INCLUDE_DIRECTORIES(Centaur PRIVATE
         include
         ${CENT_PROTOCOL_INCLUDE_PATH}
@@ -248,7 +251,6 @@ TARGET_INCLUDE_DIRECTORIES(Centaur PRIVATE
         ${CENT_THEME_INCLUDE_PATH}
         ${CENT_GLOBAL_INCLUDE_PATH})
 
-#TARGET_LINK_LIBRARIES(Centaur PRIVATE fmt::fmt)
 TARGET_LINK_LIBRARIES(Centaur PRIVATE
         Qt6::Core
         Qt6::Gui
@@ -298,3 +300,26 @@ IF (${APPLE_PLATFORM})
     ENDFOREACH ()
 ENDIF ()
 
+IF (CNT_COPY_BUILTIN_PLUGIN OR CNT_COPY_THEME_PLUGIN)
+    # In this case ctpath must be build
+    ADD_DEPENDENCIES(Centaur
+            ctpath)
+
+    SET(LOCAL_PATH "${PROJECT_SOURCE_DIR}/local")
+    SET(SCRIPTS_PATH "${PROJECT_SOURCE_DIR}/scripts")
+
+    SET(CTPATH_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+ENDIF ()
+
+IF (CNT_COPY_THEME_PLUGIN)
+    # Copy the theme plugin to the path
+    FIND_PACKAGE(PythonInterp 3 REQUIRED)
+
+    # This script will copy CentTheme to the themes path
+    ADD_CUSTOM_COMMAND(TARGET Centaur
+            POST_BUILD
+            COMMAND ${PYTHON_EXECUTABLE}
+            ARGS "${SCRIPTS_PATH}/cttheme-copy.py" -c "${CTPATH_DIR}" -l "${CENT_LOCAL_PATH}" -b "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+            COMMENT Running cttheme-copy.py
+            VERBATIM)
+ENDIF ()

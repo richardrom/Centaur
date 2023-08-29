@@ -9,13 +9,15 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "core-naming.hpp"
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QCoreApplication::setOrganizationName("CentaurProject");
-    QCoreApplication::setOrganizationDomain("centaur.com");
-    QCoreApplication::setApplicationName("Centaur");
+    QCoreApplication::setOrganizationName(cen::defines::_organization_Name);
+    QCoreApplication::setOrganizationDomain(cen::defines::_organization_Domain);
+    QCoreApplication::setApplicationName(cen::defines::_application_Name);
 
     const QString ctpath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
 
