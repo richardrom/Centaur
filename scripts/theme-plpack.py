@@ -5,7 +5,7 @@ import platform
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        prog='theme-plypack',
+        prog='theme-plpack',
         description='Generates the plpack from the build system for the CtTheme',
         epilog='CtTheme plpack generator')
 
@@ -47,6 +47,6 @@ if __name__ == '__main__':
                         " --version=0.1.0 --man=\"Centaur Project\" --min=0.1.0"
                         " --lib=\"{1}/{4}\" --out=\"{2}\""
                         " --uuid=\"2df95e88-7eae-5940-ab0d-b53f2df855e2\""
-                        " --theme --extra=\"{3}/dark.theme.json\"".format(args.bin, args.lib, args.output,
-                                                                          args.local, libraryName),
+                        " --theme --extra=\"{3}/dark.theme.xml\"".format(args.bin, args.lib, args.output,
+                                                                         args.local, libraryName),
                         shell=True).returncode)
