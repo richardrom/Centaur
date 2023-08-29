@@ -41,8 +41,6 @@
 #include <QtCharts/QValueAxis>
 #include <utility>
 
-#include "ThemeParser.hpp"
-
 /// \brief This structure hold the 'data' set to Impl::orderbookDepth and Impl::depthChart to properly
 /// handle the visualization of data
 struct OrderBookDepthInformation
@@ -59,6 +57,7 @@ struct OrderBookDepthInformation
     QString symbol;
     QString source;
 };
+
 Q_DECLARE_METATYPE(OrderBookDepthInformation);
 
 BEGIN_CENTAUR_NAMESPACE
