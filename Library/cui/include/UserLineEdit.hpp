@@ -14,12 +14,12 @@
 #define CENTAUR_USERLINEEDIT_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
+
 #include "LinkedLineEdit.hpp"
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CENTFIN_LIBRARY UserLineEdit : public LinkedLineEdit
+class CENT_LIBRARY UserLineEdit : public LinkedLineEdit
 {
     Q_OBJECT
 public:

@@ -14,12 +14,11 @@
 #define CENTAUR_SYSTEMPUSHBUTTON_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
 #include <QPushButton>
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CENTFIN_LIBRARY SystemPushButton : public QPushButton
+class CENT_LIBRARY SystemPushButton : public QPushButton
 {
     Q_OBJECT
 

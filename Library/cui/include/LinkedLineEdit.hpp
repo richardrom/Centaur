@@ -14,14 +14,13 @@
 #define CENTAUR_LINKEDLINEEDIT_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
 
 #include <QLabel>
 #include <QLineEdit>
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CENTFIN_LIBRARY LinkedLineEdit : public QLineEdit
+class CENT_LIBRARY LinkedLineEdit : public QLineEdit
 {
     Q_OBJECT
 public:

@@ -14,14 +14,14 @@
 #define CENTAUR_PASWORDLINEEDIT_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
+
 #include "LinkedLineEdit.hpp"
 #include <QAction>
 #include <QLineEdit>
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CENTFIN_LIBRARY PasswordLineEdit : public LinkedLineEdit
+class CENT_LIBRARY PasswordLineEdit : public LinkedLineEdit
 {
     Q_OBJECT
 public:

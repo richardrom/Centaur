@@ -11,13 +11,12 @@
 #ifndef FINANCEABLE_ANIMATEDBUTTON_HPP
 #define FINANCEABLE_ANIMATEDBUTTON_HPP
 
-#include "CentaurLibrary.hpp"
 #include "Centaur.hpp"
 #include <QPushButton>
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CENTFIN_LIBRARY AnimatedButton : public QPushButton
+class CENT_LIBRARY AnimatedButton : public QPushButton
 {
 public:
     enum class Animation
@@ -27,6 +26,7 @@ public:
         Bottom,
         Right
     };
+
 public:
     explicit AnimatedButton(QWidget *parent = nullptr);
     ~AnimatedButton() override;
@@ -38,8 +38,6 @@ public:
 protected:
     void enterEvent(QEnterEvent *event) override;
     void leaveEvent(QEvent *event) override;
-
-
 
 private:
     struct Impl;

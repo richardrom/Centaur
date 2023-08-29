@@ -14,13 +14,13 @@
 #define CENTAUR_RESIZABLEFRAME_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
+
 // Qt Specifics
 
 #include <QFrame>
 BEGIN_CENTAUR_NAMESPACE
 
-class CENTFIN_LIBRARY ResizableFrame : public QFrame
+class CENT_LIBRARY ResizableFrame : public QFrame
 {
     enum HotSpots : int
     {

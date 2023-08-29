@@ -14,7 +14,6 @@
 #define CENTAURTAXABLE_OPTIONSTABLEWIDGET_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
 
 #include <QAction>
 #include <QLineEdit>
@@ -26,7 +25,7 @@
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CENTFIN_LIBRARY OptionsTableWidget : public QTableView
+class CENT_LIBRARY OptionsTableWidget : public QTableView
 {
     enum class EditableMode
     {

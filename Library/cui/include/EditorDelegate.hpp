@@ -10,12 +10,11 @@
 #define CENTAUR_EDITOR_DELEGATE_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
 #include <QStyledItemDelegate>
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CENTFIN_LIBRARY EditorDelegate : public QStyledItemDelegate
+class CENT_LIBRARY EditorDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:

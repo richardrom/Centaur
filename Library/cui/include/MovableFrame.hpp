@@ -14,13 +14,12 @@
 #define CENTAUR_MOVABLEFRAME_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
 
 #include <QFrame>
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CENTFIN_LIBRARY MovableFrame : public QFrame
+class CENT_LIBRARY MovableFrame : public QFrame
 {
 public:
     explicit MovableFrame(QWidget *parent = nullptr);

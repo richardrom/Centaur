@@ -14,11 +14,11 @@
 #define CENTAUR_OPTIONSWIDGET_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
 #include <QPushButton>
 
 BEGIN_CENTAUR_NAMESPACE
-class CENTFIN_LIBRARY OptionsWidget : public QWidget
+
+class CENT_LIBRARY OptionsWidget : public QWidget
 {
     Q_OBJECT
 public:

@@ -14,12 +14,12 @@
 #define CENTAUR_SEARCHLINEEDIT_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
+
 #include <QLineEdit>
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CENTFIN_LIBRARY SearchLineEdit : public QLineEdit
+class CENT_LIBRARY SearchLineEdit : public QLineEdit
 {
     Q_OBJECT
 public:

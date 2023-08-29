@@ -7,14 +7,13 @@
 #ifndef FINANCEABLE_CHEVRONBUTTON_HPP
 #define FINANCEABLE_CHEVRONBUTTON_HPP
 
-#include "CentaurLibrary.hpp"
 #include "Centaur.hpp"
 #include <QPushButton>
 
 class QPropertyAnimation;
 BEGIN_CENTAUR_NAMESPACE
 
-class ChevronButton final : public QPushButton
+class CENT_LIBRARY ChevronButton final : public QPushButton
 {
     Q_OBJECT
 
@@ -27,8 +26,6 @@ public:
 public:
     qreal getAngle() const noexcept;
     void setAngle(qreal angle) noexcept;
-
-
 
 public:
     void allowAnimations(bool status);

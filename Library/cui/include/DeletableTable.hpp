@@ -14,7 +14,6 @@
 #define CENTAUR_DELETABLETABLE_HPP
 
 #include "Centaur.hpp"
-#include "CentaurLibrary.hpp"
 
 #include <QTableView>
 
