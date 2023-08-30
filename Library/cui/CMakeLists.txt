@@ -51,7 +51,8 @@ SET(INCLUDE_FILES
         include/CandleTimeAxisItem.hpp
         include/DeletableTable.hpp
         include/CDialog.hpp
-        include/cui.hpp)
+        include/cui.hpp
+        include/WindowFrame.hpp)
 
 SET(SOURCE_FILES
         src/EditorDelegate.cpp
@@ -74,7 +75,8 @@ SET(SOURCE_FILES
         src/CandleTimeAxisItem.cpp
         src/DeletableTable.cpp
         src/CDialog.cpp
-        src/cui.cpp)
+        src/cui.cpp
+        src/WindowFrame.cpp)
 
 SET(UI_FILES
         rcc/resources.qrc
