@@ -18,7 +18,7 @@
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CDialog : public QDialog
+class CENT_LIBRARY CDialog : public QDialog
 {
 public:
     explicit CDialog(QWidget *parent = nullptr);
@@ -39,6 +39,11 @@ protected:
     /// \brief Save the store dialog state
     /// \note The dialog name will be used to store the data. Having an empty object name will assert the execution
     void saveInterface() noexcept;
+
+    void paintEvent(QPaintEvent *event) override;
+
+private:
+    C_P_IMPL()
 };
 
 END_CENTAUR_NAMESPACE
