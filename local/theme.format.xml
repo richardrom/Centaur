@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<theme name="Dark Theme">
+    <render>
+        <!-- POSSIBLE VALUES: Will be treated as OR-->
+        <type>antialias</type>
+        <type>lossless</type>
+        <type>non-cosmetic</type>
+        <type>smooth</type>
+        <type>text-antialias</type>
+        <type>vertical</type>
+    </render>
+
+    <colors>
+        <color name="black"><!-- format: #RRGGBB; #RGB; #AARRGGBB; #RRRGGGBBB; #RRRRGGGGBBBB;  SVG color keyword names; transparent -->></color>
+    </colors>
+
+    <brushes>
+        <!-- Possible formats:
+
+        regular; linear-gradient; radial-gradient; conical-gradient
+
+        For regular format
+            Child nodes are only: pattern, the default is solid and can or can not be specified
+
+        For linear-gradient:
+
+
+        -->
+        <brush name="" format="regular" color="">
+        </brush>
+
+        <brush name="" format="linear-gradient">
+            <spread><!-- OPTIONAL  --></spread>
+            <points>
+                <x-start>0.5</x-start>
+                <y-start>0</y-start>
+                <x-end>0.5</x-end>
+                <y-end>1</y-end>
+            </points>
+            <colors>
+                <color name="accent-color">0</color>
+                <color name="accent-lighten-25p">0.5</color>
+                <color name="accent-color">1.0</color>
+            </colors>
+        </brush>
+
+        <brush name="" format="conical-gradient">
+            <center>
+                <x>0.0</x>
+                <y>0.0</y>
+            </center>
+            <angle>0.0</angle>
+
+            <colors>
+                <color name="accent-color">0</color>
+                <color name="accent-lighten-25p">0.5</color>
+                <color name="accent-color">1.0</color>
+            </colors>
+        </brush>
+
+        <brush name="" format="radial-gradient">
+            <center>
+                <x>0.0</x>
+                <y>0.0</y>
+            </center>
+            <focal>
+                <x>0.0</x>
+                <y>0.0</y>
+            </focal>
+            <radius>0.0</radius>
+            <focal-radius>0.0</focal-radius>
+
+            <colors>
+                <color name="accent-color">0</color>
+                <color name="accent-lighten-25p">0.5</color>
+                <color name="accent-color">1.0</color>
+            </colors>
+        </brush>
+
+    </brushes>
+
+    <pens>
+        <!-- width is optional is defaulted to 1.0 -->
+        <pen name="pen-accent-default" width="2" brush="accent-brush">
+            <!-- All these elements are optional -->
+            <cap><!--default: round--></cap>
+            <style><!--default: solid--></style>
+            <join><!--default: round--></join>
+        </pen>
+
+        <pen name="" brush="">
+            <style>custom</style>
+            <patterns>
+                <!-- Patterns must contain an even number -->
+                <pattern>1</pattern>
+                <pattern>2</pattern>
+            </patterns>
+        </pen>
+    </pens>
+
+    <fonts>
+        <font name="button-font">
+            <!-- Font options defines the way the text is being drawn-->
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>center</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <!-- Font Style defines the font properties declaring a font face will create a new QFont -->
+            <!--
+            <style size="12" italic="1" kerning="0" underline="1">
+                <weight></weight>
+                <capitalization></capitalization>
+                <stretch-factor></stretch-factor>
+                <letter-spacing factor="percentage"></letter-spacing>
+                <word-spacing></word-spacing>
+            </style>
+            -->
+            <style>
+                <weight>medium</weight>
+            </style>
+        </font>
+
+        <font name="button-font-focus">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>center</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style underline="1">
+                <weight>demi-bold</weight>
+            </style>
+        </font>
+
+        <font name="combobox-font">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+        </font>
+
+        <font name="menu-selected-font">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style underline="1">
+                <weight>demi-bold</weight>
+            </style>
+        </font>
+        <font name="menu-font">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+        </font>
+    </fonts>
+
+    <animations>
+        <animation name="hover-enter">
+            <easing-curve>linear</easing-curve>
+            <duration>150</duration>
+        </animation>
+        <animation name="hover-exit">
+            <easing-curve>linear</easing-curve>
+            <duration>150</duration>
+        </animation>
+        <animation name="focus-in">
+            <easing-curve>in-sine</easing-curve>
+            <duration>150</duration>
+        </animation>
+        <animation name="focus-out">
+            <easing-curve>out-sine</easing-curve>
+            <duration>150</duration>
+        </animation>
+    </animations>
+
+
+    <ui-elements>
+        <frames>
+            <frame name="generic">
+                <!-- No properties on the generic frame -->
+            </frame>
+            <frame name="button-frame">
+                <!-- if border radius will take precedence on any corners -->
+                <border-radius-x>10.0</border-radius-x>
+                <border-radius-y>10.0</border-radius-y>
+            </frame>
+
+            <frame name="button-frame-default">
+                <border-radius-x>10.0</border-radius-x>
+                <border-radius-y>10.0</border-radius-y>
+                <margins>
+                    <top>1</top>
+                    <left>1</left>
+                    <bottom>1</bottom>
+                    <right>1</right>
+                </margins>
+            </frame>
+
+            <frame name="button-frame-focus">
+                <border-radius-x>10.0</border-radius-x>
+                <border-radius-y>10.0</border-radius-y>
+                <margins>
+                    <top>1</top>
+                    <left>1</left>
+                    <bottom>1</bottom>
+                    <right>1</right>
+                </margins>
+            </frame>
+
+            <frame name="line-edit-frame">
+                <border-radius-x>8.0</border-radius-x>
+                <border-radius-y>8.0</border-radius-y>
+                <margins>
+                    <top>0</top>
+                    <left>1</left>
+                    <bottom>0</bottom>
+                    <right>1</right>
+                </margins>
+            </frame>
+
+            <frame name="combo-box-frame">
+                <margins>
+                    <top>5</top>
+                    <left>1</left>
+                    <bottom>5</bottom>
+                    <right>1</right>
+                </margins>
+            </frame>
+
+            <frame name="progress-bar-frame">
+                <!-- A -1 value indicate that the radius is MIN(width,height)/2-->
+                <border-radius-x>-1</border-radius-x>
+                <border-radius-y>-1</border-radius-y>
+                <margins>
+                    <top>7</top>
+                    <left>1</left>
+                    <bottom>7</bottom>
+                    <right>1</right>
+                </margins>
+            </frame>
+        </frames>
+
+        <buttons>
+            <button>
+                <animations>
+                    <!--
+                    start: value
+                    end: value
+
+                    hint: what kind value is the starting and ending values.
+                          If hint is not provided begin are ended are going to be treated as a decimal value
+                            hints:
+                                  integer
+                                  decimal
+                                  color (reference to a color name)
+                    to: where to apply the animation
+                         border
+                         background
+                    -->
+                    <hover-enter start="" end="" hint="color" to="">hover-enter</hover-enter>
+                    <hover-exit>hover-exit</hover-exit>
+                </animations>
+
+                <default>
+                    <state-normal>
+                        <frame>button-frame-default</frame>
+                        <frame-brush>button-default-brush</frame-brush>
+                        <frame-pen>pen-btn-default</frame-pen>
+                        <font>button-font</font>
+                        <font-pen>regular-font-pen</font-pen>
+                    </state-normal>
+                    <state-hover>
+                        <frame>button-frame-default</frame>
+                        <frame-brush>button-default-brush-hover</frame-brush>
+                        <frame-pen>pen-btn-default</frame-pen>
+                        <font>button-font</font>
+                        <font-pen>regular-font-pen</font-pen>
+                    </state-hover>
+                    <state-focus>
+                        <frame>button-frame-default</frame>
+                        <frame-brush>button-default-brush-hover</frame-brush>
+                        <frame-pen>pen-btn-focus</frame-pen>
+                        <font>button-font-focus</font>
+                        <font-pen>regular-font-pen</font-pen>
+                    </state-focus>
+                </default>
+
+                <regular>
+                    <state-normal>
+                        <frame>button-frame</frame>
+                        <frame-brush>accent-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>regular-font-pen</font-pen>
+                    </state-normal>
+                    <state-hover>
+                        <frame>button-frame</frame>
+                        <frame-brush>highlight-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>regular-font-pen</font-pen>
+                    </state-hover>
+                    <state-focus>
+                        <frame>button-frame-focus</frame>
+                        <frame-brush>accent-brush</frame-brush>
+                        <frame-pen>pen-btn-focus</frame-pen>
+                        <font>button-font-focus</font>
+                        <font-pen>regular-font-pen</font-pen>
+                    </state-focus>
+                </regular>
+
+                <disable>
+                    <state-normal>
+                        <frame>button-frame</frame>
+                        <frame-brush>disable-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>regular-font-pen</font-pen>
+                    </state-normal>
+                </disable>
+            </button>
+        </buttons>
+
+        <lineeditors>
+            <lineedit text-color="white" disable-color="gray-154" placeholder-color="input-placeholder-color">
+                <animations>
+                    <focus-in>focus-in</focus-in>
+                    <focus-out>focus-out</focus-out>
+                </animations>
+
+                <enabled-widget>
+                    <state-normal>
+                        <frame>line-edit-frame</frame>
+                        <frame-brush>input-background-brush</frame-brush>
+                        <frame-pen>pen-input-default</frame-pen>
+                    </state-normal>
+
+                    <state-focus>
+                        <frame>line-edit-frame</frame>
+                        <frame-brush>input-background-brush</frame-brush>
+                        <frame-pen>pen-accent-default</frame-pen>
+                    </state-focus>
+                </enabled-widget>
+
+                <disabled-widget>
+                    <state-normal>
+                        <frame>line-edit-frame</frame>
+                        <frame-brush>input-background-disable-brush</frame-brush>
+                    </state-normal>
+                </disabled-widget>
+            </lineedit>
+        </lineeditors>
+
+        <menus itemHeight="25" separatorHeight="10" leftPadding="5">
+            <empty-area-brush>black-brush</empty-area-brush>
+            <panel-brush>menu-background-brush</panel-brush>
+            <separator-pen>gray-154-pen</separator-pen>
+            <separator-brush></separator-brush>
+            <selected-brush>accent-darken-25p-brush</selected-brush>
+            <selected-pen>gray-248-pen</selected-pen>
+            <disabled-pen>gray-154-pen</disabled-pen>
+            <enabled-pen>gray-248-pen</enabled-pen>
+            <selected-pen>white-pen</selected-pen>
+            <selected-font>menu-selected-font</selected-font>
+            <disabled-font>menu-font</disabled-font>
+            <enabled-font>menu-font</enabled-font>
+        </menus>
+
+        <comboboxes>
+            <combobox dropWidth="20" dropPen="combo-drop-arrow-pen">
+                <animations>
+                    <focus-in>focus-in</focus-in>
+                    <focus-out>focus-out</focus-out>
+                </animations>
+
+                <enabled-widget>
+                    <state-normal>
+                        <frame>combo-box-frame</frame>
+                        <frame-brush>input-background-brush</frame-brush>
+                        <frame-pen>pen-input-default</frame-pen>
+                        <font>combobox-font</font>
+                        <font-pen>white-pen</font-pen>
+                    </state-normal>
+
+                    <state-focus>
+                        <frame>combo-box-frame</frame>
+                        <frame-brush>input-background-brush</frame-brush>
+                        <frame-pen>pen-accent-default</frame-pen>
+                        <font>combobox-font</font>
+                        <font-pen>white-pen</font-pen>
+                    </state-focus>
+                </enabled-widget>
+
+                <disabled-widget>
+                    <state-normal>
+                        <frame>combo-box-frame</frame>
+                        <frame-brush>input-background-disable-brush</frame-brush>
+                        <font-pen>combo-drop-arrow-pen</font-pen>
+                        <font>combobox-font</font>
+                    </state-normal>
+                </disabled-widget>
+            </combobox>
+        </comboboxes>
+
+        <progress-bar>
+            <bar glowEffect="1">
+                <effect>
+                    <!-- Is preferably to apply a margin to the brush-->
+                    <x-offset>0</x-offset>
+                    <y-offset>0</y-offset>
+                    <effect-color>accent-color</effect-color>
+                    <blur-radius>20</blur-radius>
+                </effect>
+
+                <frame>progress-bar-frame</frame>
+                <disabled-groove-brush>gray-154-brush</disabled-groove-brush>
+                <disable-bar-brush>input-background-disable-brush</disable-bar-brush>
+                <groove-brush>progress-bar-brush</groove-brush>
+                <bar-brush>input-background-brush</bar-brush>
+
+            </bar>
+
+            <bar name="progressBar_6" glowEffect="1">
+                <effect>
+                    <!-- Is preferably to apply a margin to the brush-->
+                    <x-offset>0</x-offset>
+                    <y-offset>0</y-offset>
+                    <effect-color>green-glow-color</effect-color>
+                    <blur-radius>20</blur-radius>
+                </effect>
+
+                <frame>progress-bar-frame</frame>
+                <disabled-groove-brush>gray-154-brush</disabled-groove-brush>
+                <disable-bar-brush>input-background-disable-brush</disable-bar-brush>
+                <groove-brush>progress-bar-brush</groove-brush>
+                <bar-brush>input-background-brush</bar-brush>
+
+            </bar>
+        </progress-bar>
+    </ui-elements>
+
+
+    <!--
+    Usually all elements inherit properties from the ui-elements
+    However, custom widgets can have more properties and animations and or override their parent behavior and geometry,
+    Usually this custom widgets are implemented in the CUI (Centaur User Interface) library
+    -->
+    <ui>
+        <element name="exchange-name" parent="button">
+        </element>
+    </ui>
+</theme>

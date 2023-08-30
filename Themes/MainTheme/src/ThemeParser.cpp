@@ -177,6 +177,7 @@ struct theme::ThemeParser::Impl
     auto parseCheckBoxInformation(const QDomElement &element) -> void;
     auto parseToolButtonInformation(const QDomElement &element) -> void;
     auto parseGroupBoxInformation(const QDomElement &element) -> void;
+    auto parseCDialog(const QDomElement &element) -> void;
 
     C_NODISCARD auto parseStates(const QDomElement &element) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::Elements;
     C_NODISCARD auto parseElementState(const QDomElement &element) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::ElementState;
@@ -355,6 +356,17 @@ void theme::ThemeParser::loadTheme(const std::string &file)
                 }
                 else {
                     P_IMPL()->errors.emplace_back(u"node '%1' in <ui-elements> node is not valid"_s.arg(nodeName));
+                }
+            }
+        }
+        else if (childElement.tagName() == "cui-elements") {
+            NODE_ITERATOR(cuiElementsNode, child)
+            {
+                NODE_ELEMENT(cuiElementsNode, cuiElement)
+                const auto nodeName = cuiElement.tagName();
+
+                if (nodeName == "c-dialogs") {
+                    P_IMPL()->parseCDialog(cuiElement);
                 }
             }
         }
@@ -2485,17 +2497,17 @@ auto theme::ThemeParser::Impl::parseGroupBoxInformation(const QDomElement &eleme
                 gbi.headerBrush = getBrush(nodeValue);
             }
             else if (nodeName == "header-indicator-width") {
-                bool ok;
-                gbi.indicatorWidth = nodeValue.toInt(&ok);
-                if (!ok) {
+                bool intOk         = true;
+                gbi.indicatorWidth = nodeValue.toInt(&intOk);
+                if (!intOk) {
                     errors.emplace_back(u"indicator with in the group box could not be parser (%1) as a valid integer"_s.arg(nodeValue));
                     gbi.indicatorWidth = 0; // Default to zero in case of error
                 }
             }
             else if (nodeName == "header-height") {
-                bool ok;
-                gbi.headerHeight = nodeValue.toInt(&ok);
-                if (!ok) {
+                bool intOk       = true;
+                gbi.headerHeight = nodeValue.toInt(&intOk);
+                if (!intOk) {
                     errors.emplace_back(u"indicator height with in the group box could not be parser as a valid integer (%1)"_s.arg(nodeValue));
                     gbi.headerHeight = -1; // Default to -1 in case of error, this will force the theme to use the default
                 }
@@ -2529,5 +2541,50 @@ auto theme::ThemeParser::Impl::parseGroupBoxInformation(const QDomElement &eleme
         else {
             parser->uiElements.groupBoxInformation = gbi;
         }
+    }
+}
+
+auto theme::ThemeParser::Impl::parseCDialog(const QDomElement &element) -> void
+{
+    using namespace Qt::Literals::StringLiterals;
+    NODE_ITERATOR(dialogNode, element)
+    {
+        CENTAUR_THEME_INTERFACE_NAMESPACE::DialogInformation difo;
+
+        NODE_ELEMENT(dialogNode, dialogElement)
+
+        if (dialogElement.tagName() != "c-dialog") {
+            errors.emplace_back(u"node '%1' in c-dialog is not recognizable"_s.arg(dialogElement.tagName()));
+            continue;
+        }
+
+        const auto name = dialogElement.attribute("name");
+
+        NODE_ITERATOR(uiNode, dialogElement)
+        {
+            NODE_ELEMENT(uiNode, uiElement)
+
+            const QString nodeName  = uiElement.tagName();
+            const QString nodeValue = uiElement.text();
+
+            if (nodeName == "frame") {
+                difo.frameInformation = getFrameInformation(nodeValue);
+            }
+            else if (nodeName == "background-brush") {
+                difo.backgroundBrush = getBrush(nodeValue);
+            }
+            else if (nodeName == "border-pen" && !nodeValue.isEmpty()) {
+                difo.borderPen = getPen(nodeValue);
+            }
+            else {
+                errors.emplace_back(u"node '%s' is not recognize in the c-dialog information"_s.arg(nodeName));
+            }
+        }
+
+        if (name.isEmpty()) {
+            parser->uiElements.dialogInformation = difo;
+        }
+        else
+            parser->uiElements.dialogOverride[name] = difo;
     }
 }

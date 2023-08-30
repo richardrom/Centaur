@@ -317,6 +317,13 @@ struct GroupBoxInformation
     int headerHeight { -1 };
 };
 
+struct DialogInformation
+{
+    QBrush backgroundBrush { Qt::NoBrush };
+    QPen borderPen { Qt::NoPen };
+    FrameInformation frameInformation;
+};
+
 using ToolButtonInformation = PushButtonInformation;
 
 using ColorMap            = std::unordered_map<QString, QColor>;
@@ -335,6 +342,7 @@ using HorizontalHeaderMap = std::unordered_map<QString, HeaderInformation>;
 using TableViewMap        = std::unordered_map<QString, TableViewInformation>;
 using CheckBoxMap         = std::unordered_map<QString, CheckBoxInformation>;
 using GroupBoxMap         = std::unordered_map<QString, GroupBoxInformation>;
+using DialogMap           = std::unordered_map<QString, DialogInformation>;
 
 struct ThemeConstants
 {
@@ -367,6 +375,7 @@ struct UIElements
     TableViewMap tableViewOverride;
     CheckBoxMap checkBoxOverride;
     GroupBoxMap groupBoxOverride;
+    DialogMap dialogOverride;
     PushButtonInformation pushButtonInformation;
     ToolButtonInformation toolButtonInformation;
     LineEditInformation lineEditInformation;
@@ -378,6 +387,7 @@ struct UIElements
     TableViewInformation tableViewInformation;
     CheckBoxInformation checkBoxInformation;
     GroupBoxInformation groupBoxInformation;
+    DialogInformation dialogInformation;
 };
 
 #if defined(C_GNU_CLANG)
