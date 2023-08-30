@@ -31,10 +31,12 @@
 namespace helper
 {
     /// \brief Each animation base is associated to a QWidget
-    struct CENT_LIBRARY_HIDDEN AnimationBase
+    struct CENT_LIBRARY_HIDDEN AnimationBase : public QObject
     {
+        Q_OBJECT
+    public:
         explicit AnimationBase(QWidget *parent, const CENTAUR_THEME_INTERFACE_NAMESPACE::AnimationInformation &animInfo);
-        virtual ~AnimationBase();
+        ~AnimationBase() override;
 
     protected:
         /// \brief Add an animation
@@ -135,8 +137,6 @@ private:
         -> std::tuple<CENTAUR_THEME_INTERFACE_NAMESPACE::ElementState &, QPen, int>;
 
     static auto initFontFromInfo(const QFont &font_p, const cen::theme::FontTextLayout &fifo) noexcept -> QFont;
-
-    std::unordered_map<QWidget *, std::unique_ptr<helper::AnimationBase>> m_widgetAnimations;
 
     QPainter::RenderHints m_renderHints;
     CENTAUR_THEME_INTERFACE_NAMESPACE::ThemeConstants *m_themeConstants;

@@ -43,6 +43,7 @@ namespace
 } // namespace
 
 helper::AnimationBase::AnimationBase(QWidget *parent, const CENTAUR_THEME_INTERFACE_NAMESPACE::AnimationInformation &animInfo) :
+    QObject(parent),
     widget { parent }
 {
     setupAnimation(animInfo);
@@ -51,8 +52,9 @@ helper::AnimationBase::AnimationBase(QWidget *parent, const CENTAUR_THEME_INTERF
 
 helper::AnimationBase::~AnimationBase()
 {
-
-    std::for_each(stateMachine.begin(), stateMachine.end(), [](const QStateMachine *pState) { delete pState; });
+    std::for_each(stateMachine.begin(), stateMachine.end(), [](const QStateMachine *pState) {
+        delete pState;
+    });
 }
 
 void helper::AnimationBase::setupAnimation(const CENTAUR_THEME_INTERFACE_NAMESPACE::AnimationInformation &animInfo)
@@ -474,15 +476,14 @@ auto CentTheme::getElementState(const QStyleOption *option, CENTAUR_THEME_INTERF
             return element->disabled.normal;
         }
 
-        if (state & QStyle::State_Sunken && element->enabled.pressed.brush != Qt::NoBrush) {
+        if ((state & QStyle::State_Sunken) && element->enabled.pressed.brush != Qt::NoBrush) {
             if (validSunken != nullptr)
                 *validSunken = true;
             return element->enabled.pressed;
         }
-        else {
-            if (validSunken != nullptr)
-                *validSunken = false;
-        }
+
+        if (validSunken != nullptr)
+            *validSunken = false;
 
         return state & QStyle::State_HasFocus
                    ? element->enabled.focus
@@ -624,8 +625,12 @@ void CentTheme::drawControl(QStyle::ControlElement element, const QStyleOption *
                 qobject_cast<const QProgressBar *>(widget));
             return;
         case CE_ProgressBarGroove: C_FALLTHROUGH;
-        case CE_ProgressBarLabel: C_FALLTHROUGH;
-        case CE_ProgressBarContents: return;
+        case CE_ProgressBarLabel: break;
+        case CE_ProgressBarContents:
+            // TODO: FIX PROGRESSBAR
+            drawProgressBarContents(qstyleoption_cast<const QStyleOptionProgressBar *>(option), painter,
+                qobject_cast<const QProgressBar *>(widget));
+            return;
 
         case CE_MenuItem: drawMenuItem(qstyleoption_cast<const QStyleOptionMenuItem *>(option), painter, widget); return;
         case CE_MenuHMargin: return;
@@ -1068,9 +1073,7 @@ void CentTheme::polish(QWidget *widget)
     }
 
     if (!animInfo.empty()) {
-        auto iter = m_widgetAnimations.find(widget);
-        if (iter == m_widgetAnimations.end())
-            m_widgetAnimations.insert({ widget, std::make_unique<helper::AnimationBase>(widget, animInfo) });
+        const QPointer<helper::AnimationBase> animationBase = new helper::AnimationBase(widget, animInfo);
     }
 
     QProxyStyle::polish(widget);
@@ -1087,9 +1090,7 @@ void CentTheme::polish(QApplication *app) { QProxyStyle::polish(app); }
 
 void CentTheme::unpolish(QWidget *widget)
 {
-    if (auto btnAnim = m_widgetAnimations.find(widget); btnAnim != m_widgetAnimations.end()) {
-        m_widgetAnimations.erase(btnAnim);
-    }
+
     QProxyStyle::unpolish(widget);
 }
 
@@ -1458,9 +1459,6 @@ void CentTheme::drawMenuItem(const QStyleOptionMenuItem *option, QPainter *paint
 {
     painter->save();
     {
-        // qDebug() << option->state << option->icon << option->checkType <<
-        // option->menuItemType << option->reservedShortcutWidth << option->rect
-        // << option->menuRect << widget;
 
         QRect itemRect = option->rect;
         itemRect.setLeft(itemRect.left() + m_uiElements->menuInformation.leftPadding);
