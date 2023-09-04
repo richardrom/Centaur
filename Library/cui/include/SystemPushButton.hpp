@@ -14,56 +14,45 @@
 #define CENTAUR_SYSTEMPUSHBUTTON_HPP
 
 #include "Centaur.hpp"
-#include <QPushButton>
+#include <QFrame>
 
 BEGIN_CENTAUR_NAMESPACE
 
-class CENT_LIBRARY SystemPushButton : public QPushButton
+/// \brief The TitleFrame class initializes all SystemPushButtons
+/// And it is not intended to use independently
+class SystemPushButton : public QFrame
 {
     Q_OBJECT
-
 public:
     enum class ButtonClass
     {
-        close = 0,
-        minimize,
+        Close = 0,
+        Minimize,
 #ifdef Q_OS_MAC
-        fullscreen,
+        Fullscreen,
 #else
-        maximize,
+        Maximize,
 #endif /* Q_OS_MAC */
-        override
     };
 public:
     explicit SystemPushButton(QWidget *parent = nullptr);
-    ~SystemPushButton() override = default;
+    explicit SystemPushButton(ButtonClass buttonClass, QWidget *parent = nullptr);
+    ~SystemPushButton() override;
 
     void setButtonClass(ButtonClass btnClass) noexcept;
 
-#ifdef Q_OS_MAC
-    void linkClose(SystemPushButton *min, SystemPushButton *fullscreen);
-    void linkMinimize(SystemPushButton *close, SystemPushButton *fullscreen);
-    void linkFullScreen(SystemPushButton *close, SystemPushButton *min);
-#else
-    void linkClose(SystemPushButton *min, SystemPushButton *maximize);
-    void linkMinimize(SystemPushButton *close, SystemPushButton *maximize);
-    void linkMaximize(SystemPushButton *close, SystemPushButton *min);
-#endif
-
-public slots:
-    void activate() noexcept;
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void enterEvent(QEnterEvent *event) override;
+    void leaveEvent(QEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 signals:
-    void systemPressed();
+    /// \brief This signal is emitted when the close button is pressed if
+    void buttonPressed();
 
-private:
-    SystemPushButton *m_linkMin { nullptr };
-    SystemPushButton *m_linkMaxFull { nullptr };
-    SystemPushButton *m_linkClose { nullptr };
-
-    ButtonClass m_class { ButtonClass::close };
-
-    QWidget *m_topLevelWidget;
+    C_P_IMPL()
 };
 
 END_CENTAUR_NAMESPACE

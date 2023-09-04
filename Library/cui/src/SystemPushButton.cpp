@@ -7,101 +7,113 @@
 #include "SystemPushButton.hpp"
 
 #include <QApplication>
+#include <QMouseEvent>
+#include <QPaintEvent>
+#include <QPainter>
 
 BEGIN_CENTAUR_NAMESPACE
 
-SystemPushButton::SystemPushButton(QWidget *parent) :
-    QPushButton(parent)
+struct SystemPushButton::Impl
 {
-    m_topLevelWidget = parent;
-    while (m_topLevelWidget->parentWidget() != nullptr)
-        m_topLevelWidget = m_topLevelWidget->parentWidget();
+    SystemPushButton::ButtonClass buttonClass { SystemPushButton::ButtonClass::Close };
+    bool mouseInside { false };
+};
 
-    connect(this, &QPushButton::released, this, &SystemPushButton::activate);
+SystemPushButton::SystemPushButton(QWidget *parent) :
+    QFrame(parent),
+    _impl { std::make_unique<SystemPushButton::Impl>() }
+{
+    setFrameShape(QFrame::NoFrame);
+    setLineWidth(0);
+    setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    setMouseTracking(true);
 }
+
+SystemPushButton::SystemPushButton(SystemPushButton::ButtonClass buttonClass, QWidget *parent) :
+    SystemPushButton(parent)
+{
+    P_IMPL()->buttonClass = buttonClass;
+}
+
+SystemPushButton::~SystemPushButton() = default;
 
 void SystemPushButton::setButtonClass(CENTAUR_NAMESPACE::SystemPushButton::ButtonClass btnClass) noexcept
 {
-    m_class = btnClass;
+    P_IMPL()->buttonClass = btnClass;
+    update();
 }
 
-#ifdef Q_OS_MAC
-void SystemPushButton::linkClose(SystemPushButton *min, SystemPushButton *fullscreen)
+void SystemPushButton::mousePressEvent(C_UNUSED QMouseEvent *event)
 {
-    m_linkMin     = min;
-    m_linkMaxFull = fullscreen;
 }
 
-void SystemPushButton::linkMinimize(SystemPushButton *close, SystemPushButton *fullscreen)
+void SystemPushButton::mouseReleaseEvent(C_UNUSED QMouseEvent *event)
 {
-    m_linkClose   = close;
-    m_linkMaxFull = fullscreen;
+    emit buttonPressed();
 }
 
-void SystemPushButton::linkFullScreen(SystemPushButton *close, SystemPushButton *min)
+void SystemPushButton::enterEvent(C_UNUSED QEnterEvent *event)
 {
-    m_linkClose = close;
-    m_linkMin   = min;
+    P_IMPL()->mouseInside = true;
+    update();
 }
 
-#else
-void SystemPushButton::linkClose(SystemPushButton *min, SystemPushButton *maximize)
+void SystemPushButton::leaveEvent(C_UNUSED QEvent *event)
 {
-    m_linkMin     = min;
-    m_linkMaxFull = maximize
+    P_IMPL()->mouseInside = false;
+    update();
 }
-void SystemPushButton::linkMinimize(SystemPushButton *close, SystemPushButton *maximize)
+
+void SystemPushButton::paintEvent(C_UNUSED QPaintEvent *event)
 {
-    m_linkClose   = close;
-    m_linkMaxFull = maximize;
-}
-void SystemPushButton::linkMaximize(SystemPushButton *close, SystemPushButton *min)
-{
-    m_linkClose = close;
-    m_linkMin   = min;
-}
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::RenderHint::Antialiasing);
+#if defined(Q_OS_MAC)
+
+    const QBrush brush = [&]() -> QBrush {
+        switch (P_IMPL()->buttonClass) {
+            case ButtonClass::Close:
+                {
+                    static constexpr auto closePushButtonColor       = QColor(245, 79, 83);
+                    static constexpr auto closePushButtonColor_Hover = QColor(246, 95, 87);
+                    if (P_IMPL()->mouseInside) {
+                        return QBrush { closePushButtonColor_Hover };
+                    }
+                    return QBrush { closePushButtonColor };
+                }
+            case ButtonClass::Minimize:
+                {
+                    static constexpr auto minimizePushButtonColor       = QColor(250, 178, 67);
+                    static constexpr auto minimizePushButtonColor_Hover = QColor(250, 188, 47);
+                    if (P_IMPL()->mouseInside) {
+                        return QBrush { minimizePushButtonColor_Hover };
+                    }
+                    return QBrush { minimizePushButtonColor };
+                }
+            case ButtonClass::Fullscreen:
+                {
+                    static constexpr auto fullscreenPushButtonColor       = QColor(68, 200, 64);
+                    static constexpr auto fullscreenPushButtonColor_Hover = QColor(87, 205, 83);
+                    if (P_IMPL()->mouseInside) {
+                        return QBrush { fullscreenPushButtonColor_Hover };
+                    }
+                    return QBrush { fullscreenPushButtonColor };
+                }
+        }
+    }();
+
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(brush);
+    painter.drawRoundedRect(
+        event->rect(),
+        static_cast<qreal>(event->rect().width()) / 2,
+        static_cast<qreal>(event->rect().height()) / 2);
+
+#elif defined(Q_OS_WIN)
+    // TODO: Draw windows widgets
+#elif defined(Q_OS_LINUX)
+    // TODO: Draw linux widgets
 #endif
-
-void SystemPushButton::activate() noexcept
-{
-    switch (m_class)
-    {
-        case ButtonClass::close:
-            m_topLevelWidget->close();
-            break;
-        case ButtonClass::minimize:
-            m_topLevelWidget->showMinimized();
-            break;
-#ifdef Q_OS_MAC
-        case ButtonClass::fullscreen:
-            if (m_topLevelWidget->isFullScreen())
-            {
-                m_topLevelWidget->showNormal();
-                if (m_linkClose)
-                    m_linkClose->show();
-                if (m_linkMin)
-                    m_linkMin->show();
-            }
-            else
-            {
-                m_topLevelWidget->showFullScreen();
-                if (m_linkClose)
-                    m_linkClose->hide();
-                if (m_linkMin)
-                    m_linkMin->hide();
-            }
-#else
-        case ButtonClass::maximize:
-            if (!m_topLevelWidget->isMaximized())
-                m_topLevelWidget->showNormal();
-            else
-                m_topLevelWidget->showMaximized();
-#endif
-            break;
-        case ButtonClass::override:
-            emit systemPressed();
-            break;
-    }
 }
 
 END_CENTAUR_NAMESPACE
