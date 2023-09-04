@@ -44,7 +44,6 @@ static auto initFontFromInfo(const QFont &font_p, const cen::theme::FontTextLayo
 
 struct TitleFrame::Impl
 {
-
     void initData(QWidget *titleWidget);
 
     QString frameTitle;
@@ -166,10 +165,10 @@ void TitleFrame::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::RenderHint::Antialiasing);
     painter.setBrush(Qt::NoBrush);
 
-    const qreal widgetX = 1;
-    const qreal widgetY = 1;
-    const qreal width   = event->rect().width() - 2;
-    const qreal height  = event->rect().height() - 2;
+    const qreal widgetX = 0;
+    const qreal widgetY = 0;
+    const qreal width   = event->rect().width();
+    const qreal height  = event->rect().height();
 
     QPainterPath leftBorderPath;
     if (topLeftRadius > 0.0) {
