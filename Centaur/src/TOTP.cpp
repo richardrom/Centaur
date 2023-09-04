@@ -33,7 +33,7 @@ namespace
 
 int CENTAUR_NAMESPACE::getTOTPCode(const std::string &secret)
 {
-    quint64 current = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() / 30LL;
+    quint64 current = static_cast<quint64>(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) / 30LL;
 
     if constexpr (std::endian::native == std::endian::little) {
         // This integer needs to be in the big-endian format
