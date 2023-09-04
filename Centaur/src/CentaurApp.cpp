@@ -395,6 +395,15 @@ void CentaurApp::initializeInterface() noexcept
 {
     logTrace("app", "CentaurApp::initializeInterface()");
 
+    ui()->mainWindowFrame->overrideMovableParent(this);
+
+#ifdef DEBUG
+    const QString applicationTitle = QString("%1 %2").arg(cen::defines::_application_Name, CentaurVersionString);
+#else
+    const QString applicationTitle = QString("%1").arg(cen::defines::_application_Name);
+#endif
+    ui()->mainFrameTitle->setFrameTitle(applicationTitle);
+
     /*
         ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::close);
         ui()->minimizeButton->setButtonClass(SystemPushButton::ButtonClass::minimize);
