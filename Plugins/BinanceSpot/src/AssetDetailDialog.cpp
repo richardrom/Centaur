@@ -5,6 +5,7 @@
 //
 
 #include "AssetDetailDialog.hpp"
+
 #include <QSettings>
 
 CENTAUR_NAMESPACE::AssetDetailDialog::AssetDetailDialog(const binapi::SPOT::AssetDetail &detail, const QString &asset, cen::interface::IConfiguration *config, QDialog *parent) :
@@ -24,7 +25,6 @@ CENTAUR_NAMESPACE::AssetDetailDialog::AssetDetailDialog(const binapi::SPOT::Asse
 
     setReadOnly(m_ui->checkBoxDeposit);
     setReadOnly(m_ui->checkBoxWithdraw);
-
 
     m_ui->image->setPixmap(config->getAssetImage(64, CENTAUR_INTERFACE_NAMESPACE::AssetImageSource::Crypto, asset, this));
     m_ui->coinName->setText(asset);

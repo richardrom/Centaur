@@ -34,7 +34,7 @@ auto cen::PluginConfiguration::getAssetImage(int size, CENTAUR_INTERFACE_NAMESPA
 
 auto cen::PluginConfiguration::credentials(const std::string &textData, bool forceDialog, CredentialsMethod method) -> std::string
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("user.password");
     auto pad = settings.value("pad").toString();
     settings.endGroup();
@@ -43,8 +43,7 @@ auto cen::PluginConfiguration::credentials(const std::string &textData, bool for
     const auto iv = settings.value(m_uuidString, "").toString();
     settings.endGroup();
 
-    if (iv.isEmpty())
-    {
+    if (iv.isEmpty()) {
         throw std::runtime_error("the plugin was installed with protection disabled");
     }
 
@@ -62,10 +61,8 @@ auto cen::PluginConfiguration::credentials(const std::string &textData, bool for
     if (cred.isEmpty())
         return {};
 
-    try
-    {
-        switch (method)
-        {
+    try {
+        switch (method) {
             case CredentialsMethod::encrypt:
                 return CENTAUR_PROTOCOL_NAMESPACE::Encryption::EncryptAES(textData, cred.toStdString(), iv.toStdString());
 
@@ -73,8 +70,7 @@ auto cen::PluginConfiguration::credentials(const std::string &textData, bool for
                 return CENTAUR_PROTOCOL_NAMESPACE::Encryption::DecryptAES(textData, cred.toStdString(), iv.toStdString());
         }
 
-    } catch (...)
-    {
+    } catch (...) {
         throw;
     }
 }

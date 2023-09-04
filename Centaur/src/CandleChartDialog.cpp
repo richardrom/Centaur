@@ -15,6 +15,7 @@ struct CandleChartDialog::Impl
     inline Impl(CENTAUR_PLUGIN_NAMESPACE::TimeFrame tf) :
         ui { new Ui::CandleChartDialog },
         timeframe { tf } { }
+
     inline ~Impl() = default;
 
     std::unique_ptr<Ui::CandleChartDialog> ui;
@@ -41,13 +42,13 @@ CandleChartDialog::CandleChartDialog(CENTAUR_PLUGIN_NAMESPACE::TimeFrame tf, con
     ui()->titleFrame->overrideParent(this);
     ui()->mainTableFrame->overrideParent(this);
 
-    ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
+    /*ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
     ui()->minimizeButton->setButtonClass(SystemPushButton::ButtonClass::override);
-
-    // Minimize will only hide the dialog
-    connect(ui()->minimizeButton, &QPushButton::released, this, [&]() { hide(); });
-    // Close will have special meaning
-    connect(ui()->closeButton, &QPushButton::released, this, [&]() { onCloseButton(); });
+*/
+    /*    // Minimize will only hide the dialog
+        connect(ui()->minimizeButton, &QPushButton::released, this, [&]() { hide(); });
+        // Close will have special meaning
+        connect(ui()->closeButton, &QPushButton::released, this, [&]() { onCloseButton(); });*/
 
     connect(ui()->onTopButton, &QPushButton::clicked, this, [&](bool checked) {
         this->setWindowFlag(Qt::WindowType::WindowStaysOnTopHint, checked);
@@ -66,7 +67,7 @@ Ui::CandleChartDialog *CandleChartDialog::ui()
 
 void CandleChartDialog::onCloseButton() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("CandleChartDialog");
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
@@ -76,7 +77,7 @@ void CandleChartDialog::onCloseButton() noexcept
 
 void CandleChartDialog::restoreInterface() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("CandleChartDialog");
     restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();

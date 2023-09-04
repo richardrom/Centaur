@@ -46,23 +46,20 @@ namespace
 
         std::string out;
         out.reserve(iterations * 8);
-        for (auto i = 0ull; i < iterations; ++i)
-        {
-            const auto copy = (i == iterations - 1 && mod) ? mod : 5ull;
+        for (auto i = 0ULL; i < iterations; ++i) {
+            const auto copy = (i == iterations - 1 && mod) ? mod : 5ULL;
 
             uint64_t block { 0 };
             memmove(&block, data.substr(i * 5, copy).c_str(), copy);
-            uint64_t block_be = 0xffffffffff & ((block << 32) | (block << 16 & 0xFF000000) | (block << 0 & 0x00FF0000) | (block >> 16 & 0x0000FF00) | (block >> 32 & 0x000000FF));
+            const uint64_t block_be = 0xffffffffff & ((block << 32) | (block << 16 & 0xFF000000) | (block << 0 & 0x00FF0000) | (block >> 16 & 0x0000FF00) | (block >> 32 & 0x000000FF));
 
-            for (int k = 7; k >= 0; --k)
-            {
+            for (int k = 7; k >= 0; --k) {
                 const uint64_t idx = (block_be >> 5 * k) & 0x1F;
                 out.push_back(base32Table[idx]);
             }
         }
-        if (mod)
-        {
-            for (auto k = (iterations - 1) * 8 + index[mod], i = 0ull; i < padding[mod]; ++i, ++k)
+        if (mod) {
+            for (auto k = (iterations - 1) * 8 + index[mod], i = 0ULL; i < padding[mod]; ++i, ++k)
                 out[k] = '=';
         }
 
@@ -96,16 +93,14 @@ void SettingsDialog::initSessionWidget() noexcept
     ui()->userTable->setCellWidget(5, 1, _sesImpl->_checkBoxWidget);
 
     // First time started
-    if (isFirstTimeStarted())
-    {
+    if (isFirstTimeStarted()) {
 
         QIcon addIcon;
         addIcon.addFile(QString::fromUtf8(":/buttons/add"), QSize(), QIcon::Normal, QIcon::Off);
         ui()->addUserBtn->setIcon(addIcon);
         ui()->addUserBtn->setText(tr("Add"));
     }
-    else
-    {
+    else {
         QIcon editIcon;
         editIcon.addFile(QString::fromUtf8(":/options/edit"), QSize(), QIcon::Normal, QIcon::Off);
         ui()->addUserBtn->setIcon(editIcon);
@@ -119,7 +114,7 @@ void SettingsDialog::initSessionWidget() noexcept
 void SettingsDialog::onAddUser() noexcept
 {
     using namespace CENTAUR_PROTOCOL_NAMESPACE;
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("__iv__");
     const auto localIV = settings.value("__local__").toString();
     settings.endGroup();
@@ -130,8 +125,7 @@ void SettingsDialog::onAddUser() noexcept
 
     bool editingMode = false;
     AddUserDialog dlg(this);
-    if (!g_globals->session.user.isEmpty())
-    {
+    if (!g_globals->session.user.isEmpty()) {
         editingMode = true;
         dlg.enableEditOnly(
             _sesImpl->_userValue->text(),
@@ -140,10 +134,9 @@ void SettingsDialog::onAddUser() noexcept
             _sesImpl->_pictureValue->data(Qt::UserRole).value<QImage>());
     }
 
-    if (dlg.exec() == QDialog::Accepted)
-    {
+    if (dlg.exec() == QDialog::Accepted) {
         // The database will be created
-        AddUserDialog::UserInformation ifo = dlg.getUserInformation();
+        const AddUserDialog::UserInformation ifo = dlg.getUserInformation();
 
         // Initialize the data in the table
         _sesImpl->_userValue->setText(ifo.user);
@@ -154,29 +147,26 @@ void SettingsDialog::onAddUser() noexcept
         g_globals->session.display = ifo.name;
         g_globals->session.email   = ifo.mail;
 
-        if (!_sesImpl->_pswValue->text().isEmpty())
-        {
+        if (!_sesImpl->_pswValue->text().isEmpty()) {
             _sesImpl->_pswValue->setText(QString("*").repeated(15));
             _sesImpl->_pswValue->setData(Qt::UserRole, ifo.psw);
 
-            const QString tfaFile = []() -> QString {
-                QString data = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+            const QString tfaFileName = []() -> QString {
+                QString const data = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
                 return QString("%1/f6110cb58f3b").arg(data);
             }();
 
-            QFile file(tfaFile);
-            if (!file.open(QIODeviceBase::ReadOnly) && g_globals->session.tfa)
-            {
+            QFile file(tfaFileName);
+            if (!file.open(QIODeviceBase::ReadOnly) && g_globals->session.tfa) {
                 // Code: 0x00000001 is encryption failed
                 // Code: 0x00000002 is a file failure
                 QMessageBox::critical(this, tr("Error"), QString(tr("2FA can not be updated.\n2FA will be disabled.\nError: 0x0000001")),
                     QMessageBox::Ok);
                 _sesImpl->_checkBox->setChecked(false);
             }
-            else
-            {
+            else {
                 QTextStream stream(&file);
-                QString fileData = stream.readAll();
+                const QString fileData = stream.readAll();
                 file.close();
 
                 auto pad0                  = pad;
@@ -186,14 +176,12 @@ void SettingsDialog::onAddUser() noexcept
                         pad0.replace(0, ifo.prevPsw.size(), ifo.prevPsw).toStdString(),
                         localIV.toStdString()));
 
-                if (!QFile::remove(tfaFile))
-                {
+                if (!QFile::remove(tfaFileName)) {
                     QMessageBox::critical(this, tr("Error"), QString(tr("2FA can not be updated.\n2FA will be disabled.\nError: 0x0000002")),
                         QMessageBox::Ok);
                     _sesImpl->_checkBox->setChecked(false);
                 }
-                else
-                {
+                else {
                     auto pad1   = pad;
                     auto result = QString::fromStdString(
                         Encryption::EncryptAES(
@@ -201,9 +189,8 @@ void SettingsDialog::onAddUser() noexcept
                             pad1.replace(0, ifo.psw.size(), ifo.psw).toStdString(),
                             localIV.toStdString()));
 
-                    QFile file(tfaFile);
-                    if (!file.open(QIODeviceBase::WriteOnly) || result.isEmpty())
-                    {
+                    QFile tfaFile(tfaFileName);
+                    if (!tfaFile.open(QIODeviceBase::WriteOnly) || result.isEmpty()) {
                         // Code: 0x00000001 is: encryption failed
                         // Code: 0x00000002 is: a file failure
                         QMessageBox::critical(this, tr("Error"),
@@ -211,19 +198,17 @@ void SettingsDialog::onAddUser() noexcept
                             QMessageBox::Ok);
                         _sesImpl->_checkBox->setChecked(false);
                     }
-                    else
-                    {
+                    else {
                         // Store the data
-                        QTextStream stream(&file);
-                        stream << result;
-                        file.close();
+                        QTextStream tfaStream(&tfaFile);
+                        tfaStream << result;
+                        tfaFile.close();
                     }
                 }
             }
         }
 
-        if (ifo.photoUpdate)
-        {
+        if (ifo.photoUpdate) {
             _sesImpl->_pictureValue->setData(Qt::DecorationRole, QPixmap::fromImage(ifo.photograph).scaled(100, 100, Qt::KeepAspectRatio));
             _sesImpl->_pictureValue->setData(Qt::UserRole, ifo.photograph);
             g_globals->session.image = ifo.photograph;
@@ -235,7 +220,6 @@ void SettingsDialog::onAddUser() noexcept
         ui()->addUserBtn->setIcon(editIcon);
         ui()->addUserBtn->setText(tr("Edit"));
 
-        QSettings settings("CentaurProject", "Centaur");
         settings.beginGroup("__Session__data");
         settings.setValue("__user__", g_globals->session.user);
         settings.setValue("__display__", g_globals->session.display);
@@ -267,7 +251,7 @@ void SettingsDialog::resetTablesValues() noexcept
 
 void SettingsDialog::openUserInformationData() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
 
     const QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
 
@@ -288,10 +272,10 @@ void SettingsDialog::openUserInformationData() noexcept
     _sesImpl->_emailValue->setText(g_globals->session.email);
 
     g_globals->session.image.load(imageFilePath);
-    if (g_globals->session.image.isNull())
+    if (g_globals->session.image.isNull()) {
         logWarn("session", "user image does not exists");
-    else
-    {
+    }
+    else {
         _sesImpl->_pictureValue->setData(Qt::DecorationRole, QPixmap::fromImage(g_globals->session.image).scaled(100, 100, Qt::KeepAspectRatio));
         _sesImpl->_pictureValue->setData(Qt::UserRole, g_globals->session.image);
     }
@@ -304,7 +288,7 @@ void SettingsDialog::openUserInformationData() noexcept
 void SettingsDialog::onAllow2FA(bool checked) noexcept
 {
     using namespace CENTAUR_PROTOCOL_NAMESPACE;
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("__iv__");
     const auto localIV = settings.value("__local__").toString();
     settings.endGroup();
@@ -314,43 +298,34 @@ void SettingsDialog::onAllow2FA(bool checked) noexcept
     settings.endGroup();
 
     const QString tfaFile = []() -> QString {
-        QString data = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+        const QString data = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
         return QString("%1/f6110cb58f3b").arg(data);
     }();
 
-    if (checked)
-    {
-        if (_sesImpl->_emailValue->text().isEmpty())
-        {
+    if (checked) {
+        if (_sesImpl->_emailValue->text().isEmpty()) {
             QMessageBox::warning(this, tr("Warning"), tr("e-mail user field could not be empty"), QMessageBox::Ok);
             _sesImpl->_checkBox->setChecked(false);
             return;
         }
 
-        if (tfaFile.isEmpty())
-        {
+        if (tfaFile.isEmpty()) {
             QMessageBox::critical(this, tr("Error"), tr("There is an error in the user identification. 2FA is not available"), QMessageBox::Ok);
             _sesImpl->_checkBox->setChecked(false);
             return;
         }
-        else
-        {
-            if (QFile::exists(tfaFile))
-            {
-                int res = QMessageBox::warning(this, tr("Warning"),
-                    tr("Currently, there is 2FA registered and the data can not be retrieved for security.\nWould you like to repeat the process?.\nSelecting no the 2FA will be disabled"),
-                    QMessageBox::Yes | QMessageBox::No);
-                if (res == QMessageBox::Yes)
-                {
-                    // Remove and continue
-                    QFile::remove(tfaFile);
-                }
-                else
-                {
-                    // Do not continue and set the checked flag
-                    _sesImpl->_checkBox->setChecked(false);
-                    return;
-                }
+        if (QFile::exists(tfaFile)) {
+            int res = QMessageBox::warning(this, tr("Warning"),
+                tr("Currently, there is 2FA registered and the data can not be retrieved for security.\nWould you like to repeat the process?.\nSelecting no the 2FA will be disabled"),
+                QMessageBox::Yes | QMessageBox::No);
+            if (res == QMessageBox::Yes) {
+                // Remove and continue
+                QFile::remove(tfaFile);
+            }
+            else {
+                // Do not continue and set the checked flag
+                _sesImpl->_checkBox->setChecked(false);
+                return;
             }
         }
 
@@ -361,17 +336,14 @@ void SettingsDialog::onAllow2FA(bool checked) noexcept
         // Store in the file the key encrypted with the password
         // Since this operation can fail and return, write the file first and if it not fails, just then, show the QR code dialog
         auto userPsw = _sesImpl->_pswValue->data(Qt::UserRole).toString();
-        if (userPsw.isEmpty())
-        {
+        if (userPsw.isEmpty()) {
             LoginDialog dlg(this);
             dlg.setPasswordMode();
-            if (dlg.exec() == QDialog::Accepted)
-            {
+            if (dlg.exec() == QDialog::Accepted) {
                 userPsw          = dlg.userPassword;
                 dlg.userPassword = QString::fromStdString(AESSym::createUniqueId(10, 8)); // clear the data with random digits
             }
-            else
-            {
+            else {
                 QMessageBox::critical(this, "Critical", QString(tr("In order to provide 2FA you must set your password")));
                 _sesImpl->_checkBox->setChecked(false);
                 return;
@@ -385,8 +357,7 @@ void SettingsDialog::onAllow2FA(bool checked) noexcept
                 localIV.toStdString()));
 
         QFile file(tfaFile);
-        if (!file.open(QIODeviceBase::WriteOnly) || result.isEmpty())
-        {
+        if (!file.open(QIODeviceBase::WriteOnly) || result.isEmpty()) {
             // Code: 0x00000001 is: encryption failed
             // Code: 0x00000002 is: a file failure
             QMessageBox::critical(this, tr("Error"),
@@ -406,15 +377,12 @@ void SettingsDialog::onAllow2FA(bool checked) noexcept
         qrCode.exec();
 
         g_globals->session.tfa = true;
-        QSettings settings("CentaurProject", "Centaur");
         settings.beginGroup("__Session__data");
         settings.setValue("__2fa__", g_globals->session.tfa);
         settings.endGroup();
     }
-    else
-    {
+    else {
         g_globals->session.tfa = false;
-        QSettings settings("CentaurProject", "Centaur");
         settings.beginGroup("__Session__data");
         settings.setValue("__2fa__", g_globals->session.tfa);
         settings.endGroup();

@@ -178,6 +178,7 @@ struct theme::ThemeParser::Impl
     auto parseToolButtonInformation(const QDomElement &element) -> void;
     auto parseGroupBoxInformation(const QDomElement &element) -> void;
     auto parseCDialog(const QDomElement &element) -> void;
+    auto parseTitleBar(const QDomElement &element) -> void;
 
     C_NODISCARD auto parseStates(const QDomElement &element) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::Elements;
     C_NODISCARD auto parseElementState(const QDomElement &element) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::ElementState;
@@ -367,6 +368,9 @@ void theme::ThemeParser::loadTheme(const std::string &file)
 
                 if (nodeName == "c-dialogs") {
                     P_IMPL()->parseCDialog(cuiElement);
+                }
+                else if (nodeName == "title-bar") {
+                    P_IMPL()->parseTitleBar(cuiElement);
                 }
             }
         }
@@ -2531,7 +2535,7 @@ auto theme::ThemeParser::Impl::parseGroupBoxInformation(const QDomElement &eleme
                 gbi.disabledPen = getPen(nodeValue);
             }
             else {
-                errors.emplace_back(u"node %1 in groupbox is not recognized"_s.arg(nodeName));
+                errors.emplace_back(u"node '%1' in groupbox is not recognized"_s.arg(nodeName));
             }
         }
 
@@ -2577,7 +2581,7 @@ auto theme::ThemeParser::Impl::parseCDialog(const QDomElement &element) -> void
                 difo.borderPen = getPen(nodeValue);
             }
             else {
-                errors.emplace_back(u"node '%s' is not recognize in the c-dialog information"_s.arg(nodeName));
+                errors.emplace_back(u"node '%1' is not recognized in the c-dialog information"_s.arg(nodeName));
             }
         }
 
@@ -2586,5 +2590,53 @@ auto theme::ThemeParser::Impl::parseCDialog(const QDomElement &element) -> void
         }
         else
             parser->uiElements.dialogOverride[name] = difo;
+    }
+}
+
+auto theme::ThemeParser::Impl::parseTitleBar(const QDomElement &element) -> void
+{
+    using namespace Qt::Literals::StringLiterals;
+    NODE_ITERATOR(titleNode, element)
+    {
+        CENTAUR_THEME_INTERFACE_NAMESPACE::TitleBarInformation tbfo;
+
+        NODE_ELEMENT(titleNode, titleElement)
+
+        if (titleElement.tagName() != "bar") {
+            errors.emplace_back(u"node '%1' in title-bar is not recognizable"_s.arg(titleElement.tagName()));
+            continue;
+        }
+
+        const auto name = titleElement.attribute("name");
+
+        NODE_ITERATOR(uiNode, titleElement)
+        {
+            NODE_ELEMENT(uiNode, uiElement)
+
+            const QString nodeName  = uiElement.tagName();
+            const QString nodeValue = uiElement.text();
+
+            if (nodeName == "frame") {
+                tbfo.frameInformation = getFrameInformation(nodeValue);
+            }
+            else if (nodeName == "background-brush") {
+                tbfo.backgroundBrush = getBrush(nodeValue);
+            }
+            else if (nodeName == "font") {
+                tbfo.font = getFont(nodeValue);
+            }
+            else if (nodeName == "font-pen") {
+                tbfo.fontPen = getPen(nodeValue);
+            }
+            else {
+                errors.emplace_back(u"node '%1' is not recognized in the title-bar->bar information"_s.arg(nodeName));
+            }
+        }
+
+        if (name.isEmpty()) {
+            parser->uiElements.titleBarInformation = tbfo;
+        }
+        else
+            parser->uiElements.titleBarOverride[name] = tbfo;
     }
 }

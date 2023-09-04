@@ -45,8 +45,7 @@ namespace
                 return;
 
             QStringList supportedPairs;
-            for (const auto &available : _plugin->pluginSettings["user-enabled"].GetArray())
-            {
+            for (const auto &available : _plugin->pluginSettings["user-enabled"].GetArray()) {
                 supportedPairs.push_back(available.GetString());
             }
 
@@ -58,20 +57,16 @@ namespace
 
         void destroyEditor(C_UNUSED QWidget *editor, const QModelIndex &index) const override
         {
-            if (index.data(Qt::UserRole + 1).toInt() == 1)
-            {
+            if (index.data(Qt::UserRole + 1).toInt() == 1) {
                 const QString data = index.data().toString();
 
-                if (data.isEmpty())
-                {
+                if (data.isEmpty()) {
                     QMessageBox::warning(_parentTable, tr("Empty field"), tr("Data can not be empty. The row will be deleted"), QMessageBox::Ok);
                     _parentTable->model()->removeRow(index.row());
                     return;
                 }
-                else
-                {
-                    if (index.column() == 0)
-                    {
+                else {
+                    if (index.column() == 0) {
                         _parentTable->model()->setData(index, 0, Qt::UserRole + 1);
                         _parentTable->edit(_parentTable->model()->index(index.row(), 1));
                     }
@@ -102,11 +97,9 @@ namespace
             const QString newSymbol = newBase + newQuote;
 
             bool fromNewRow = false;
-            if (index.data(Qt::UserRole + 1).toInt() == 1)
-            {
+            if (index.data(Qt::UserRole + 1).toInt() == 1) {
                 fromNewRow = true;
-                if (index.column() == 0)
-                {
+                if (index.column() == 0) {
                     model->setData(index, comboBox->currentText(), Qt::DisplayRole);
                     return;
                 }
@@ -116,22 +109,18 @@ namespace
 
             auto availableObject = _plugin->pluginSettings.FindMember("available");
 
-            if (availableObject != _plugin->pluginSettings.MemberEnd())
-            {
+            if (availableObject != _plugin->pluginSettings.MemberEnd()) {
                 auto existingSymbol = availableObject->value.FindMember(newSymbol.toUtf8().data());
-                if (existingSymbol != availableObject->value.MemberEnd())
-                {
+                if (existingSymbol != availableObject->value.MemberEnd()) {
                     QMessageBox::warning(editor, tr("Warning"), tr("There is already an existing symbol with the same quote and base"), QMessageBox::Ok);
-                    if (fromNewRow)
-                    {
+                    if (fromNewRow) {
                         _parentTable->model()->removeRow(index.row());
                     }
                     return;
                 }
 
                 auto deletingSymbol = availableObject->value.FindMember(oldSymbol.toUtf8().data());
-                if (deletingSymbol != availableObject->value.MemberEnd())
-                {
+                if (deletingSymbol != availableObject->value.MemberEnd()) {
                     // Remove the old data
                     availableObject->value.RemoveMember(oldSymbol.toUtf8().data());
                 }
@@ -196,7 +185,7 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
 
     m_symsItemModel->setHorizontalHeaderLabels({ tr("Symbol"), tr("Description") });
 
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("ExchRate_SymTable");
     ui->supportedSymTable->restoreGeometry(settings.value("geometry").toByteArray());
     ui->supportedSymTable->horizontalHeader()->restoreGeometry(settings.value("h-geometry").toByteArray());
@@ -204,8 +193,7 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
     settings.endGroup();
 
     bool userEnabledObjectExists = true;
-    if (m_exchRatePlg->pluginSettings.FindMember("user-enabled") == m_exchRatePlg->pluginSettings.MemberEnd())
-    {
+    if (m_exchRatePlg->pluginSettings.FindMember("user-enabled") == m_exchRatePlg->pluginSettings.MemberEnd()) {
         userEnabledObjectExists                       = false;
         rapidjson::Document::AllocatorType &allocator = m_exchRatePlg->pluginSettings.GetAllocator();
         rapidjson::Value userEnabledObject(rapidjson::kArrayType);
@@ -213,10 +201,8 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
         m_exchRatePlg->storeData();
     }
 
-    if (m_exchRatePlg->pluginSettings.HasMember("cache"))
-    {
-        for (const auto &ch : m_exchRatePlg->pluginSettings["cache"].GetArray())
-        {
+    if (m_exchRatePlg->pluginSettings.HasMember("cache")) {
+        for (const auto &ch : m_exchRatePlg->pluginSettings["cache"].GetArray()) {
             const QString cur { ch["currency"].GetString() };
             const QString desc { ch["description"].GetString() };
 
@@ -225,12 +211,10 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
 
             itemCur->setCheckable(true);
 
-            if (userEnabledObjectExists)
-            {
+            if (userEnabledObjectExists) {
                 auto enabledIter = std::find(m_exchRatePlg->pluginSettings["user-enabled"].GetArray().begin(), m_exchRatePlg->pluginSettings["user-enabled"].GetArray().end(), cur.toStdString().c_str());
 
-                if (enabledIter != m_exchRatePlg->pluginSettings["user-enabled"].GetArray().end())
-                {
+                if (enabledIter != m_exchRatePlg->pluginSettings["user-enabled"].GetArray().end()) {
                     itemCur->setCheckState(Qt::CheckState::Checked);
                 }
             }
@@ -246,8 +230,7 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
 
         const std::string text = item->text().toStdString();
 
-        switch (itemCheckState)
-        {
+        switch (itemCheckState) {
             case Qt::Unchecked:
                 [[likely]];
                 {
@@ -256,8 +239,7 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
                         m_exchRatePlg->pluginSettings["user-enabled"].GetArray().end(),
                         text.c_str());
 
-                    if (enabledIter != m_exchRatePlg->pluginSettings["user-enabled"].GetArray().end())
-                    {
+                    if (enabledIter != m_exchRatePlg->pluginSettings["user-enabled"].GetArray().end()) {
                         m_exchRatePlg->pluginSettings["user-enabled"].Erase(enabledIter);
                         m_exchRatePlg->storeData();
                     }
@@ -272,8 +254,7 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
                         m_exchRatePlg->pluginSettings["user-enabled"].GetArray().end(),
                         text.c_str());
 
-                    if (enabledIter == m_exchRatePlg->pluginSettings["user-enabled"].GetArray().end())
-                    {
+                    if (enabledIter == m_exchRatePlg->pluginSettings["user-enabled"].GetArray().end()) {
                         rapidjson::Value textValue(text.c_str(), allocator);
                         m_exchRatePlg->pluginSettings["user-enabled"].PushBack(textValue, allocator);
                         m_exchRatePlg->storeData();
@@ -312,16 +293,13 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
     QString defQuote, defBase;
     if (m_exchRatePlg->pluginSettings.HasMember("default")
         && m_exchRatePlg->pluginSettings["default"].HasMember("quote")
-        && m_exchRatePlg->pluginSettings["default"].HasMember("base"))
-    {
+        && m_exchRatePlg->pluginSettings["default"].HasMember("base")) {
         defQuote = m_exchRatePlg->pluginSettings["default"]["quote"].GetString();
         defBase  = m_exchRatePlg->pluginSettings["default"]["base"].GetString();
     }
 
-    for (auto available = m_exchRatePlg->pluginSettings["available"].MemberBegin(); available != m_exchRatePlg->pluginSettings["available"].MemberEnd(); ++available)
-    {
-        if (available->value.HasMember("q") && available->value.HasMember("b"))
-        {
+    for (auto available = m_exchRatePlg->pluginSettings["available"].MemberBegin(); available != m_exchRatePlg->pluginSettings["available"].MemberEnd(); ++available) {
+        if (available->value.HasMember("q") && available->value.HasMember("b")) {
             const QString itemBaseString  = available->value["b"].GetString();
             const QString itemQuoteString = available->value["q"].GetString();
 
@@ -330,8 +308,7 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
 
             itemBase->setCheckable(true);
 
-            if (itemBaseString == defBase && itemQuoteString == defQuote)
-            {
+            if (itemBaseString == defBase && itemQuoteString == defQuote) {
                 itemBase->setCheckState(Qt::CheckState::Checked);
                 m_defCheckedItem = itemBase;
             }
@@ -389,11 +366,9 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
         model->removeRow(index.row());
 
         auto availableObject = m_exchRatePlg->pluginSettings.FindMember("available");
-        if (availableObject != m_exchRatePlg->pluginSettings.MemberEnd())
-        {
+        if (availableObject != m_exchRatePlg->pluginSettings.MemberEnd()) {
             auto deletingSymbol = availableObject->value.FindMember(symbol.toUtf8().data());
-            if (deletingSymbol != availableObject->value.MemberEnd())
-            {
+            if (deletingSymbol != availableObject->value.MemberEnd()) {
                 // Remove the old data
                 availableObject->value.RemoveMember(symbol.toUtf8().data());
                 m_exchRatePlg->storeData();
@@ -409,27 +384,22 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
     ui->timeframeEdit->setValidator(new QDoubleValidator(0.0, 86'400'000.0, 3, this));
 
     auto reloadTimerObject = m_exchRatePlg->pluginSettings.FindMember("reload-timer");
-    if (reloadTimerObject != m_exchRatePlg->pluginSettings.MemberEnd())
-    {
+    if (reloadTimerObject != m_exchRatePlg->pluginSettings.MemberEnd()) {
         const auto value = m_exchRatePlg->pluginSettings["reload-timer"].GetDouble();
 
-        if (value < 1000)
-        {
+        if (value < 1000) {
             ui->timeframeFrames->setCurrentIndex(0);
             ui->timeframeEdit->setText(QString("%1").arg(value, 0, 'f', 3));
         }
-        else if (value >= 1000 && value < 60'000)
-        {
+        else if (value >= 1000 && value < 60'000) {
             ui->timeframeFrames->setCurrentIndex(1);
             ui->timeframeEdit->setText(QString("%1").arg(value / 1000.0, 0, 'f', 3));
         }
-        else if (value >= 60'000 && value < 3'600'000)
-        {
+        else if (value >= 60'000 && value < 3'600'000) {
             ui->timeframeFrames->setCurrentIndex(2);
             ui->timeframeEdit->setText(QString("%1").arg(value / 60'000.0, 0, 'f', 3));
         }
-        else if (value >= 3'600'000)
-        {
+        else if (value >= 3'600'000) {
             ui->timeframeFrames->setCurrentIndex(3);
             ui->timeframeEdit->setText(QString("%1").arg(value / 3'600'000, 0, 'f', 3));
         }
@@ -438,38 +408,31 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
     connect(m_usedItemModel, &QStandardItemModel::itemChanged, this, [&](QStandardItem *item) {
         auto quoteIndex = m_usedItemModel->index(item->row(), 1);
 
-        if (m_defCheckedItem != nullptr)
-        {
+        if (m_defCheckedItem != nullptr) {
             m_defCheckedItem->setCheckState(Qt::CheckState::Unchecked);
         }
 
-        if (item->checkState() == Qt::CheckState::Unchecked && m_defCheckedItem == item)
-        {
+        if (item->checkState() == Qt::CheckState::Unchecked && m_defCheckedItem == item) {
             m_defCheckedItem = nullptr;
         }
 
-        if (item->checkState() == Qt::CheckState::Checked)
-        {
+        if (item->checkState() == Qt::CheckState::Checked) {
             const auto base  = item->text();
             const auto quote = quoteIndex.data().toString();
 
             auto defaultObject = m_exchRatePlg->pluginSettings.FindMember("default");
-            if (defaultObject != m_exchRatePlg->pluginSettings.MemberEnd())
-            {
+            if (defaultObject != m_exchRatePlg->pluginSettings.MemberEnd()) {
                 auto baseDefault = defaultObject->value.FindMember("base");
-                if (baseDefault != defaultObject->value.MemberEnd())
-                {
+                if (baseDefault != defaultObject->value.MemberEnd()) {
                     baseDefault->value.SetString(base.toUtf8().constData(), static_cast<rapidjson::SizeType>(base.toUtf8().size()), m_exchRatePlg->pluginSettings.GetAllocator());
                 }
 
                 auto quoteDefault = defaultObject->value.FindMember("quote");
-                if (quoteDefault != defaultObject->value.MemberEnd())
-                {
+                if (quoteDefault != defaultObject->value.MemberEnd()) {
                     quoteDefault->value.SetString(quote.toUtf8().constData(), static_cast<rapidjson::SizeType>(quote.toUtf8().size()), m_exchRatePlg->pluginSettings.GetAllocator());
                 }
 
-                if (auto iter = m_exchRatePlg->pluginSettings.FindMember("value-timestamp"); iter != m_exchRatePlg->pluginSettings.MemberEnd())
-                {
+                if (auto iter = m_exchRatePlg->pluginSettings.FindMember("value-timestamp"); iter != m_exchRatePlg->pluginSettings.MemberEnd()) {
                     // This will invalidate the data cache
                     iter->value.SetInt64(0);
                 }
@@ -495,7 +458,7 @@ cen::plugin::SettingsWidget::SettingsWidget(IBase *iBase, CENTAUR_INTERFACE_NAME
 
 cen::plugin::SettingsWidget::~SettingsWidget()
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
 
     settings.beginGroup("ExchRate_SymTable");
     settings.setValue("geometry", ui->supportedSymTable->saveGeometry());
@@ -513,8 +476,7 @@ cen::plugin::SettingsWidget::~SettingsWidget()
 void cen::plugin::SettingsWidget::reloadTimer(const QString &timeframe)
 {
     const auto timeframeValue = timeframe.toDouble() * [&]() -> double {
-        switch (ui->timeframeFrames->currentIndex())
-        {
+        switch (ui->timeframeFrames->currentIndex()) {
             case 0:
                 return 1.0;
             case 1:
@@ -534,8 +496,7 @@ void cen::plugin::SettingsWidget::reloadTimer(const QString &timeframe)
 void cen::plugin::SettingsWidget::reloadTimer(int index)
 {
     const auto timeframeValue = ui->timeframeEdit->text().toDouble() * [&]() -> double {
-        switch (index)
-        {
+        switch (index) {
             case 0:
                 return 1.0;
             case 1:
@@ -555,8 +516,7 @@ void cen::plugin::SettingsWidget::reloadTimer(int index)
 void cen::plugin::SettingsWidget::reloadTimer(double timeframe)
 {
     auto reloadTimerObject = m_exchRatePlg->pluginSettings.FindMember("reload-timer");
-    if (reloadTimerObject != m_exchRatePlg->pluginSettings.MemberEnd())
-    {
+    if (reloadTimerObject != m_exchRatePlg->pluginSettings.MemberEnd()) {
         reloadTimerObject->value.SetDouble(timeframe);
         m_exchRatePlg->restartReloadTimer(static_cast<int>(timeframe));
         m_exchRatePlg->storeData();

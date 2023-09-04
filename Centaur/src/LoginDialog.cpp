@@ -22,8 +22,12 @@ BEGIN_CENTAUR_NAMESPACE
 
 struct LoginDialog::Impl
 {
-    inline Impl() :
-        ui { new Ui::LoginDialog } { }
+    inline explicit Impl(QDialog *parent) :
+        ui { new Ui::LoginDialog }
+    {
+        ui->setupUi(parent);
+    }
+
     inline ~Impl() = default;
 
     bool loginTFA { false };
@@ -34,19 +38,10 @@ struct LoginDialog::Impl
 };
 
 LoginDialog::LoginDialog(QWidget *parent) :
-    QDialog { parent },
-    _impl { new Impl }
+    CDialog { parent },
+    _impl { new Impl(this) }
 {
-    ui()->setupUi(this);
-
-    connect(ui()->acceptButton, &QPushButton::released, this, &LoginDialog::onAccept);
-
-#ifdef Q_OS_MAC
-    setWindowFlag(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_TranslucentBackground);
-#endif
-
-    restoreInterface();
+    setAccept(ui()->acceptButton);
 }
 
 LoginDialog::~LoginDialog() = default;
@@ -58,10 +53,8 @@ Ui::LoginDialog *LoginDialog::ui()
 
 void LoginDialog::onAccept() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
-    settings.beginGroup("LoginDialog");
-    settings.setValue("geometry", saveGeometry());
-    settings.endGroup();
+    QSettings settings;
+    saveInterface();
 
     settings.beginGroup("user.password");
     auto pad = settings.value("pad").toString();
@@ -82,54 +75,46 @@ void LoginDialog::onAccept() noexcept
 
     const QString hashedPassword = QString::fromUtf8(QCryptographicHash::hash(QByteArrayView(ui()->passwordEdit->text().toUtf8()), QCryptographicHash::RealSha3_512).toBase64());
 
-    if (!_impl->tfaMode && _impl->pswMode)
-    {
+    if (!_impl->tfaMode && _impl->pswMode) {
         ui()->passwordEdit->setFocus();
 
-        if (registeredPassword != hashedPassword)
-        {
+        if (registeredPassword != hashedPassword) {
             ui()->errLabel->setText(tr("Wrong password"));
             ui()->errLabel->show();
             return;
         }
 
-        if (_impl->pswMode)
-        {
+        if (_impl->pswMode) {
             userPassword = ui()->passwordEdit->text();
         }
 
         accept();
     }
 
-    if (!_impl->pswMode && !_impl->tfaMode)
-    {
-        ui()->userEdit->setFocus();
+    if (!_impl->pswMode && !_impl->tfaMode) {
+
         // Normal mode
-#ifndef TEST_LOGIN_MODE // Avoid do all the testing
-        if (ui()->userEdit->text() != registeredUser)
-        {
+#ifndef TEST_LOGIN_MODE // Avoid doing all the testing
+        if (ui()->userEdit->text() != registeredUser) {
             ui()->errLabel->setText(tr("Wrong user"));
             ui()->errLabel->show();
             return;
         }
 
-        if (registeredPassword != hashedPassword)
-        {
+        if (registeredPassword != hashedPassword) {
             ui()->errLabel->setText(tr("Wrong password"));
             ui()->errLabel->show();
             return;
         }
 
-        if (loginTFA)
-        {
+        if (loginTFA) {
             const QString tfaFile = []() -> QString {
-                QString data = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+                QString const data = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
                 return QString("%1/f6110cb58f3b").arg(data);
             }();
 
             QFile file(tfaFile);
-            if (!file.open(QIODeviceBase::ReadOnly))
-            {
+            if (!file.open(QIODeviceBase::ReadOnly)) {
                 // Code: 0x00000001 is encryption failed
                 // Code: 0x00000002 is a file failure
                 QMessageBox::critical(this, tr("Error"), QString(tr("There is an error in the user identification. 2FA is not available.")));
@@ -140,20 +125,17 @@ void LoginDialog::onAccept() noexcept
             QString fileData = stream.readAll();
             file.close();
 
-            try
-            {
+            try {
                 g_globals->session.userTFA = QString::fromStdString(
                     Encryption::DecryptAES(
                         fileData.toStdString(),
                         pad.replace(0, ui()->passwordEdit->text().size(), ui()->passwordEdit->text()).toStdString(),
                         localIV.toStdString()));
-            } catch (const std::exception &ex)
-            {
+            } catch (const std::exception &ex) {
                 return;
             }
 
-            if (ui()->tfaEdit->text().toInt() != getTOTPCode(g_globals->session.userTFA.toStdString()))
-            {
+            if (ui()->tfaEdit->text().toInt() != getTOTPCode(g_globals->session.userTFA.toStdString())) {
                 ui()->errLabel->setText(tr("Wrong 2FA input"));
                 ui()->errLabel->show();
                 return;
@@ -169,32 +151,27 @@ void LoginDialog::onAccept() noexcept
         settings.endGroup();
     }
 
-    if (_impl->tfaMode)
-    {
+    if (_impl->tfaMode) {
         ui()->tfaEdit->setFocus();
-        
-        if (g_globals->session.userTFA.isEmpty())
-        {
-            if (registeredPassword != registeredUser)
-            {
+
+        if (g_globals->session.userTFA.isEmpty()) {
+            if (registeredPassword != registeredUser) {
                 ui()->errLabel->setText(tr("Wrong password"));
                 ui()->errLabel->show();
                 return;
             }
 
-            if (_impl->pswMode)
-            {
+            if (_impl->pswMode) {
                 userPassword = ui()->passwordEdit->text();
             }
 
             const QString tfaFile = []() -> QString {
-                QString data = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+                QString const data = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
                 return QString("%1/f6110cb58f3b").arg(data);
             }();
 
             QFile file(tfaFile);
-            if (!file.open(QIODeviceBase::ReadOnly))
-            {
+            if (!file.open(QIODeviceBase::ReadOnly)) {
                 // Code: 0x00000001 is encryption failed
                 // Code: 0x00000002 is a file failure
                 QMessageBox::critical(this, tr("Error"), QString(tr("There is an error in the user identification. 2FA is not available.")));
@@ -202,7 +179,7 @@ void LoginDialog::onAccept() noexcept
             }
 
             QTextStream stream(&file);
-            QString fileData = stream.readAll();
+            const QString fileData = stream.readAll();
             file.close();
 
             g_globals->session.userTFA = QString::fromStdString(
@@ -211,8 +188,7 @@ void LoginDialog::onAccept() noexcept
                     localIV.toStdString()));
         }
 
-        if (ui()->tfaEdit->text().toInt() != getTOTPCode(g_globals->session.userTFA.toStdString()))
-        {
+        if (ui()->tfaEdit->text().toInt() != getTOTPCode(g_globals->session.userTFA.toStdString())) {
             ui()->errLabel->setText(tr("Wrong 2FA input"));
             ui()->errLabel->show();
             return;
@@ -226,15 +202,16 @@ void LoginDialog::onAccept() noexcept
 
 void LoginDialog::accept()
 {
-    auto mainWindow = []() -> CentaurApp * {
+    auto *mainWindow = []() -> CentaurApp * {
         foreach (QWidget *w, QApplication::topLevelWidgets())
             if (auto *mainWin = qobject_cast<CentaurApp *>(w))
                 return mainWin;
         return nullptr;
     }();
 
-    if (g_credentials != nullptr)
+    if (g_credentials != nullptr) {
         delete g_credentials;
+    }
 
 #ifndef TEST_LOGIN_MODE
     // The 'new' approach tries to randomize addresses as much as possible
@@ -243,10 +220,9 @@ void LoginDialog::accept()
 
     /// TODO: DOCUMENT HOW THIS WORKS
 
-    QString fileName = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/h983mjuklg43";
+    const QString fileName = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/h983mjuklg43";
     QFile file(fileName);
-    if (!file.exists() || !file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    if (!file.exists() || !file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::critical(this,
             tr("Error"),
             tr("When the login test mode is on. You must set the password in a file.\nCheck documentation to see how this is done"),
@@ -258,13 +234,12 @@ void LoginDialog::accept()
     const QString fileData   = stream.readAll();
     const QString hashedData = QString::fromUtf8(QCryptographicHash::hash(QByteArrayView(fileData.toUtf8()), QCryptographicHash::RealSha3_512).toBase64());
 
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("__Session__data");
     const QString registeredPassword = settings.value("__sec__").toString();
     settings.endGroup();
 
-    if (registeredPassword != hashedData)
-    {
+    if (registeredPassword != hashedData) {
         QMessageBox::critical(this,
             tr("Error"),
             tr("The login test mode is on, and the password written is not correct.\nCheck documentation to see how this is done"),
@@ -288,14 +263,6 @@ void LoginDialog::accept()
 #endif // TEST_LOGIN_MODE
 }
 
-void LoginDialog::restoreInterface() noexcept
-{
-    QSettings settings("CentaurProject", "Centaur");
-    settings.beginGroup("LoginDialog");
-    restoreGeometry(settings.value("geometry").toByteArray());
-    settings.endGroup();
-}
-
 void LoginDialog::setPasswordMode() noexcept
 {
     _impl->pswMode = true;
@@ -314,7 +281,7 @@ void LoginDialog::setNormalMode() noexcept
     loadImage();
 
     // Determinate if the 2FA is activated
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("__Session__data");
     g_globals->session.tfa = settings.value("__2fa__").toBool();
     settings.endGroup();
@@ -322,13 +289,13 @@ void LoginDialog::setNormalMode() noexcept
     ui()->acceptButton->setText(tr("Start"));
 
     // Index 0 holds the 2FA activated and Index 1 holds the login 2fa
-    if (g_globals->session.tfa)
-    {
+    if (g_globals->session.tfa) {
         _impl->loginTFA = true;
         ui()->tfaEdit->show();
     }
     else
         ui()->tfaEdit->hide();
+    ui()->userEdit->setFocus();
 }
 
 void LoginDialog::setTFAMode() noexcept
@@ -351,8 +318,7 @@ void LoginDialog::loadImage() noexcept
     const QString dataPath      = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     const QString imageFilePath = QString("%1/e30dfd91071c.image.data").arg(dataPath);
 
-    if (QFile::exists(imageFilePath))
-    {
+    if (QFile::exists(imageFilePath)) {
         g_globals->session.image.load(imageFilePath);
 
         ui()->iconLabel->setPixmap(

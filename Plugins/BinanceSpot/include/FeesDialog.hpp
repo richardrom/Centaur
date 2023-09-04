@@ -13,12 +13,13 @@
 #ifndef CENTAUR_FEESDIALOG_HPP
 #define CENTAUR_FEESDIALOG_HPP
 
-#include "Centaur.hpp"
-#include "../ui/ui_FeesDialog.h"
 #include "BinanceAPI.hpp"
+#include "Centaur.hpp"
 #include "CentaurInterface.hpp"
 #include "OptionsTableWidget.hpp"
 #include <QDialog>
+
+#include "../ui/ui_FeesDialog.h"
 
 namespace CENTAUR_NAMESPACE
 {
@@ -27,7 +28,7 @@ namespace CENTAUR_NAMESPACE
         Q_OBJECT
     public:
         TradeFeesDialog(const BINAPI_NAMESPACE::SpotTradingFees &fees, const QString &symbolFilter, QDialog *parent = nullptr);
-        ~TradeFeesDialog();
+        ~TradeFeesDialog() override;
 
     protected:
         void saveInterfaceState() noexcept;

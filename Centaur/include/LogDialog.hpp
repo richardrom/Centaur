@@ -14,7 +14,7 @@
 #define CENTAUR_LOGDIALOG_HPP
 
 #include "Centaur.hpp"
-#include <QDialog>
+#include <CDialog.hpp>
 #include <QTableWidget>
 
 BEGIN_CENTAUR_NAMESPACE
@@ -24,7 +24,7 @@ namespace Ui
     class LogDialog;
 }
 
-class LogDialog : public QDialog
+class LogDialog : public CDialog
 {
     Q_OBJECT
 public:
@@ -39,6 +39,9 @@ public:
 
 protected:
     void restoreInterface() noexcept;
+
+public:
+    void saveInterface() noexcept override;
 
 private:
     struct Impl;

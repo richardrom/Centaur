@@ -70,8 +70,7 @@ cen::CandleViewWidget::CandleViewWidget(const CENTAUR_PLUGIN_NAMESPACE::PluginIn
 
     // Load the last window of times for the specific timeframe and symbol
     loadLastTimeWindow();
-    if (m_candleWindow.begin == 0 && m_candleWindow.end == 0)
-    {
+    if (m_candleWindow.begin == 0 && m_candleWindow.end == 0) {
         // Get basic begin and end timestamps
         m_candleWindow = CandleViewWidget::getClosedCandlesTimes(m_tf);
     }
@@ -90,10 +89,8 @@ void cen::CandleViewWidget::initToolBar() noexcept
 
     //
     m_candleViewTimeFrameToolBarActions = std::make_unique<CandleViewTimeFrameToolBarActions>(this);
-    for (const auto &stf : m_view->supportedTimeFrames())
-    {
-        switch (stf)
-        {
+    for (const auto &stf : m_view->supportedTimeFrames()) {
+        switch (stf) {
             case CENTAUR_PLUGIN_NAMESPACE::TimeFrame::nullTime: m_toolbar->addSeparator(); break;
             case CENTAUR_PLUGIN_NAMESPACE::TimeFrame::Seconds_1:
                 m_toolbar->addAction(m_candleViewTimeFrameToolBarActions->aSeconds_1);
@@ -198,8 +195,7 @@ QString cen::CandleViewWidget::buildSettingsGroupName(const QString &symbol, con
 
 QString cen::CandleViewWidget::timeFrameToString(cen::plugin::TimeFrame tf) noexcept
 {
-    switch (tf)
-    {
+    switch (tf) {
         case plugin::TimeFrame::nullTime: return "0";
         case plugin::TimeFrame::Seconds_1: return "1s";
         case plugin::TimeFrame::Seconds_5: return "5s";
@@ -226,6 +222,7 @@ QString cen::CandleViewWidget::timeFrameToString(cen::plugin::TimeFrame tf) noex
         case plugin::TimeFrame::Months_1: return "1M";
     }
 }
+
 CENTAUR_PLUGIN_NAMESPACE::IExchange::Timestamp cen::CandleViewWidget::timeFrameToMilliseconds(cen::plugin::TimeFrame tf) noexcept
 {
     constexpr CENTAUR_PLUGIN_NAMESPACE::IExchange::Timestamp sec   = 1000;
@@ -235,8 +232,7 @@ CENTAUR_PLUGIN_NAMESPACE::IExchange::Timestamp cen::CandleViewWidget::timeFrameT
     constexpr CENTAUR_PLUGIN_NAMESPACE::IExchange::Timestamp week  = day * 7;
     constexpr CENTAUR_PLUGIN_NAMESPACE::IExchange::Timestamp month = day * 365 / 12;
 
-    switch (tf)
-    {
+    switch (tf) {
         case plugin::TimeFrame::nullTime: return 0;
         case plugin::TimeFrame::Seconds_1: return sec;
         case plugin::TimeFrame::Seconds_5: return sec * 5;
@@ -282,8 +278,8 @@ cen::CandleViewWidget::CandleWindow cen::CandleViewWidget::getClosedCandlesTimes
 
     const auto t_begin = t_end - ms * times;
 
-    //return { t_begin, t_end };
-    return {0,0};
+    // return { t_begin, t_end };
+    return { 0, 0 };
 }
 
 QPair<double, double> cen::CandleViewWidget::calculateMinMaxVerticalAxis(double highestHigh, double lowestLow) noexcept
@@ -303,7 +299,7 @@ void cen::CandleViewWidget::closeEvent(QCloseEvent *event)
 
 void cen::CandleViewWidget::storeLastTimeWindow() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup(CandleViewWidget::buildSettingsGroupName(m_symbol, m_pi.name, m_tf));
     settings.setValue("begin", m_candleWindow.begin);
     settings.setValue("end", m_candleWindow.end);
@@ -312,7 +308,7 @@ void cen::CandleViewWidget::storeLastTimeWindow() noexcept
 
 void cen::CandleViewWidget::loadLastTimeWindow() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup(CandleViewWidget::buildSettingsGroupName(m_symbol, m_pi.name, m_tf));
     m_candleWindow.begin = settings.value("begin", 0).toULongLong();
     m_candleWindow.end   = settings.value("end", 0).toULongLong();
@@ -329,14 +325,12 @@ void cen::CandleViewWidget::onRetrieveCandles(cen::plugin::IExchange::Timestamp 
 
     double min = 0, max = 0;
     bool minSet = false;
-    for (const auto &cd : data)
-    {
+    for (const auto &cd : data) {
         // Add the candle
         m_ui->graphicsView->addCandle(cd.first, cd.second.open, cd.second.close, cd.second.high, cd.second.low);
 
         max = std::max(max, cd.second.high);
-        if (!minSet)
-        {
+        if (!minSet) {
             min    = std::min(max, cd.second.low); // Sets the first min as the candle low
             minSet = true;
         }
@@ -362,50 +356,50 @@ void cen::CandleViewWidget::onUpdateSeries() noexcept
 
 void cen::CandleViewWidget::onUpdateCandleMousePosition(uint64_t timestamp)
 {
-   /* auto candle = m_ui->graphicsView->getCandleItem(timestamp);
+    /* auto candle = m_ui->graphicsView->getCandleItem(timestamp);
 
-    const QString timeFormat = [&]() {
-        const uint64_t candleTimeframe = timeFrameToMilliseconds(m_tf);
-        if (candleTimeframe < 3'600'000) // 3,600,000 is the number of milliseconds in a minute, thus, if the time is less than a minute we must include the seconds on the label
-            return "dd-MM-yyyy HH:mm:ss";
-        else
-            return "dd-MM-yyyy HH:mm";
-    }();
+     const QString timeFormat = [&]() {
+         const uint64_t candleTimeframe = timeFrameToMilliseconds(m_tf);
+         if (candleTimeframe < 3'600'000) // 3,600,000 is the number of milliseconds in a minute, thus, if the time is less than a minute we must include the seconds on the label
+             return "dd-MM-yyyy HH:mm:ss";
+         else
+             return "dd-MM-yyyy HH:mm";
+     }();
 
-    // const auto &time       = m_candleRects.at(m_cursorIndex);
-    QDateTime dt      = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(timestamp));
-    QString infoLabel = dt.toString(timeFormat);
+     // const auto &time       = m_candleRects.at(m_cursorIndex);
+     QDateTime dt      = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(timestamp));
+     QString infoLabel = dt.toString(timeFormat);
 
-    m_ui->labelTime->setText(infoLabel);
-    if (candle == nullptr)
-    {
-        m_ui->labelClose->setText({});
-        m_ui->labelOpen->setText({});
-        m_ui->labelHigh->setText({});
-        m_ui->labelLow->setText({});
-    }
-    else
-    {
-        auto setLabelColor = [](QLabel *label, const QColor &color) {
-            QPalette palette = label->palette();
-            palette.setColor(QPalette::ColorRole::WindowText, color);
-            label->setPalette(palette);
-        };
+     m_ui->labelTime->setText(infoLabel);
+     if (candle == nullptr)
+     {
+         m_ui->labelClose->setText({});
+         m_ui->labelOpen->setText({});
+         m_ui->labelHigh->setText({});
+         m_ui->labelLow->setText({});
+     }
+     else
+     {
+         auto setLabelColor = [](QLabel *label, const QColor &color) {
+             QPalette palette = label->palette();
+             palette.setColor(QPalette::ColorRole::WindowText, color);
+             label->setPalette(palette);
+         };
 
-        QColor color = candle->isCandleBullish() ? QColor { 0, 255, 0 } : QColor { 255, 0, 0 };
+         QColor color = candle->isCandleBullish() ? QColor { 0, 255, 0 } : QColor { 255, 0, 0 };
 
-        setLabelColor(m_ui->labelClose, color);
-        setLabelColor(m_ui->labelOpen, color);
-        setLabelColor(m_ui->labelHigh, color);
-        setLabelColor(m_ui->labelLow, color);
+         setLabelColor(m_ui->labelClose, color);
+         setLabelColor(m_ui->labelOpen, color);
+         setLabelColor(m_ui->labelHigh, color);
+         setLabelColor(m_ui->labelLow, color);
 
-        int precision = m_ui->graphicsView->getPricePrecision();
+         int precision = m_ui->graphicsView->getPricePrecision();
 
-        m_ui->labelClose->setText(QString("%1").arg(QLocale(QLocale::English).toString(candle->close(), 'f', precision)));
-        m_ui->labelOpen->setText(QString("%1").arg(QLocale(QLocale::English).toString(candle->open(), 'f', precision)));
-        m_ui->labelHigh->setText(QString("%1").arg(QLocale(QLocale::English).toString(candle->high(), 'f', precision)));
-        m_ui->labelLow->setText(QString("%1").arg(QLocale(QLocale::English).toString(candle->low(), 'f', precision)));
-    }*/
+         m_ui->labelClose->setText(QString("%1").arg(QLocale(QLocale::English).toString(candle->close(), 'f', precision)));
+         m_ui->labelOpen->setText(QString("%1").arg(QLocale(QLocale::English).toString(candle->open(), 'f', precision)));
+         m_ui->labelHigh->setText(QString("%1").arg(QLocale(QLocale::English).toString(candle->high(), 'f', precision)));
+         m_ui->labelLow->setText(QString("%1").arg(QLocale(QLocale::English).toString(candle->low(), 'f', precision)));
+     }*/
 }
 
 void cen::CandleViewWidget::updateLatency(quint64 event) noexcept

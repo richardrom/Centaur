@@ -15,6 +15,7 @@ struct SplashDialog::Impl
 {
     inline Impl() :
         ui { new Ui::SplashDialog } { }
+
     inline ~Impl() = default;
 
     std::unique_ptr<Ui::SplashDialog> ui;
@@ -24,20 +25,20 @@ SplashDialog::SplashDialog(QWidget *parent) :
     QDialog { parent },
     _impl { new Impl }
 {
-    ui()->setupUi(this);
-    ui()->logMainFrame->overrideParent(this);
-
-    // Center the dialog
-    QRect screenGeometry = QGuiApplication::screens()[0]->geometry();
-
-    int x = (screenGeometry.width() - this->width()) / 2;
-    int y = (screenGeometry.height() - this->height()) / 2;
-    this->move(x, y);
-
 #ifdef Q_OS_MAC
     setWindowFlag(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
 #endif
+
+    ui()->setupUi(this);
+    ui()->logMainFrame->overrideParent(this);
+
+    // Center the dialog
+    const QRect screenGeometry = QGuiApplication::screens().at(0)->geometry();
+
+    const int xCenter = (screenGeometry.width() - this->width()) / 2;
+    const int yCenter = (screenGeometry.height() - this->height()) / 2;
+    this->move(xCenter, yCenter);
 }
 
 SplashDialog::~SplashDialog() = default;
@@ -62,26 +63,26 @@ void SplashDialog::setDisplayText(const QString &text)
 
 void SplashDialog::setProgressRange(int min, int max)
 {
-    ui()->progressBar->setRange(min, max);
+    ui()->initializationProgressBar->setRange(min, max);
     QCoreApplication::processEvents();
 }
 
 void SplashDialog::setProgressPos(int pos)
 {
-    ui()->progressBar->setValue(pos);
+    ui()->initializationProgressBar->setValue(pos);
     QCoreApplication::processEvents();
 }
 
 void SplashDialog::step()
 {
-    auto pos = ui()->progressBar->value();
+    auto pos = ui()->initializationProgressBar->value();
     setProgressPos(pos + 1);
 }
 
 std::pair<int, int> SplashDialog::getProgressRange()
 {
-    return { ui()->progressBar->minimum(),
-        ui()->progressBar->maximum() };
+    return { ui()->initializationProgressBar->minimum(),
+        ui()->initializationProgressBar->maximum() };
 }
 
 END_CENTAUR_NAMESPACE

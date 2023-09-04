@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>901</width>
+    <width>1191</width>
     <height>807</height>
    </rect>
   </property>
@@ -184,6 +184,15 @@
       <property name="enabled">
        <bool>false</bool>
       </property>
+      <attribute name="horizontalHeaderMinimumSectionSize">
+       <number>60</number>
+      </attribute>
+      <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
       <row>
        <property name="text">
         <string>Nueva fila</string>
@@ -482,14 +491,17 @@
       <property name="cornerButtonEnabled">
        <bool>true</bool>
       </property>
+      <attribute name="horizontalHeaderVisible">
+       <bool>true</bool>
+      </attribute>
       <attribute name="horizontalHeaderCascadingSectionResizes">
        <bool>false</bool>
       </attribute>
       <attribute name="horizontalHeaderMinimumSectionSize">
-       <number>21</number>
+       <number>100</number>
       </attribute>
       <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>50</number>
+       <number>150</number>
       </attribute>
       <attribute name="horizontalHeaderHighlightSections">
        <bool>true</bool>
@@ -497,8 +509,14 @@
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>true</bool>
       </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
       <attribute name="verticalHeaderMinimumSectionSize">
        <number>21</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>30</number>
       </attribute>
       <row>
        <property name="text">

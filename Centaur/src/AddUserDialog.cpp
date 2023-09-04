@@ -25,6 +25,7 @@ struct AddUserDialog::Impl
 {
     inline Impl() :
         ui { new Ui::AddUserDialog } { }
+
     inline ~Impl() = default;
 
     std::unique_ptr<Ui::AddUserDialog> ui;
@@ -49,10 +50,12 @@ AddUserDialog::AddUserDialog(QWidget *parent) :
 
     ui()->titleFrame->overrideParent(this);
 
-    ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
-    connect(ui()->closeButton, &SystemPushButton::systemPressed, this, [&]() {
-        reject();
-    });
+    /*
+        ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
+        connect(ui()->closeButton, &SystemPushButton::systemPressed, this, [&]() {
+            reject();
+        });
+    */
 
     ui()->newUsrEdit->linkLabel(ui()->label2);
     ui()->newPswEdit->linkLabel(ui()->passwordLabel);
@@ -124,7 +127,7 @@ AddUserDialog::UserInformation AddUserDialog::getUserInformation() const noexcep
 
 void AddUserDialog::restoreInterface() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("AddUserDialog");
     restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();
@@ -132,7 +135,7 @@ void AddUserDialog::restoreInterface() noexcept
 
 void AddUserDialog::onAccept() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("AddUserDialog");
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
@@ -147,40 +150,34 @@ void AddUserDialog::onAccept() noexcept
     // Perhaps, the user erase all fields of the password, so we are no longer updating this field
     _impl->pswUpdate = false;
 
-    if (ui()->newUsrEdit->text().isEmpty())
-    {
+    if (ui()->newUsrEdit->text().isEmpty()) {
         ui()->userErrorLabel->setText(tr("Must type a username"));
         ui()->userErrorLabel->show();
         return;
     }
 
-    if (_impl->editingMode)
-    {
+    if (_impl->editingMode) {
 
-        if (!ui()->oldPasswordEdit->text().isEmpty() || !ui()->newPswEdit->text().isEmpty() || !ui()->confirmEdit->text().isEmpty())
-        {
+        if (!ui()->oldPasswordEdit->text().isEmpty() || !ui()->newPswEdit->text().isEmpty() || !ui()->confirmEdit->text().isEmpty()) {
 
-            QSettings settings("CentaurProject", "Centaur");
+            QSettings settings;
             settings.beginGroup("__Session__data");
             QString oldPassword = settings.value("__sec__").toString();
             settings.endGroup();
 
-            if (oldPassword != QString::fromUtf8(QCryptographicHash::hash(QByteArrayView(ui()->oldPasswordEdit->text().toUtf8()), QCryptographicHash::RealSha3_512).toBase64()))
-            {
+            if (oldPassword != QString::fromUtf8(QCryptographicHash::hash(QByteArrayView(ui()->oldPasswordEdit->text().toUtf8()), QCryptographicHash::RealSha3_512).toBase64())) {
                 ui()->oldPswErrorLabel->setText(tr("not valid"));
                 ui()->oldPswErrorLabel->show();
                 return;
             }
 
-            if (ui()->newPswEdit->text().isEmpty())
-            {
+            if (ui()->newPswEdit->text().isEmpty()) {
                 ui()->pswErrorLabel->setText(tr("Must type a password"));
                 ui()->pswErrorLabel->show();
                 return;
             }
 
-            if ((ui()->newPswEdit->text() != ui()->confirmEdit->text()))
-            {
+            if ((ui()->newPswEdit->text() != ui()->confirmEdit->text())) {
                 ui()->pswConfirmErrorLabel->setText(tr("Passwords don't match"));
                 ui()->pswConfirmErrorLabel->show();
                 return;
@@ -190,42 +187,36 @@ void AddUserDialog::onAccept() noexcept
         }
     }
 
-    if (ui()->newPswEdit->text().isEmpty() && !_impl->editingMode)
-    {
+    if (ui()->newPswEdit->text().isEmpty() && !_impl->editingMode) {
         ui()->pswErrorLabel->setText(tr("Must type a password"));
         ui()->pswErrorLabel->show();
         return;
     }
 
-    if ((ui()->newPswEdit->text() != ui()->confirmEdit->text()) && !_impl->editingMode)
-    {
+    if ((ui()->newPswEdit->text() != ui()->confirmEdit->text()) && !_impl->editingMode) {
         ui()->pswConfirmErrorLabel->setText(tr("Passwords don't match"));
         ui()->pswConfirmErrorLabel->show();
         return;
     }
 
-    if (ui()->nameEdit->text().isEmpty())
-    {
+    if (ui()->nameEdit->text().isEmpty()) {
         ui()->nameErrorLabel->setText(tr("Type a name"));
         ui()->nameErrorLabel->show();
         return;
     }
 
-    if (ui()->mailEdit->text().isEmpty())
-    {
+    if (ui()->mailEdit->text().isEmpty()) {
         ui()->mailErrorLabel->setText("Type an e-mail");
         ui()->mailErrorLabel->show();
         return;
     }
-    else
-    {
+    else {
 
         QRegularExpression mailRegex(R"(\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b)", QRegularExpression::PatternOption::CaseInsensitiveOption);
 
         QRegularExpressionMatch match = mailRegex.match(ui()->mailEdit->text());
 
-        if (!match.hasMatch())
-        {
+        if (!match.hasMatch()) {
             ui()->mailErrorLabel->setText(tr("Invalid e-mail"));
             ui()->mailErrorLabel->show();
             return;
@@ -241,8 +232,7 @@ void AddUserDialog::searchImage() noexcept
 
     static bool firstDialog = true;
 
-    if (firstDialog)
-    {
+    if (firstDialog) {
         firstDialog                         = false;
         const QStringList picturesLocations = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
         dlg.setDirectory(picturesLocations.isEmpty() ? QDir::currentPath() : picturesLocations.last());
@@ -257,21 +247,17 @@ void AddUserDialog::searchImage() noexcept
     dlg.selectMimeTypeFilter("image/jpeg");
     dlg.setAcceptMode(QFileDialog::AcceptMode::AcceptOpen);
 
-    if (dlg.exec() == QDialog::Accepted)
-    {
+    if (dlg.exec() == QDialog::Accepted) {
         const QString dataPath      = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
         const QString imageFilePath = QString("%1/e30dfd91071c.image.data").arg(dataPath);
 
-        if (QFile::exists(imageFilePath))
-        {
+        if (QFile::exists(imageFilePath)) {
             QFile::remove(imageFilePath);
         }
 
-        if (QFile::copy(dlg.selectedFiles().first(), imageFilePath))
-        {
+        if (QFile::copy(dlg.selectedFiles().first(), imageFilePath)) {
             _impl->photoUpdate = true;
-            if (_impl->photo.load(imageFilePath))
-            {
+            if (_impl->photo.load(imageFilePath)) {
                 ui()->photoLabel->setPixmap(QPixmap::fromImage(_impl->photo.scaled(ui()->photoLabel->size())));
             }
         }

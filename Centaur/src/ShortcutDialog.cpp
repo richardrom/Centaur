@@ -14,6 +14,7 @@ struct ShortcutDialog::Impl
 {
     inline Impl() :
         ui { new Ui::ShortcutDialog } { }
+
     inline ~Impl() = default;
 
     std::unique_ptr<Ui::ShortcutDialog> ui;
@@ -31,11 +32,13 @@ ShortcutDialog::ShortcutDialog(QWidget *parent) :
     setWindowFlag(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
 #endif
+    /*
 
-    ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
-    connect(ui()->closeButton, &SystemPushButton::systemPressed, this, [&]() {
-        reject();
-    });
+        ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
+        connect(ui()->closeButton, &SystemPushButton::systemPressed, this, [&]() {
+            reject();
+        });
+    */
 
     connect(ui()->acceptButton, &QPushButton::released, this, &ShortcutDialog::onAccept);
     connect(ui()->cancelButton, &QPushButton::released, this, &ShortcutDialog::reject);
@@ -56,7 +59,7 @@ Ui::ShortcutDialog *ShortcutDialog::ui()
 
 void ShortcutDialog::onAccept() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("ShortcutDialog");
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
@@ -66,7 +69,7 @@ void ShortcutDialog::onAccept() noexcept
 
 void ShortcutDialog::restoreInterface() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("ShortcutDialog");
     restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();

@@ -64,8 +64,7 @@ void OptionsTableWidget::init(int filterColumn) noexcept
 
     connect(m_selectionModel, &QItemSelectionModel::currentChanged, this, &OptionsTableWidget::onModelSelectionChanged);
 
-    switch (m_mode)
-    {
+    switch (m_mode) {
         case EditableMode::byColumn:
             {
                 localEditableColumn = m_editableColumn;
@@ -88,15 +87,12 @@ void OptionsTableWidget::init(int filterColumn) noexcept
 
         proxy->setFilterFixedString(str);
 
-        if (m_optionsColumn != -1)
-        {
+        if (m_optionsColumn != -1) {
             // This fixes a bug where the QWidget is deleted when the filter is applied
-            for (int r = 0; r < proxy->rowCount(); ++r)
-            {
+            for (int r = 0; r < proxy->rowCount(); ++r) {
                 auto widget = this->indexWidget(proxy->index(r, m_optionsColumn));
 
-                if (widget == nullptr)
-                {
+                if (widget == nullptr) {
                     auto opts = new OptionsWidget(m_buttons);
 
                     auto item = m_itemModel->itemFromIndex(proxy->mapToSource(proxy->index(r, localEditableColumn)));
@@ -112,8 +108,7 @@ void OptionsTableWidget::init(int filterColumn) noexcept
 
     connect(m_itemModel, &QStandardItemModel::itemChanged, this, &OptionsTableWidget::itemChangedLocal);
 
-    if (this->horizontalHeader() != nullptr)
-    {
+    if (this->horizontalHeader() != nullptr) {
         connect(horizontalHeader(), &QHeaderView::sortIndicatorChanged, this, [&](int logicalIndex, Qt::SortOrder order) {
             m_itemModel->sort(logicalIndex, order);
         });
@@ -137,8 +132,7 @@ void OptionsTableWidget::allowDeletionWhenEditorIsClear(bool allow)
 
 void OptionsTableWidget::editButtonPressed(QStandardItem *item) noexcept
 {
-    switch (m_mode)
-    {
+    switch (m_mode) {
         case EditableMode::byColumn:
             {
                 auto proxy                        = getProxyModel();
@@ -160,9 +154,8 @@ void OptionsTableWidget::deleteButtonPressed(QStandardItem *item) noexcept
 {
     m_removedItem = item;
 
-    if (m_deletionColumnData != -1)
-    {
-        auto data = m_itemModel->item(item->row(), m_deletionColumnData);
+    if (m_deletionColumnData != -1) {
+        auto *data = m_itemModel->item(item->row(), m_deletionColumnData);
         emit deleteItemPressed(data->index().data().toString());
     }
 
@@ -173,12 +166,10 @@ QModelIndex OptionsTableWidget::getRemovedItem()
 {
     QStandardItem *temp = m_removedItem;
     m_removedItem       = nullptr;
-    if (temp)
-    {
+    if (temp != nullptr) {
         return getItemIndexFromSource(temp);
     }
-    else
-        return {};
+    return {};
 }
 
 void OptionsTableWidget::viewButtonPressed(QStandardItem *item) noexcept
@@ -193,16 +184,14 @@ void OptionsTableWidget::itemChangedLocal(QStandardItem *item) noexcept
 
 void OptionsTableWidget::editorEditingCancelledLocal(const QModelIndex &index) noexcept
 {
-    auto proxy = getProxyModel();
+    auto *proxy = getProxyModel();
 
-    auto item = m_itemModel->itemFromIndex(proxy->mapToSource(proxy->index(index.row(), m_editableColumn)));
+    auto *item = m_itemModel->itemFromIndex(proxy->mapToSource(proxy->index(index.row(), m_editableColumn)));
 
-    if (item->data(Qt::DisplayRole).toString().isEmpty() && m_allowDeletion)
-    {
+    if (item->data(Qt::DisplayRole).toString().isEmpty() && m_allowDeletion) {
         deleteButtonPressed(item);
     }
-    else
-    {
+    else {
         emit editorEditingCancelled(index);
     }
 }
@@ -224,10 +213,9 @@ void OptionsTableWidget::insertRowWithOptions(int row, const QList<QStandardItem
     assert(items.size() == m_columns);
 
     m_itemModel->insertRow(row, items);
-    auto proxy = getProxyModel();
+    auto *proxy = getProxyModel();
 
-    if (m_optionsColumn != -1)
-    {
+    if (m_optionsColumn != -1) {
 
         auto optionsIndex = proxy->mapFromSource(items[m_optionsColumn]->index());
 
@@ -245,8 +233,7 @@ void OptionsTableWidget::insertRowWithOptions(int row, const QList<QStandardItem
         connect(opts->viewButton(), &QPushButton::released, this, [=, this]() { viewButtonPressed(items[itemCol]); });
     }
 
-    if (immediateEdit)
-    {
+    if (immediateEdit) {
         auto editableData = proxy->mapFromSource(items[m_editableColumn]->index());
         this->setCurrentIndex(editableData);
         this->edit(editableData);

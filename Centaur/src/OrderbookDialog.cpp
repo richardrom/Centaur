@@ -13,6 +13,7 @@
 #include <utility>
 
 BEGIN_CENTAUR_NAMESPACE
+
 namespace
 {
     class ProgressDelegate : public QStyledItemDelegate
@@ -29,8 +30,7 @@ namespace
             QStyledItemDelegate(parent),
             _type { type }
         {
-            switch (_type)
-            {
+            switch (_type) {
                 case Type::ask:
                     redBrush = QBrush(QColor(197, 29, 7, 128));
                     break;
@@ -42,8 +42,7 @@ namespace
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
         {
-            if (index.column() == 2)
-            {
+            if (index.column() == 2) {
                 QStyleOptionViewItem options = option;
 
                 initStyleOption(&options, index);
@@ -102,6 +101,7 @@ struct OrderbookDialog::Impl
         base  = exchange->getBaseFromSymbol(symbol);
         quote = exchange->getQuoteFromSymbol(symbol);
     }
+
     inline ~Impl() = default;
 
     std::unique_ptr<Ui::OrderbookDialog> ui;
@@ -128,14 +128,16 @@ OrderbookDialog::OrderbookDialog(QString symbol, CENTAUR_PLUGIN_NAMESPACE::IExch
 
     ui()->titleFrame->overrideParent(this);
     ui()->mainTableFrame->overrideParent(this);
+    /*
 
-    ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
-    ui()->minimizeButton->setButtonClass(SystemPushButton::ButtonClass::override);
+        ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
+        ui()->minimizeButton->setButtonClass(SystemPushButton::ButtonClass::override);
 
-    // Minimize will only hide the dialog
-    connect(ui()->minimizeButton, &QPushButton::released, this, [&]() { hide(); });
-    // Close will have special meaning
-    connect(ui()->closeButton, &QPushButton::released, this, [&]() { onCloseButton(); });
+        // Minimize will only hide the dialog
+        connect(ui()->minimizeButton, &QPushButton::released, this, [&]() { hide(); });
+        // Close will have special meaning
+        connect(ui()->closeButton, &QPushButton::released, this, [&]() { onCloseButton(); });
+    */
 
     connect(ui()->onTopButton, &QPushButton::clicked, this, [&](bool checked) {
         this->setWindowFlag(Qt::WindowType::WindowStaysOnTopHint, checked);
@@ -170,8 +172,7 @@ OrderbookDialog::OrderbookDialog(QString symbol, CENTAUR_PLUGIN_NAMESPACE::IExch
         auto *otherHeader = ui()->bidsTable->horizontalHeader();
         if (otherHeader == nullptr)
             return;
-        if (otherHeader->sectionSize(index) != newSize)
-        {
+        if (otherHeader->sectionSize(index) != newSize) {
             const auto block = otherHeader->blockSignals(true);
             otherHeader->resizeSection(index, newSize);
             otherHeader->blockSignals(block);
@@ -181,8 +182,7 @@ OrderbookDialog::OrderbookDialog(QString symbol, CENTAUR_PLUGIN_NAMESPACE::IExch
         auto *otherHeader = ui()->asksTable->horizontalHeader();
         if (otherHeader == nullptr)
             return;
-        if (otherHeader->sectionSize(index) != newSize)
-        {
+        if (otherHeader->sectionSize(index) != newSize) {
             const auto block = otherHeader->blockSignals(true);
             otherHeader->resizeSection(index, newSize);
             otherHeader->blockSignals(block);
@@ -209,7 +209,7 @@ Ui::OrderbookDialog *OrderbookDialog::ui()
 
 void OrderbookDialog::onCloseButton() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup(objectName());
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
@@ -233,7 +233,7 @@ void OrderbookDialog::onCloseButton() noexcept
 
 void OrderbookDialog::restoreInterface() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup(objectName());
     restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();
@@ -262,8 +262,7 @@ void OrderbookDialog::setPrice(double price)
         ui()->priceLabel->setStyleSheet(stylesheetRed);
     else if (qFuzzyCompare(price, _impl->oldPrice))
         ui()->priceLabel->setStyleSheet(stylesheetGray);
-    else
-    {
+    else {
         [[unlikely]];
     }
 
@@ -278,11 +277,9 @@ void OrderbookDialog::onOrderbookUpdate(const QString &source, const QString &sy
 
     auto insertTable = [](const QString &text, QTableWidget *ui, int row, int col, int type) -> QTableWidgetItem * {
         QTableWidgetItem *item = ui->item(row, col);
-        if (item == nullptr)
-        {
+        if (item == nullptr) {
             item = new QTableWidgetItem(text);
-            switch (col)
-            {
+            switch (col) {
                 case 1:
                     item->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
                     break;
@@ -340,8 +337,7 @@ void OrderbookDialog::onOrderbookUpdate(const QString &source, const QString &sy
 
     ui()->asksTable->setRowCount(static_cast<int>(asks.size()));
     nRowIndex = 0;
-    for (auto iter = asks.begin(); iter != asks.end(); ++iter)
-    {
+    for (auto iter = asks.begin(); iter != asks.end(); ++iter) {
         insertTable(QString("$ %1").arg(QLocale(QLocale::English).toString(iter.key(), 'f', 5)), ui()->asksTable, nRowIndex, 0, 1);
         insertTable(QString("$ %1").arg(QLocale(QLocale::English).toString(iter.value().first, 'f', 5)), ui()->asksTable, nRowIndex, 1, 1);
         auto item = insertTable(QString("$ %1").arg(QLocale(QLocale::English).toString(iter.value().second, 'f', 5)), ui()->asksTable, nRowIndex, 2, 1);
@@ -355,8 +351,7 @@ void OrderbookDialog::onOrderbookUpdate(const QString &source, const QString &sy
 
     ui()->bidsTable->setRowCount(static_cast<int>(bids.size()));
     nRowIndex = 0;
-    for (auto iter = bids.begin(); iter != bids.end(); ++iter)
-    {
+    for (auto iter = bids.begin(); iter != bids.end(); ++iter) {
         insertTable(QString("$ %1").arg(QLocale(QLocale::English).toString(iter.key(), 'f', 5)), ui()->bidsTable, nRowIndex, 0, 0);
         insertTable(QString("$ %1").arg(QLocale(QLocale::English).toString(iter.value().first, 'f', 5)), ui()->bidsTable, nRowIndex, 1, 0);
         auto item = insertTable(QString("$ %1").arg(QLocale(QLocale::English).toString(iter.value().second, 'f', 5)), ui()->bidsTable, nRowIndex, 2, 0);
@@ -382,16 +377,13 @@ void OrderbookDialog::onOrderbookUpdate(const QString &source, const QString &sy
         pal.setColor(ctr->foregroundRole(), color);
         ctr->setPalette(pal);
     };
-    if (latency <= 85)
-    {
+    if (latency <= 85) {
         changeColor(ui()->latencyLabel, QColor(0, 255, 0));
     }
-    else if (latency >= 86 && latency <= 185)
-    {
+    else if (latency >= 86 && latency <= 185) {
         changeColor(ui()->latencyLabel, QColor(255, 215, 0));
     }
-    else if (latency >= 186 && latency <= 10000000)
-    {
+    else if (latency >= 186 && latency <= 10000000) {
         changeColor(ui()->latencyLabel, QColor(255, 129, 112));
     }
 

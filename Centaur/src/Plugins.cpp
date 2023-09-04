@@ -65,8 +65,8 @@ void CENTAUR_NAMESPACE::CentaurApp::loadPlugins(SplashDialog *splash) noexcept
 
     logInfo("plugins", tr("Plugins local data loaded and parsed."));
 
-    QString pluginPath = g_globals->paths.pluginsPath;
-    QDir pluginsDir(pluginPath);
+    const QString pluginPath = g_globals->paths.pluginsPath;
+    const QDir pluginsDir(pluginPath);
 
     // Modify the range of the splash dialog progress bar
     // So it can display the loading of the plugins
@@ -77,8 +77,7 @@ void CENTAUR_NAMESPACE::CentaurApp::loadPlugins(SplashDialog *splash) noexcept
     logWarn("loadPlugins", "No checksum verification for plugins");
 #endif /**/
 
-    for (const auto &plFile : pluginsDir.entryList(QDir::Files))
-    {
+    for (const auto &plFile : pluginsDir.entryList(QDir::Files)) {
         QString realFile = pluginsDir.absoluteFilePath(plFile);
 
         //  Detect if the file is a symbolic link
@@ -87,8 +86,7 @@ void CENTAUR_NAMESPACE::CentaurApp::loadPlugins(SplashDialog *splash) noexcept
 #ifdef Q_OS_WIN
             || info.isShortcut()
 #endif /* Q_OS_WIN */
-        )
-        {
+        ) {
             realFile = info.symLinkTarget();
         }
 
@@ -97,8 +95,7 @@ void CENTAUR_NAMESPACE::CentaurApp::loadPlugins(SplashDialog *splash) noexcept
 #ifndef NO_PLUGIN_CHECKSUM_CHECK
         const QString checksum = [&]() {
             QFile ckFile(realFile);
-            if (!ckFile.open(QIODevice::ReadOnly))
-            {
+            if (!ckFile.open(QIODevice::ReadOnly)) {
                 logError("loadPlugins", "The file could not be opened for checksum check");
                 return QString("");
             }
@@ -115,61 +112,52 @@ void CENTAUR_NAMESPACE::CentaurApp::loadPlugins(SplashDialog *splash) noexcept
         QObject *plugin = loader->instance();
         splash->step();
 
-        if (plugin)
-        {
+        if (plugin) {
             // Add to the list
             auto baseInterface = qobject_cast<CENTAUR_PLUGIN_NAMESPACE::IBase *>(plugin);
 
             if (baseInterface == nullptr)
                 logError("loadPlugins", tr("The file is not a plugin"));
-            else
-            {
+            else {
                 splash->setDisplayText(tr("Initializing: %1 (%2)").arg(baseInterface->getPluginName(), baseInterface->getPluginVersionString()));
 
                 // Check data
                 const auto plDBInfo = dal::DataAccess::pluginInformation(baseInterface->getPluginUUID().to_qstring(false));
 
-                if (!plDBInfo.has_value())
-                {
+                if (!plDBInfo.has_value()) {
                     logError("loadPlugins", tr("Plugin %1 found in the filesystem but not in the installed database").arg(plFile));
                     continue;
                 }
 
                 // Check the dynamic file name
-                if ((*plDBInfo).dynamic != plFile)
-                {
+                if ((*plDBInfo).dynamic != plFile) {
                     logError("loadPlugins", tr("Plugin %1 filename and DB file discrepancies").arg(plFile));
                     continue;
                 }
 
                 // Check UI Version
-                if ((*plDBInfo).centaur_uuid != CENTAUR_PLUGIN_NAMESPACE::centaurUUID)
-                {
+                if ((*plDBInfo).centaur_uuid != CENTAUR_PLUGIN_NAMESPACE::centaurUUID) {
                     logError("loadPlugins", tr("Plugin %1 not supported").arg(plFile));
                     continue;
                 }
 
-                if (!(*plDBInfo).enabled)
-                {
+                if (!(*plDBInfo).enabled) {
                     logInfo("loadPlugins", tr("Plugin %1 is disabled").arg(plFile));
                     continue;
                 }
 
-                if ((*plDBInfo).name != baseInterface->getPluginName())
-                {
+                if ((*plDBInfo).name != baseInterface->getPluginName()) {
                     logError("loadPlugins", tr("Plugin %1 name and DB name discrepancies").arg(plFile));
                     continue;
                 }
 
-                if ((*plDBInfo).version != baseInterface->getPluginVersionString())
-                {
+                if ((*plDBInfo).version != baseInterface->getPluginVersionString()) {
                     logError("loadPlugins", tr("Plugin %1 version string and DB version string discrepancies").arg(plFile));
                     continue;
                 }
 
 #ifndef NO_PLUGIN_CHECKSUM_CHECK
-                if ((*plDBInfo).checksum != checksum)
-                {
+                if ((*plDBInfo).checksum != checksum) {
                     logError("loadPlugins", tr("Plugin %1 invalid checksum").arg(plFile));
                     continue;
                 }
@@ -188,11 +176,9 @@ void CENTAUR_NAMESPACE::CentaurApp::loadPlugins(SplashDialog *splash) noexcept
                 // Generate the plugin data
                 mapConfigurationInterface(baseInterface->getPluginUUID(), pluginConfig);
 
-                if (auto exInterface = qobject_cast<CENTAUR_PLUGIN_NAMESPACE::IExchange *>(plugin); exInterface)
-                {
+                if (auto exInterface = qobject_cast<CENTAUR_PLUGIN_NAMESPACE::IExchange *>(plugin); exInterface) {
                     logInfo("loadPlugins", tr("IExchange plugin found in file: ##F2FEFF#%1#").arg(plFile));
-                    if (!initExchangePlugin(exInterface))
-                    {
+                    if (!initExchangePlugin(exInterface)) {
                         loader->unload();
                         logWarn("loadPlugins", tr("Plugin IExchange in file: ##F2FEFF#%1#, was unloaded").arg(plFile));
                         removeLastPluginBase();
@@ -200,15 +186,13 @@ void CENTAUR_NAMESPACE::CentaurApp::loadPlugins(SplashDialog *splash) noexcept
                     }
                 }
 
-                if (auto stInterface = qobject_cast<CENTAUR_PLUGIN_NAMESPACE::IStatus *>(plugin); stInterface)
-                {
+                if (auto stInterface = qobject_cast<CENTAUR_PLUGIN_NAMESPACE::IStatus *>(plugin); stInterface) {
                     logInfo("loadPlugins", tr("IStatus plugin found in file: ##F2FEFF#%1#").arg(plFile));
                     // Init the plugin
                     initStatusPlugin(stInterface);
                 }
 
-                if (loader->isLoaded())
-                {
+                if (loader->isLoaded()) {
                     mapPluginInstance(loader);
                 }
             }
@@ -226,8 +210,7 @@ bool CENTAUR_NAMESPACE::CentaurApp::initExchangePlugin(CENTAUR_NAMESPACE::plugin
 
     const auto uuid = exchange->getPluginUUID();
 
-    if (!exchange->initialization())
-    {
+    if (!exchange->initialization()) {
         logError("plugins", tr("Failed to initialize an IExchange-plugin"));
         return false;
     }
@@ -306,14 +289,11 @@ CENTAUR_NAMESPACE::OptionsTableWidget *CENTAUR_NAMESPACE::CentaurApp::populateEx
     ui()->stackedWidget->addWidget(widget);
 
     connect(button, &QPushButton::clicked, this, [&, widget, symbolsList, exchange](bool clicked) {
-        if (clicked)
-        {
-            if (symbolsList->getRowCount() == 0)
-            {
+        if (clicked) {
+            if (symbolsList->getRowCount() == 0) {
 
                 auto symbols = exchange->getSymbolList();
-                for (const auto &[sym, icon] : symbols)
-                {
+                for (const auto &[sym, icon] : symbols) {
 
                     auto item  = new QStandardItem(sym);
                     int curRow = symbolsList->getRowCount();
@@ -334,8 +314,7 @@ CENTAUR_NAMESPACE::OptionsTableWidget *CENTAUR_NAMESPACE::CentaurApp::populateEx
         QModelIndex index = symbolsList->indexAt(pos).siblingAtColumn(0);
         auto itemData     = index.data(Qt::DisplayRole).toString();
 
-        if (!itemData.isEmpty())
-        {
+        if (!itemData.isEmpty()) {
             QMenu contextMenu("Context menu", this);
 
             QAction action(tr("Add '%1' to the watchlist").arg(itemData), this);
@@ -382,8 +361,7 @@ void cen::CentaurApp::initStatusPlugin(CENTAUR_PLUGIN_NAMESPACE::IStatus *status
         button->setIcon(QIcon(status->image().scaled(18, 18, Qt::AspectRatioMode::KeepAspectRatio)));
     };
 
-    switch (mode)
-    {
+    switch (mode) {
         case IStatus::DisplayMode::OnlyText:
             button->setToolButtonStyle(Qt::ToolButtonTextOnly);
             textMode();
@@ -404,18 +382,15 @@ void cen::CentaurApp::initStatusPlugin(CENTAUR_PLUGIN_NAMESPACE::IStatus *status
     const auto backgroundBrush = status->brush(IStatus::DisplayRole::Background);
 
     QPalette palette = button->palette();
-    if (foregroundBrush != Qt::NoBrush)
-    {
+    if (foregroundBrush != Qt::NoBrush) {
         palette.setBrush(QPalette::ColorRole::ButtonText, status->brush(IStatus::DisplayRole::Foreground));
     }
-    if (backgroundBrush != Qt::NoBrush)
-    {
+    if (backgroundBrush != Qt::NoBrush) {
         button->setStyleSheet("");
         button->setAutoFillBackground(true);
         palette.setBrush(QPalette::ColorRole::Button, status->brush(IStatus::DisplayRole::Background));
     }
-    else
-    {
+    else {
         button->setStyleSheet(stylesheet);
         button->setAutoFillBackground(false);
     }
@@ -425,8 +400,7 @@ void cen::CentaurApp::initStatusPlugin(CENTAUR_PLUGIN_NAMESPACE::IStatus *status
         connect(status->getPluginObject(), SIGNAL(displayChange(plugin::IStatus::DisplayRole)), this, SLOT(onStatusDisplayChanged(plugin::IStatus::DisplayRole)));
     // clang-format on
 
-    if (status->action())
-    {
+    if (status->action()) {
         connect(button, &QPushButton::released, this, [status, button]() {
             // Update the button top left coordinates
             auto point = button->mapToGlobal(button->geometry().topLeft());

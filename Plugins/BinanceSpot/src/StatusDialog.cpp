@@ -22,11 +22,12 @@ cen::StatusDialog::StatusDialog(binapi::SPOT::APIKeyPermissions *apiKeyPermissio
     restoreInterfaceState();
 
     m_ui->titleFrame->overrideParent(this);
+    /*
+        m_ui->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
 
-    m_ui->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
-
-    // Close will have special meaning
-    connect(m_ui->closeButton, &QPushButton::released, this, [&]() { accept(); });
+        // Close will have special meaning
+        TODO: FIX THIS ON THE BASE CLASS
+        connect(m_ui->closeButton, &QPushButton::released, this, [&]() { accept(); });*/
 
     auto setReadOnly = [&](QCheckBox *checkBox) -> void {
         checkBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -46,18 +47,15 @@ cen::StatusDialog::StatusDialog(binapi::SPOT::APIKeyPermissions *apiKeyPermissio
     setReadOnly(m_ui->checkBoxMargin);
     setReadOnly(m_ui->checkBoxSpotAndMargin);
 
-    if (status == "BinanceSPOT Account Status: Normal")
-    {
+    if (status == "BinanceSPOT Account Status: Normal") {
         m_ui->lineEditStatus->setProperty("statusNormal", true);
     }
-    else
-    {
+    else {
         m_ui->lineEditStatus->setProperty("statusNormal", false);
     }
     m_ui->lineEditStatus->setText(status);
 
-    if (apiTradingStatus->updateTime > 0)
-    {
+    if (apiTradingStatus->updateTime > 0) {
         QDateTime updateTime;
         updateTime.setMSecsSinceEpoch(static_cast<qint64>(apiTradingStatus->updateTime));
         m_ui->lineEditUpdateTime->setText(updateTime.toString("dd-MM-yyyy hh:mm:ss.zzz"));
@@ -66,8 +64,7 @@ cen::StatusDialog::StatusDialog(binapi::SPOT::APIKeyPermissions *apiKeyPermissio
         m_ui->lineEditUpdateTime->setText("No update time");
 
     m_ui->checkBoxLocked->setChecked(apiTradingStatus->isLocked);
-    if (apiTradingStatus->recoverTime > 0)
-    {
+    if (apiTradingStatus->recoverTime > 0) {
         QDateTime recoverTime;
         recoverTime.setMSecsSinceEpoch(static_cast<qint64>(apiTradingStatus->recoverTime));
         m_ui->lineEditRecoverTime->setText(recoverTime.toString("dd-MM-yyyy hh:mm:ss.zzz"));
@@ -91,8 +88,7 @@ cen::StatusDialog::StatusDialog(binapi::SPOT::APIKeyPermissions *apiKeyPermissio
     m_ui->checkBoxFutures->setChecked(apiKeyPermissions->enableFutures);
     m_ui->checkBoxMargin->setChecked(apiKeyPermissions->enableMargin);
     m_ui->checkBoxSpotAndMargin->setChecked(apiKeyPermissions->enableSpotAndMarginTrading);
-    if (apiKeyPermissions->tradingAuthorityExpirationTime > 0)
-    {
+    if (apiKeyPermissions->tradingAuthorityExpirationTime > 0) {
         QDateTime expirationTime;
         expirationTime.setMSecsSinceEpoch(static_cast<qint64>(apiKeyPermissions->tradingAuthorityExpirationTime));
         m_ui->labelTradingAuthority->setText(expirationTime.toString("dd-MM-yyyy hh:mm:ss.zzz"));

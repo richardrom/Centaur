@@ -10,7 +10,7 @@
 #define CENTAUR_LOGINDIALOG_HPP
 
 #include "Centaur.hpp"
-#include <QDialog>
+#include <CDialog.hpp>
 
 BEGIN_CENTAUR_NAMESPACE
 
@@ -18,7 +18,8 @@ namespace Ui
 {
     class LoginDialog;
 }
-class LoginDialog : public QDialog
+
+class LoginDialog : public CENTAUR_NAMESPACE::CDialog
 {
 public:
     explicit LoginDialog(QWidget *parent = nullptr);
@@ -29,7 +30,7 @@ protected slots:
 #else
 public slots:
 #endif /*TEST_LOGIN_MODE*/
-    void onAccept() noexcept;
+    void onAccept() noexcept override;
 
 public:
     /// \brief Only asks for the password
@@ -45,7 +46,6 @@ public:
     QString userPassword;
 
 protected:
-    void restoreInterface() noexcept;
     void loadImage() noexcept;
 
 private:

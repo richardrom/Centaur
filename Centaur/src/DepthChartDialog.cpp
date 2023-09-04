@@ -16,6 +16,7 @@ struct DepthChartDialog::Impl
 {
     inline Impl() :
         ui { new Ui::DepthChartDialog } { }
+
     inline ~Impl() = default;
 
     std::unique_ptr<Ui::DepthChartDialog> ui;
@@ -43,13 +44,14 @@ DepthChartDialog::DepthChartDialog(const QString &symbol, QWidget *parent) :
     ui()->titleFrame->overrideParent(this);
     ui()->mainTableFrame->overrideParent(this);
 
-    ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
-    ui()->minimizeButton->setButtonClass(SystemPushButton::ButtonClass::override);
+    /*    ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
+        ui()->minimizeButton->setButtonClass(SystemPushButton::ButtonClass::override);*/
 
-    // Minimize will only hide the dialog
-    connect(ui()->minimizeButton, &QPushButton::released, this, [&]() { hide(); });
-    // Close will have special meaning
-    connect(ui()->closeButton, &QPushButton::released, this, [&]() { onCloseButton(); });
+    /*    // Minimize will only hide the dialog
+        connect(ui()->minimizeButton, &QPushButton::released, this, [&]() { hide(); });
+        // Close will have special meaning
+        TODO: FIX THIS ON THE MAIN CLASS
+        connect(ui()->closeButton, &QPushButton::released, this, [&]() { onCloseButton(); });*/
 
     connect(ui()->onTopButton, &QPushButton::clicked, this, [&](bool checked) {
         this->setWindowFlag(Qt::WindowType::WindowStaysOnTopHint, checked);
@@ -119,7 +121,7 @@ Ui::DepthChartDialog *DepthChartDialog::ui()
 
 void DepthChartDialog::onCloseButton() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("DepthChartDialog");
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
@@ -129,7 +131,7 @@ void DepthChartDialog::onCloseButton() noexcept
 
 void DepthChartDialog::restoreInterface() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("DepthChartDialog");
     restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();
@@ -158,15 +160,13 @@ void DepthChartDialog::onOrderBookDepth(const QMap<qreal, QPair<qreal, qreal>> &
 
     // Determinate the min and max of each ask and bids list
     double asksMin = 0.0, asksMax = 0.0;
-    if (!asks.empty())
-    {
+    if (!asks.empty()) {
         // Of these we can be sure because it is a sorted map
         asksMin = asks.firstKey();
         asksMax = asks.lastKey();
     }
     double bidsMin = 0.0, bidsMax = 0.0;
-    if (!bids.empty())
-    {
+    if (!bids.empty()) {
         // Of these we can be sure because it is a sorted map
         bidsMin = bids.firstKey();
         bidsMax = bids.lastKey();
@@ -206,13 +206,11 @@ void DepthChartDialog::onOrderBookDepth(const QMap<qreal, QPair<qreal, qreal>> &
 
     int maxAskStep;
     double maxAskQuant = 0.0;
-    for (auto iter = asks.begin(); iter != asks.end(); ++iter)
-    {
+    for (auto iter = asks.begin(); iter != asks.end(); ++iter) {
         const double price = iter.key();
         const double quant = iter.value().first;
 
-        if (price >= _impl->price + (step * currentDoubleStep))
-        {
+        if (price >= _impl->price + (step * currentDoubleStep)) {
             // Make a scaffold effect
             *_impl->asksDepth << QPointF { _impl->price + (step * currentDoubleStep), prevY };
             *_impl->asksDepthFill << QPointF { _impl->price + (step * currentDoubleStep), minY };
@@ -246,8 +244,7 @@ void DepthChartDialog::onOrderBookDepth(const QMap<qreal, QPair<qreal, qreal>> &
     *_impl->bidsDepthFill << QPointF { _impl->price, minY };
     int maxBidStep     = 0.0;
     double maxBidQuant = 0.0;
-    for (auto iter = stlMap.rbegin(); iter != stlMap.rend(); ++iter)
-    {
+    for (auto iter = stlMap.rbegin(); iter != stlMap.rend(); ++iter) {
         const auto &[price, data] = *iter;
         const auto quant          = data.first;
 
@@ -277,13 +274,11 @@ void DepthChartDialog::onOrderBookDepth(const QMap<qreal, QPair<qreal, qreal>> &
 
     // There are cases where are more asks than bids and the number of steps are not the same
     // this make the graphs even on the lower scale on bids and the upper scale on asks
-    if (maxAskStep > maxBidStep)
-    {
+    if (maxAskStep > maxBidStep) {
         *_impl->bidsDepth << QPointF { _impl->price - (step * static_cast<double>(maxAskStep)), maxBidQuant };
         *_impl->bidsDepthFill << QPointF { _impl->price - (step * static_cast<double>(maxAskStep)), minY };
     }
-    else
-    {
+    else {
         *_impl->asksDepth << QPointF { _impl->price + (step * static_cast<double>(maxBidStep)), maxAskQuant };
         *_impl->asksDepthFill << QPointF { _impl->price + (step * static_cast<double>(maxBidStep)), minY };
     }

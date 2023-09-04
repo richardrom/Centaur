@@ -37,7 +37,7 @@ namespace
             doc.setHtml(options.text);
 
             options.text = "";
-            options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
+            options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter, option.widget);
 
             // shift text right to make icon visible
             const QSize iconSize = options.icon.actualSize(options.rect.size());
@@ -48,6 +48,8 @@ namespace
             QAbstractTextDocumentLayout::PaintContext ctx;
 
             ctx.clip = clip;
+
+            doc.setTextWidth(option.rect.width());
             doc.documentLayout()->draw(painter, ctx);
 
             painter->restore();
@@ -68,8 +70,11 @@ namespace
 
 struct LogDialog::Impl
 {
-    inline Impl() :
-        ui { new Ui::LogDialog } { }
+    inline explicit Impl(QDialog *parent) :
+        ui { new Ui::LogDialog }
+    {
+        ui->setupUi(parent);
+    }
 
     inline ~Impl() = default;
 
@@ -77,38 +82,31 @@ struct LogDialog::Impl
 };
 
 LogDialog::LogDialog(QWidget *parent) :
-    QDialog { parent },
-    _impl { new Impl }
+    CDialog { parent },
+    _impl { new Impl(this) }
 {
-    ui()->setupUi(this);
+    /*
+        ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
+        connect(ui()->closeButton, &SystemPushButton::systemPressed, this, [&]() {
+            hide();
+        });
+    */
 
-#ifdef Q_OS_MAC
-    setWindowFlag(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_TranslucentBackground);
-#else
-#endif
-
-    ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
-    connect(ui()->closeButton, &SystemPushButton::systemPressed, this, [&]() {
-        hide();
-    });
-
-    ui()->mainTableFrame->overrideParent(this);
     ui()->titleFrame->overrideParent(this);
 
     QTableWidget *logger = ui()->logsTable;
     logger->setHorizontalHeaderLabels({ tr("Date"), tr("User"), tr("Session"), tr("Type"), tr("Source"), tr("Message") });
-    logger->horizontalHeaderItem(0)->setFont(QFont("Roboto", 10));
+    //    logger->horizontalHeaderItem(0)->setFont(QFont("Roboto", 10));
     logger->horizontalHeaderItem(0)->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    logger->horizontalHeaderItem(1)->setFont(QFont("Roboto", 10));
+    //    logger->horizontalHeaderItem(1)->setFont(QFont("Roboto", 10));
     logger->horizontalHeaderItem(1)->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-    logger->horizontalHeaderItem(2)->setFont(QFont("Roboto", 10));
+    //    logger->horizontalHeaderItem(2)->setFont(QFont("Roboto", 10));
     logger->horizontalHeaderItem(2)->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-    logger->horizontalHeaderItem(3)->setFont(QFont("Roboto", 10));
+    //    logger->horizontalHeaderItem(3)->setFont(QFont("Roboto", 10));
     logger->horizontalHeaderItem(3)->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-    logger->horizontalHeaderItem(4)->setFont(QFont("Roboto", 10));
+    //    logger->horizontalHeaderItem(4)->setFont(QFont("Roboto", 10));
     logger->horizontalHeaderItem(4)->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-    logger->horizontalHeaderItem(5)->setFont(QFont("Roboto", 10));
+    //    logger->horizontalHeaderItem(5)->setFont(QFont("Roboto", 10));
     logger->horizontalHeaderItem(5)->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
     logger->setItemDelegateForColumn(5, new HTMLDelegate);
@@ -125,11 +123,9 @@ Ui::LogDialog *LogDialog::ui()
 
 void LogDialog::restoreInterface() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
-    settings.beginGroup("LogDialog");
-    restoreGeometry(settings.value("geometry").toByteArray());
-    settings.endGroup();
+    restoreDialogInterface();
 
+    QSettings settings;
     settings.beginGroup("LogDialog_Table");
     settings.setValue("geometry", ui()->logsTable->saveGeometry());
     settings.setValue("h-geometry", ui()->logsTable->horizontalHeader()->saveGeometry());
@@ -154,8 +150,8 @@ void LogDialog::onLog(qint64 date, int session, int level, const QString &usr, c
     logger->insertRow(curRow);
 
     auto insertItem = [&](const int &col, const QString &text, const QColor &color, const Qt::Alignment &align = Qt::AlignCenter) {
-        auto item = new QTableWidgetItem(text);
-        item->setFont(QFont("Roboto", 12));
+        auto *item = new QTableWidgetItem(text);
+        // item->setFont(QFont("Roboto", 12));
         item->setForeground(color);
         item->setTextAlignment(align | Qt::AlignVCenter);
         logger->setItem(curRow, col, item);
@@ -194,7 +190,7 @@ void LogDialog::onLog(qint64 date, int session, int level, const QString &usr, c
 
     QString newMsg { msg };
 
-    newMsg.prepend("<span style=\"font-size: 11px;font-family: arial;vertical-align: middle\">");
+    newMsg.prepend("<span style=\"vertical-align: middle; line-height: 25px;\">");
     auto idx = newMsg.indexOf("#", 0);
     if (idx != -1) {
         do {
@@ -210,6 +206,18 @@ void LogDialog::onLog(qint64 date, int session, int level, const QString &usr, c
     insertItem(5, newMsg, Qt::white, Qt::AlignLeft);
 
     logger->scrollToItem(insertedItem);
+}
+
+void LogDialog::saveInterface() noexcept
+{
+    CDialog::saveInterface();
+
+    QSettings settings;
+    settings.beginGroup("LogDialog_Table");
+    settings.setValue("geometry", tableWidget()->saveGeometry());
+    settings.setValue("h-geometry", tableWidget()->horizontalHeader()->saveGeometry());
+    settings.setValue("state", tableWidget()->horizontalHeader()->saveState());
+    settings.endGroup();
 }
 
 END_CENTAUR_NAMESPACE

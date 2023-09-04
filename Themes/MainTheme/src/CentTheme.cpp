@@ -514,7 +514,9 @@ void CentTheme::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOpti
         case PE_Frame: return;
         case PE_FrameDefaultButton: C_FALLTHROUGH;
         case PE_FrameDockWidget: break;
-        case PE_FrameFocusRect: painter->fillRect(option->rect, QColor(0, 0, 255)); return;
+        case PE_FrameFocusRect:
+            // painter->fillRect(option->rect, QColor(0, 0, 255));
+            return;
         case PE_FrameGroupBox: C_FALLTHROUGH;
         case PE_FrameLineEdit: C_FALLTHROUGH;
         case PE_FrameMenu: C_FALLTHROUGH;
@@ -1527,8 +1529,7 @@ void CentTheme::drawMenuItem(const QStyleOptionMenuItem *option, QPainter *paint
                 else {
                     iconState = QIcon::State::Off;
                 }
-
-                {
+                if (option->menuItemType != QStyleOptionMenuItem::Separator) {
                     QRect checkArrowRect = itemRect;
                     checkArrowRect.setWidth(m_themeConstants->menuItemImage.width());
                     if (state & QStyle::State_Enabled) {

@@ -79,8 +79,7 @@ TestDialog::TestDialog(QWidget *parent) :
 
     qreal minPrice = testData1h[testData1h.size() - 3].second.low;
     qreal maxPrice = 0;
-    for (int i = 3; i < 400; ++i)
-    {
+    for (int i = 3; i < 400; ++i) {
         minPrice = std::min(minPrice, testData1h[testData1h.size() - i].second.low);
         maxPrice = std::max(maxPrice, testData1h[testData1h.size() - i].second.high);
         widget->addCandle(testData1h[testData1h.size() - i].first,
@@ -102,7 +101,7 @@ TestDialog::TestDialog(QWidget *parent) :
         }*/
 
     connect(this, &QDialog::rejected, this, [&]() {
-        QSettings settings("CentaurProject", "Centaur");
+        QSettings settings;
         settings.beginGroup("test_candle");
         settings.setValue("geometry", saveGeometry());
         settings.endGroup();
@@ -133,7 +132,7 @@ TestDialog::TestDialog(QWidget *parent) :
     connect(cdSpacing, &QDoubleSpinBox::valueChanged, widget, &cen::CandleChartWidget::onChangeCandleSpacing);
     connect(cdWidth, &QDoubleSpinBox::valueChanged, widget, &cen::CandleChartWidget::onChangeCandleWidth);
 
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("test_candle");
     restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();

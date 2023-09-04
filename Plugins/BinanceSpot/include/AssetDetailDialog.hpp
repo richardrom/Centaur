@@ -13,12 +13,13 @@
 #ifndef CENTAUR_ASSETDETAILDIALOG_HPP
 #define CENTAUR_ASSETDETAILDIALOG_HPP
 
-#include "Centaur.hpp"
-#include "../ui/ui_AssetDetailDialog.h"
 #include "BinanceAPI.hpp"
+#include "Centaur.hpp"
 #include "CentaurInterface.hpp"
 #include "OptionsTableWidget.hpp"
 #include <QDialog>
+
+#include "../ui/ui_AssetDetailDialog.h"
 
 namespace CENTAUR_NAMESPACE
 {
@@ -27,7 +28,7 @@ namespace CENTAUR_NAMESPACE
         Q_OBJECT
     public:
         AssetDetailDialog(const BINAPI_NAMESPACE::SPOT::AssetDetail &detail, const QString &asset, CENTAUR_INTERFACE_NAMESPACE::IConfiguration *config, QDialog *parent = nullptr);
-        ~AssetDetailDialog();
+        ~AssetDetailDialog() override;
 
     protected:
         void saveInterfaceState() noexcept;

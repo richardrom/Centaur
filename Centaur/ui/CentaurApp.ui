@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1147</width>
+    <width>1011</width>
     <height>647</height>
    </rect>
   </property>
@@ -20,82 +20,7 @@
    <string>TraderApp</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">
-QMenu {
-    background-color: rgb(2,5,8);
-    margin: 2px;
-}
-
-QMenu::item {
-    padding: 2px 25px 2px 20px;
-    height: 20px;
-}
-QMenu::item:disabled{
-background-color:  rgb(2,5,8);
-color: rgb(131,133,134);
-}
-
-QMenu::item:selected {
-    border-color: darkblue;
-    background: rgba(100, 100, 100, 150);
-    color: rgb(235, 243, 255);
-}
-
-QMenu::icon:checked {
-    background: gray;
-    border: 1px inset gray;
-    position: absolute;
-    top: 1px;
-    right: 1px;
-    bottom: 1px;
-    left: 1px;
-}
-
-QMenu::separator {
-    height: 1px;
-    background: rgb(153, 194, 255);
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-QMenu::indicator {
-    width: 13px;
-    height: 13px;
-}
-
-
-QMenu::indicator:non-exclusive:unchecked {
-    image: url(:/images/checkbox_unchecked.png);
-}
-
-QMenu::indicator:non-exclusive:unchecked:selected {
-    image: url(:/images/checkbox_unchecked_hover.png);
-}
-
-QMenu::indicator:non-exclusive:checked {
-    image: url(:/images/checkbox_checked.png);
-}
-
-QMenu::indicator:non-exclusive:checked:selected {
-    image: url(:/images/checkbox_checked_hover.png);
-}
-
-/* exclusive indicator = radio button style indicator (see QActionGroup::setExclusive) */
-QMenu::indicator:exclusive:unchecked {
-    image: url(:/images/radiobutton_unchecked.png);
-}
-
-QMenu::indicator:exclusive:unchecked:selected {
-    image: url(:/images/radiobutton_unchecked_hover.png);
-}
-
-QMenu::indicator:exclusive:checked {
-    image: url(:/images/radiobutton_checked.png);
-}
-
-QMenu::indicator:exclusive:checked:selected {
-    image: url(:/images/radiobutton_checked_hover.png);
-}</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">
@@ -125,19 +50,7 @@ QMenu::indicator:exclusive:checked:selected {
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame{
-background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: .1 rgb(23,51,44), stop: 0 rgb(36,44,50) stop: .2  rgb(3,12,45));
-
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-border-bottom-left-radius: 10px;
-border-bottom-right-radius: 10px;
-border-left: 1px solid rgb(92,92,92);
-border-top: 1px solid rgb(104,104,104);
-border-right: 1px solid rgb(104,104,104);
-border-bottom: 1px solid rgb(92,92,92);
-}</string>
+       <string notr="true"/>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -296,158 +209,6 @@ border-top-right-radius: 10px;
                 <property name="bottomMargin">
                  <number>0</number>
                 </property>
-                <item>
-                 <widget class="QFrame" name="systemButtonsFrame">
-                  <property name="maximumSize">
-                   <size>
-                    <width>60</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QFrame{
-background-color: rgba(0,0,0,0);
-border: 0px;
-}</string>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="systemButtonsFrameLayout">
-                   <property name="spacing">
-                    <number>8</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>1</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>1</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>1</number>
-                   </property>
-                   <item>
-                    <widget class="CENTAUR_NAMESPACE::SystemPushButton" name="closeButton">
-                     <property name="minimumSize">
-                      <size>
-                       <width>13</width>
-                       <height>13</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>13</width>
-                       <height>13</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QPushButton{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(230,80,2);
-}
-
-QPushButton:hover{
-border: 0px;
-border-radius: 6px;
-background-color:  rgb(232,94,22);
-}
-
-QPushButton:pressed{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(238,136,83);
-}</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="CENTAUR_NAMESPACE::SystemPushButton" name="minimizeButton">
-                     <property name="minimumSize">
-                      <size>
-                       <width>13</width>
-                       <height>13</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>13</width>
-                       <height>13</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QPushButton{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(230,203,2);
-}
-
-QPushButton:hover{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(232,207,22);
-}
-QPushButton:pressed{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(238,220,83);
-}</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="CENTAUR_NAMESPACE::SystemPushButton" name="maximizeButton">
-                     <property name="minimumSize">
-                      <size>
-                       <width>13</width>
-                       <height>13</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>13</width>
-                       <height>13</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QPushButton{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(89,225,70);
-}
-
-QPushButton:hover{
-border: 0px;
-border-radius: 6px;
-background-color:  rgb(102,227,85);
-}
-
-QPushButton:pressed{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(142,235,129);
-}</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
                 <item>
                  <widget class="QLabel" name="titleLabel">
                   <property name="text">
@@ -841,14 +602,7 @@ QToolButton:pressed{
        <item>
         <widget class="CENTAUR_NAMESPACE::MovableFrame" name="frame">
          <property name="styleSheet">
-          <string notr="true">QFrame{
-background-color: rgb(6,10,12);
-border-top-left-radius: 0px;
-border-top-right-radius: 0px;
-border-bottom-left-radius: 10px;
-border-bottom-right-radius: 10px;
-border: 0px;
-}</string>
+          <string notr="true"/>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -1244,8 +998,8 @@ background-color: #9D9EA4;
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>69</width>
-                       <height>487</height>
+                       <width>74</width>
+                       <height>485</height>
                       </rect>
                      </property>
                      <property name="styleSheet">
@@ -1254,21 +1008,6 @@ background-color: transparent;
 }</string>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_7">
-                      <property name="spacing">
-                       <number>0</number>
-                      </property>
-                      <property name="leftMargin">
-                       <number>3</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
                       <item>
                        <widget class="QToolButton" name="toolButton_9">
                         <property name="minimumSize">
@@ -2279,7 +2018,7 @@ border: 0px;
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>253</width>
+                           <width>190</width>
                            <height>30</height>
                           </rect>
                          </property>
@@ -2449,21 +2188,6 @@ border: 0px;
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_2">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-              <property name="leftMargin">
-               <number>12</number>
-              </property>
-              <property name="topMargin">
-               <number>12</number>
-              </property>
-              <property name="rightMargin">
-               <number>12</number>
-              </property>
-              <property name="bottomMargin">
-               <number>12</number>
-              </property>
               <item>
                <widget class="QFrame" name="framePortfolio2">
                 <property name="minimumSize">
@@ -2927,11 +2651,6 @@ border-bottom-right-radius: 10px;
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>CENTAUR_NAMESPACE::SystemPushButton</class>
-   <extends>QPushButton</extends>
-   <header>../../Library/cui/include/SystemPushButton.hpp</header>
-  </customwidget>
-  <customwidget>
    <class>CENTAUR_NAMESPACE::ChevronButton</class>
    <extends>QPushButton</extends>
    <header>../../Library/cui/include/ChevronButton.hpp</header>
@@ -2957,6 +2676,7 @@ border-bottom-right-radius: 10px;
   <include location="../qrc/resource.qrc"/>
   <include location="../../Library/cui/rcc/resources.qrc"/>
   <include location="../../../Financeable/Financeable/rcc/resources.qrc"/>
+  <include location="../../Themes/MainTheme/qrc/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

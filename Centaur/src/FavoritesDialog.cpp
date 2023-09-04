@@ -29,17 +29,12 @@ namespace CENTAUR_NAMESPACE
         {
             QVariant value = QSqlTableModel::data(index, role);
 
-            if (value.isValid())
-            {
-                if (role == Qt::DisplayRole)
-                {
-                    if (index.column() == 2)
-                    {
-                        for (auto &loadedPlugins : g_app->getPluginBase())
-                        {
-                            QString strPlid { loadedPlugins->getPluginUUID().to_string().c_str() };
-                            if (strPlid == value.toString())
-                            {
+            if (value.isValid()) {
+                if (role == Qt::DisplayRole) {
+                    if (index.column() == 2) {
+                        for (auto &loadedPlugins : g_app->getPluginBase()) {
+                            const QString strPlid { loadedPlugins->getPluginUUID().to_string().c_str() };
+                            if (strPlid == value.toString()) {
                                 value.setValue(loadedPlugins->getPluginName());
                                 break;
                             }
@@ -47,12 +42,9 @@ namespace CENTAUR_NAMESPACE
                     }
                 }
             }
-            else
-            {
-                if (role == Qt::DecorationRole)
-                {
-                    if (index.column() == 1)
-                    {
+            else {
+                if (role == Qt::DecorationRole) {
+                    if (index.column() == 1) {
                         value.setValue(g_globals->icons.favoritesIcon);
                     }
                 }
@@ -92,12 +84,10 @@ CENTAUR_NAMESPACE::FavoritesDialog::FavoritesDialog(QWidget *parent) noexcept :
     model->setHeaderData(1, Qt::Horizontal, tr("Symbol name"));
     model->setHeaderData(2, Qt::Horizontal, tr("Plugin"));
 
-    if (model->lastError().isValid())
-    {
+    if (model->lastError().isValid()) {
         logError("app", QString(tr("Could not select the data from the favorites DB. %1")).arg(model->lastError().text()));
     }
-    else
-    {
+    else {
         m_ui->favoritesTable->setModel(model);
 
         m_ui->favoritesTable->hideColumn(0);
@@ -113,7 +103,7 @@ CENTAUR_NAMESPACE::FavoritesDialog::~FavoritesDialog() = default;
 
 void CENTAUR_NAMESPACE::FavoritesDialog::saveInterfaceState() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
 
     settings.beginGroup("favoritesDialog");
     settings.setValue("geometry", saveGeometry());
@@ -128,7 +118,7 @@ void CENTAUR_NAMESPACE::FavoritesDialog::saveInterfaceState() noexcept
 
 void CENTAUR_NAMESPACE::FavoritesDialog::loadInterfaceState() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
 
     settings.beginGroup("favoritesDialog");
     restoreGeometry(settings.value("geometry").toByteArray());
@@ -155,8 +145,7 @@ void CENTAUR_NAMESPACE::FavoritesDialog::onDelete() noexcept
     model->removeRows(row, 1);
     model->submitAll();
 
-    if (model->lastError().isValid())
-    {
+    if (model->lastError().isValid()) {
         QString message = QString(tr("Could not delete the data from the favorites DB. %1")).arg(model->lastError().text());
         logError("app", message);
         QMessageBox::critical(this,

@@ -427,44 +427,6 @@ border: 0px;
                    <number>1</number>
                   </property>
                   <item>
-                   <widget class="CENTAUR_NAMESPACE::SystemPushButton" name="closeButton">
-                    <property name="minimumSize">
-                     <size>
-                      <width>13</width>
-                      <height>13</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>13</width>
-                      <height>13</height>
-                     </size>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">QPushButton{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(230,80,2);
-}
-
-QPushButton:hover{
-border: 0px;
-border-radius: 6px;
-background-color:  rgb(232,94,22);
-}
-
-QPushButton:pressed{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(238,136,83);
-}</string>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
                    <spacer name="titleSpacer">
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
@@ -1022,19 +984,14 @@ Expiration Time:</string>
   <customwidget>
    <class>CENTAUR_NAMESPACE::MovableFrame</class>
    <extends>QFrame</extends>
-   <header>../../../Library/cui/include/MovableFrame.hpp</header>
+   <header>../../Library/cui/include/MovableFrame.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CENTAUR_NAMESPACE::ResizableFrame</class>
    <extends>QFrame</extends>
-   <header>../../../Library/cui/include/ResizableFrame.hpp</header>
+   <header>../../Library/cui/include/ResizableFrame.hpp</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CENTAUR_NAMESPACE::SystemPushButton</class>
-   <extends>QPushButton</extends>
-   <header>../../../Library/cui/include/SystemPushButton.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

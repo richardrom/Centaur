@@ -35,17 +35,18 @@ namespace
     {
     public:
         explicit DelegateItem(QObject *parent = nullptr);
-        void paint(QPainter *painter, const QStyleOptionViewItem &option4, const QModelIndex &index) const override
+
+        void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
         {
-            QStyleOptionViewItem options { option4 };
+            QStyleOptionViewItem options { option };
             initStyleOption(&options, index);
 
-            if (options.state & QStyle::State_Selected)
+            if (options.state.testFlag(QStyle::State_Selected)) {
                 QStyledItemDelegate::paint(painter, options, index);
-            else
-            {
+            }
+            else {
                 painter->save();
-                options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
+                options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter, option.widget);
 
                 painter->restore();
             }
@@ -107,16 +108,13 @@ void SettingsDialog::initPluginsWidget() noexcept
 
     auto plInfo = DataAccess::pluginInformation();
 
-    if (!plInfo.has_value())
-    {
+    if (!plInfo.has_value()) {
         QMessageBox::critical(this, tr("Error"),
             QString(tr("The plugin information could not be retrieved")),
             QMessageBox::Ok);
     }
-    else
-    {
-        for (const auto &data : *plInfo)
-        {
+    else {
+        for (const auto &data : *plInfo) {
             auto row = ui()->pluginsTableWidget->rowCount();
 
             ui()->pluginsTableWidget->insertRow(row);
@@ -154,10 +152,8 @@ void SettingsDialog::initPluginsWidget() noexcept
 
             itemName->setToolTip(tr("Check for enable the plugin\nUncheck for disabling the plugin"));
 
-            for (auto &loadedPlugins : g_app->getPluginBase())
-            {
-                if (loadedPlugins->getPluginUUID() == data.uuid)
-                {
+            for (auto &loadedPlugins : g_app->getPluginBase()) {
+                if (loadedPlugins->getPluginUUID() == data.uuid) {
                     itemLoaded->setText(tr("Loaded"));
                     itemLoaded->setData(Qt::UserRole + 1, 1);
 
@@ -169,8 +165,7 @@ void SettingsDialog::initPluginsWidget() noexcept
                     itemProtected->setBackground(QColor(0, 255, 0, 25));
                     itemLoaded->setBackground(QColor(0, 255, 0, 25));
 
-                    if (auto plWidget = loadedPlugins->settingsWidget(loadedPlugins, g_app->getPluginConfig(loadedPlugins->getPluginUUID())); plWidget)
-                    {
+                    if (auto plWidget = loadedPlugins->settingsWidget(loadedPlugins, g_app->getPluginConfig(loadedPlugins->getPluginUUID())); plWidget) {
 
                         auto treeItem = new QTreeWidgetItem({ loadedPlugins->getPluginName() });
                         _impl->pluginsItem->insertChild(_impl->pluginsItem->childCount(), treeItem);
@@ -188,9 +183,9 @@ void SettingsDialog::initPluginsWidget() noexcept
                                                                     "}"));
                         titleFrame->setFrameShape(QFrame::StyledPanel);
                         titleFrame->setFrameShadow(QFrame::Raised);
-                        auto verticalTitleLayoutData = new QVBoxLayout(titleFrame);
+                        auto *verticalTitleLayoutData = new QVBoxLayout(titleFrame);
                         verticalTitleLayoutData->setContentsMargins(0, 0, 0, 0);
-                        auto titleLabel = new QLabel(tr("Plugin: %1").arg(loadedPlugins->getPluginName()), titleFrame);
+                        auto *titleLabel = new QLabel(tr("Plugin: %1").arg(loadedPlugins->getPluginName()), titleFrame);
                         titleLabel->setStyleSheet(QString::fromUtf8("QLabel{\n"
                                                                     "font-size:  25px;\n"
                                                                     "}"));
@@ -226,8 +221,7 @@ void SettingsDialog::initPluginsWidget() noexcept
     }
 
     connect(ui()->pluginsTableWidget, &QTableWidget::itemSelectionChanged, this, [this]() {
-        if (ui()->pluginsTableWidget->selectedItems().size() != 1)
-        {
+        if (ui()->pluginsTableWidget->selectedItems().size() != 1) {
             ui()->uninstallButton->setDisabled(true);
             return;
         }
@@ -251,7 +245,7 @@ void cen::SettingsDialog::installPlugin() noexcept
 
     QFileDialog dlg(this);
 
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("settings.Plugins");
     auto lastDir = settings.value("Install.LastDirectory", QString()).toString();
     settings.endGroup();
@@ -260,22 +254,20 @@ void cen::SettingsDialog::installPlugin() noexcept
     dlg.setFileMode(QFileDialog::ExistingFiles);
     dlg.setViewMode(QFileDialog::Detail);
 
-    if (!lastDir.isEmpty())
-    {
+    if (!lastDir.isEmpty()) {
         dlg.setDirectory(lastDir);
     }
 
     dlg.setNameFilter("Plugin files (*.cpk *.zip)");
 
-    if (dlg.exec() == QDialog::Accepted)
-    {
+    if (dlg.exec() == QDialog::Accepted) {
         QString userPsw;
         LoginDialog usrDlg(this);
         usrDlg.setPasswordMode();
-        if (usrDlg.exec() == QDialog::Accepted)
+        if (usrDlg.exec() == QDialog::Accepted) {
             userPsw = usrDlg.userPassword;
-        else
-        {
+        }
+        else {
             QMessageBox::critical(this, tr("Error"),
                 tr("Can not continue"),
                 QMessageBox::Ok);
@@ -310,36 +302,32 @@ void cen::SettingsDialog::installPlugin() noexcept
                     // Open the plugin schema
                     namespace json = rapidjson;
 
-                    QFile file(schemaJSONPlugin);
-                    if (!file.open(QIODevice::ReadOnly))
-                    {
+                    QFile schemaPluginFile(schemaJSONPlugin);
+                    if (!schemaPluginFile.open(QIODevice::ReadOnly)) {
                         errorStrings.push_back(tr("An internal file is missing. Reinstalling the application might solve the problem"));
                         return;
                     }
 
-                    QTextStream textStream(&file);
+                    QTextStream textStream(&schemaPluginFile);
 
                     json::Document schemaJSONDoc;
                     schemaJSONDoc.Parse(textStream.readAll().toUtf8().constData());
-                    if (schemaJSONDoc.HasParseError())
-                    {
+                    if (schemaJSONDoc.HasParseError()) {
                         errorStrings.push_back(tr("An internal file is corrupted. Reinstalling the application might solve the problem"));
                         return;
                     }
 
-                    json::SchemaDocument schemaDoc(schemaJSONDoc);
+                    const json::SchemaDocument schemaDoc(schemaJSONDoc);
                     json::SchemaValidator schemaValidator(schemaDoc);
 
                     int ipv = 0;
-                    for (const auto &file : dlg.selectedFiles())
-                    {
+                    for (const auto &file : dlg.selectedFiles()) {
                         emit watcher.progressTextChanged(file);
 
-                        int z_error      = ZIP_ER_OK;
-                        auto zip_archive = zip_open(file.toLatin1().constData(), ZIP_RDONLY, &z_error);
+                        int z_error       = ZIP_ER_OK;
+                        auto *zip_archive = zip_open(file.toLatin1().constData(), ZIP_RDONLY, &z_error);
 
-                        if (z_error != ZIP_ER_OK)
-                        {
+                        if (z_error != ZIP_ER_OK) {
                             errorStrings.push_back(tr("The file %1 is not a valid plugin package").arg(file));
                             emit watcher.progressValueChanged(++ipv);
                             continue;
@@ -347,8 +335,7 @@ void cen::SettingsDialog::installPlugin() noexcept
 
                         auto json_index = zip_name_locate(zip_archive, "plugin.json", ZIP_FL_NOCASE | ZIP_FL_ENC_UTF_8);
 
-                        if (json_index == -1)
-                        {
+                        if (json_index == -1) {
                             errorStrings.push_back(tr("%1\ndoes not contain any plugin metadata information").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
@@ -357,23 +344,21 @@ void cen::SettingsDialog::installPlugin() noexcept
 
                         zip_stat_t json_stats;
 
-                        auto json_st   = zip_stat_index(zip_archive, static_cast<zip_uint64_t>(json_index), ZIP_STAT_SIZE, &json_stats);
-                        auto json_file = zip_fopen_index(zip_archive, static_cast<zip_uint64_t>(json_index), 0);
+                        auto json_st    = zip_stat_index(zip_archive, static_cast<zip_uint64_t>(json_index), ZIP_STAT_SIZE, &json_stats);
+                        auto *json_file = zip_fopen_index(zip_archive, static_cast<zip_uint64_t>(json_index), 0);
 
-                        if (json_st == -1 || json_stats.size <= 0)
-                        {
+                        if (json_st == -1 || json_stats.size <= 0) {
                             errorStrings.push_back(tr("%1\nmetadata file is not available").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
                             continue;
                         }
 
-                        QScopedArrayPointer<char> _file_bytes(new char[json_stats.size + 1]);
+                        const QScopedArrayPointer<char> _file_bytes(new char[json_stats.size + 1]);
                         auto bytes_read                    = zip_fread(json_file, _file_bytes.get(), json_stats.size);
                         _file_bytes.get()[json_stats.size] = 0;
 
-                        if (bytes_read < 0)
-                        {
+                        if (bytes_read < 0) {
                             errorStrings.push_back(tr("%1\nmetadata file was not read").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
@@ -382,27 +367,24 @@ void cen::SettingsDialog::installPlugin() noexcept
 
                         json::Document jsonDoc;
                         jsonDoc.Parse(_file_bytes.get());
-                        if (jsonDoc.HasParseError())
-                        {
+                        if (jsonDoc.HasParseError()) {
                             errorStrings.push_back(tr("%1\nmetadata file is not valid").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
                             continue;
                         }
 
-                        if (!jsonDoc.Accept(schemaValidator))
-                        {
+                        if (!jsonDoc.Accept(schemaValidator)) {
                             errorStrings.push_back(tr("%1\nmetadata file contain an invalid format").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
                             continue;
                         }
 
-                        QString plVersion { jsonDoc["version"].GetString() };
+                        QString const plVersion { jsonDoc["version"].GetString() };
 
                         // Currently there's only version 0.1.0
-                        if (plVersion != "0.1.0")
-                        {
+                        if (plVersion != "0.1.0") {
                             errorStrings.push_back(tr("%1\nfile format version is not supported").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
@@ -410,8 +392,7 @@ void cen::SettingsDialog::installPlugin() noexcept
                         }
 
                         auto exists = DataAccess::pluginExists(QString { jsonDoc["identification"]["uuid"].GetString() });
-                        if (exists)
-                        {
+                        if (exists) {
                             errorStrings.push_back(tr("%1\nhas an unready installed plugin").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
@@ -421,18 +402,15 @@ void cen::SettingsDialog::installPlugin() noexcept
                         auto min_ui_version = QString { jsonDoc["identification"]["ui-version"]["min-uuid"].GetString() };
 
                         // Currently there is only version 0.1.0
-                        if (min_ui_version != "a15c48b4-460b-4a79-a0a8-8ece90603f85")
-                        {
+                        if (min_ui_version != "a15c48b4-460b-4a79-a0a8-8ece90603f85") {
                             errorStrings.push_back(tr("%1\nis not supported by this version of the UI").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
                             continue;
                         }
 
-                        bool protectedPlugin = jsonDoc["identification"]["protected"].GetBool();
-                        if (protectedPlugin)
-                        {
-                            QSettings settings("CentaurProject", "Centaur");
+                        bool const protectedPlugin = jsonDoc["identification"]["protected"].GetBool();
+                        if (protectedPlugin) {
                             settings.beginGroup("local.plugins.iv");
                             settings.setValue(jsonDoc["identification"]["uuid"].GetString(), QString::fromStdString(AESSym::createUniqueId(10, 16)));
                             settings.endGroup();
@@ -443,8 +421,7 @@ void cen::SettingsDialog::installPlugin() noexcept
 
                         auto dynlib_index = zip_name_locate(zip_archive, jsonDoc["identification"]["dynamic"].GetString(), ZIP_FL_NOCASE | ZIP_FL_ENC_UTF_8);
 
-                        if (dynlib_index == -1)
-                        {
+                        if (dynlib_index == -1) {
                             errorStrings.push_back(tr("%1\ndoes not contain any plugin").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
@@ -452,22 +429,20 @@ void cen::SettingsDialog::installPlugin() noexcept
                         }
 
                         zip_stat_t dynlib_stats;
-                        auto dynlib_st   = zip_stat_index(zip_archive, static_cast<zip_uint64_t>(dynlib_index), ZIP_STAT_SIZE, &dynlib_stats);
-                        auto dynlib_file = zip_fopen_index(zip_archive, static_cast<zip_uint64_t>(dynlib_index), 0);
+                        auto dynlib_st    = zip_stat_index(zip_archive, static_cast<zip_uint64_t>(dynlib_index), ZIP_STAT_SIZE, &dynlib_stats);
+                        auto *dynlib_file = zip_fopen_index(zip_archive, static_cast<zip_uint64_t>(dynlib_index), 0);
 
-                        if (dynlib_st == -1 || dynlib_stats.size <= 0)
-                        {
+                        if (dynlib_st == -1 || dynlib_stats.size <= 0) {
                             errorStrings.push_back(QString(tr("%1\nplugin file is not available")).arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
                             continue;
                         }
 
-                        QScopedArrayPointer<unsigned char> _plugin_bytes(new unsigned char[dynlib_stats.size + 1ull]);
+                        const QScopedArrayPointer<unsigned char> _plugin_bytes(new unsigned char[dynlib_stats.size + 1ull]);
                         bytes_read = zip_fread(dynlib_file, _plugin_bytes.get(), dynlib_stats.size);
 
-                        if (bytes_read < 0)
-                        {
+                        if (bytes_read < 0) {
                             errorStrings.push_back(tr("%1\nplugin file was not read").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
@@ -476,8 +451,7 @@ void cen::SettingsDialog::installPlugin() noexcept
 
                         auto calcHash = QCryptographicHash::hash({ _plugin_bytes.get(), static_cast<qsizetype>(dynlib_stats.size) }, QCryptographicHash::Sha224).toHex();
 
-                        if (calcHash != hash)
-                        {
+                        if (calcHash != hash) {
                             errorStrings.push_back(tr("%1\nplugin file is corrupted").arg(file));
                             zip_close(zip_archive);
                             emit watcher.progressValueChanged(++ipv);
@@ -487,13 +461,12 @@ void cen::SettingsDialog::installPlugin() noexcept
                         zip_close(zip_archive);
 
                         const QString pluginFile = [&]() -> QString {
-                            QString data = g_globals->paths.pluginsPath;
+                            const QString data = g_globals->paths.pluginsPath;
                             return QString("%1/%2").arg(data, QString { jsonDoc["identification"]["dynamic"].GetString() });
                         }();
 
                         QFile toDiscPluginFile(pluginFile);
-                        if (!toDiscPluginFile.open(QIODeviceBase::NewOnly | QIODeviceBase::WriteOnly))
-                        {
+                        if (!toDiscPluginFile.open(QIODeviceBase::NewOnly | QIODeviceBase::WriteOnly)) {
                             errorStrings.push_back(tr("%1\nthe plugin file could not be opened to write").arg(file));
                             emit watcher.progressValueChanged(++ipv);
                             continue;
@@ -501,8 +474,7 @@ void cen::SettingsDialog::installPlugin() noexcept
 
                         QDataStream dataStream(&toDiscPluginFile);
                         auto nWritten = dataStream.writeRawData(reinterpret_cast<const char *>(_plugin_bytes.get()), static_cast<int>(dynlib_stats.size));
-                        if (nWritten < static_cast<int>(dynlib_stats.size))
-                        {
+                        if (nWritten < static_cast<int>(dynlib_stats.size)) {
                             errorStrings.push_back(tr("%1\nthe plugin file could not be written").arg(file));
                             emit watcher.progressValueChanged(++ipv);
                             continue;
@@ -510,7 +482,7 @@ void cen::SettingsDialog::installPlugin() noexcept
 
                         toDiscPluginFile.close();
 
-                        QFileInfo nfo(pluginFile);
+                        QFileInfo const nfo(pluginFile);
                         toTableData.push_back({
                             pluginFile, {jsonDoc["identification"]["name"].GetString(),
                                          jsonDoc["identification"]["version"].GetString(),
@@ -531,20 +503,18 @@ void cen::SettingsDialog::installPlugin() noexcept
 
         watcher.waitForFinished();
 
-        if (!errorStrings.empty())
-        {
-            int i = 0;
+        if (!errorStrings.empty()) {
             QString errors;
-            for (const auto &er : errorStrings)
-                errors += QString("%1. %2\n\n").arg(++i).arg(er);
+            int idx = 0;
+            for (const auto &error : errorStrings)
+                errors += QString("%1. %2\n\n").arg(++idx).arg(error);
 
             QMessageBox::critical(this, tr("Error"),
                 errors,
                 QMessageBox::Ok);
         }
 
-        for (const auto &[pluginFile, data] : toTableData)
-        {
+        for (const auto &[pluginFile, data] : toTableData) {
             auto insertionResult = DataAccess::insertPlugin(
                 data.name,
                 data.version,
@@ -556,8 +526,7 @@ void cen::SettingsDialog::installPlugin() noexcept
                 true,
                 data.protect);
 
-            if (!insertionResult.has_value())
-            {
+            if (!insertionResult.has_value()) {
                 QFile::remove(pluginFile);
                 QMessageBox::critical(this, tr("Error"),
                     tr("%1\n Could not be installed. Query Error").arg(pluginFile),
@@ -566,8 +535,7 @@ void cen::SettingsDialog::installPlugin() noexcept
                 continue;
             }
 
-            if (!*insertionResult)
-            {
+            if (!*insertionResult) {
 
                 QMessageBox::critical(this, tr("Error"),
                     tr("%1\nPlugin was not installed").arg(pluginFile),
@@ -636,7 +604,6 @@ CENTAUR_WARN_POP()
 void cen::SettingsDialog::uninstallPlugin() noexcept
 {
     using namespace dal;
-
     auto res = QMessageBox::question(this,
         tr("Uninstall"),
         tr("Are you sure you want to uninstall this plugin?"),
@@ -648,13 +615,12 @@ void cen::SettingsDialog::uninstallPlugin() noexcept
     const auto &selectedItem = ui()->pluginsTableWidget->selectedItems().front();
 
     // Get the UUID item
-    auto uuidItem = selectedItem->column() == 4 ? selectedItem : ui()->pluginsTableWidget->item(selectedItem->row(), 4);
+    auto *uuidItem = selectedItem->column() == 4 ? selectedItem : ui()->pluginsTableWidget->item(selectedItem->row(), 4);
 
     const QString uuid = uuidItem->text();
 
     const auto dynFile = DataAccess::getDynamicFieldPlugin(uuid);
-    if (!dynFile.has_value())
-    {
+    if (!dynFile.has_value()) {
         QMessageBox::critical(this,
             tr("Error"),
             tr("The plugin can not be uninstalled"),
@@ -664,8 +630,7 @@ void cen::SettingsDialog::uninstallPlugin() noexcept
 
     const auto remResult = DataAccess::removePlugin(uuid);
 
-    if (!remResult.has_value() || !*remResult)
-    {
+    if (!remResult.has_value() || !*remResult) {
         QMessageBox::critical(this,
             tr("Error"),
             tr("The plugin could not be removed from the database"),
@@ -677,8 +642,7 @@ void cen::SettingsDialog::uninstallPlugin() noexcept
     showWarningLabels();
     _impl->forceShowPluginWarning = true;
 
-    if (!QFile::remove(g_globals->paths.pluginsPath + "/" + *dynFile))
-    {
+    if (!QFile::remove(g_globals->paths.pluginsPath + "/" + *dynFile)) {
         QMessageBox::critical(this,
             tr("Error"),
             tr("The plugin file could not be deleted from the filesystem.\nReinstalling this plugin can't be done unless the file is removed manually"),
@@ -691,8 +655,8 @@ void cen::SettingsDialog::pluginsTableItemChanged(QTableWidgetItem *item) noexce
 {
     using namespace dal;
 
-    bool valid;
-    auto isEnablingItem = item->data(Qt::UserRole + 1).toInt(&valid);
+    bool valid               = false;
+    const int isEnablingItem = item->data(Qt::UserRole + 1).toInt(&valid);
 
     if (!valid)
         return;
@@ -702,10 +666,9 @@ void cen::SettingsDialog::pluginsTableItemChanged(QTableWidgetItem *item) noexce
 
     const auto &uuid = item->data(Qt::UserRole + 2).toString();
 
-    auto result = DataAccess::updateEnabledState(uuid, item->checkState() == Qt::Checked ? true : false);
+    auto result = DataAccess::updateEnabledState(uuid, item->checkState() == Qt::Checked);
 
-    if (!result.has_value())
-    {
+    if (!result.has_value()) {
         QMessageBox::critical(this, tr("Error"),
             QString(tr("The action failed to execute")),
             QMessageBox::Ok);
@@ -713,8 +676,7 @@ void cen::SettingsDialog::pluginsTableItemChanged(QTableWidgetItem *item) noexce
         return;
     }
 
-    if (!*result)
-    {
+    if (!*result) {
         QMessageBox::critical(this, tr("Error"),
             QString(tr("The plugin information could not be updated")),
             QMessageBox::Ok);
@@ -722,55 +684,43 @@ void cen::SettingsDialog::pluginsTableItemChanged(QTableWidgetItem *item) noexce
         return;
     }
 
-    auto isLoadedItem = ui()->pluginsTableWidget->item(item->row(), 5);
+    auto *isLoadedItem = ui()->pluginsTableWidget->item(item->row(), 5);
     if (isLoadedItem == nullptr)
         return;
 
     if ((isLoadedItem->data(Qt::UserRole + 1).toInt() == 1 && item->checkState() == Qt::Unchecked)
         || (isLoadedItem->data(Qt::UserRole + 1).toInt() == 0 && item->checkState() == Qt::Checked)
-        || isLoadedItem->data(Qt::UserRole + 1).toInt() == -1)
-    {
-        for (int i = 0; i <= 5; ++i)
-        {
-            auto selItem = ui()->pluginsTableWidget->item(item->row(), i);
-            if (selItem != nullptr)
-            {
+        || isLoadedItem->data(Qt::UserRole + 1).toInt() == -1) {
+        for (int i = 0; i <= 5; ++i) {
+            auto *selItem = ui()->pluginsTableWidget->item(item->row(), i);
+            if (selItem != nullptr) {
                 selItem->setBackground(QColor(255, 255, 0, 25));
             }
         }
     }
 
-    if (isLoadedItem->data(Qt::UserRole + 1).toInt() == 1 && item->checkState() == Qt::Checked)
-    {
-        for (int i = 0; i <= 5; ++i)
-        {
-            auto selItem = ui()->pluginsTableWidget->item(item->row(), i);
-            if (selItem != nullptr)
-            {
+    if (isLoadedItem->data(Qt::UserRole + 1).toInt() == 1 && item->checkState() == Qt::Checked) {
+        for (int i = 0; i <= 5; ++i) {
+            auto *selItem = ui()->pluginsTableWidget->item(item->row(), i);
+            if (selItem != nullptr) {
                 selItem->setBackground(QColor(0, 255, 0, 25));
             }
         }
     }
 
-    if (isLoadedItem->data(Qt::UserRole + 1).toInt() == 0 && item->checkState() == Qt::Unchecked)
-    {
-        for (int i = 0; i <= 5; ++i)
-        {
-            auto selItem = ui()->pluginsTableWidget->item(item->row(), i);
-            if (selItem != nullptr)
-            {
+    if (isLoadedItem->data(Qt::UserRole + 1).toInt() == 0 && item->checkState() == Qt::Unchecked) {
+        for (int i = 0; i <= 5; ++i) {
+            auto *selItem = ui()->pluginsTableWidget->item(item->row(), i);
+            if (selItem != nullptr) {
                 selItem->setBackground(QColor(255, 0, 0, 25));
             }
         }
     }
 
-    for (int i = 0; i < ui()->pluginsTableWidget->rowCount(); ++i)
-    {
-        auto selItem = ui()->pluginsTableWidget->item(i, 0);
-        if (selItem)
-        {
-            if (selItem->background().color() == QColor(255, 255, 0, 25))
-            {
+    for (int i = 0; i < ui()->pluginsTableWidget->rowCount(); ++i) {
+        auto *selItem = ui()->pluginsTableWidget->item(i, 0);
+        if (selItem != nullptr) {
+            if (selItem->background().color() == QColor(255, 255, 0, 25)) {
                 showWarningLabels();
                 return;
             }

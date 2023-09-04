@@ -316,96 +316,6 @@ border: 0px;
                 <number>0</number>
                </property>
                <item>
-                <widget class="QFrame" name="systemButtonsFrame">
-                 <property name="maximumSize">
-                  <size>
-                   <width>60</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">QFrame{
-background-color: rgba(0,0,0,0);
-border: 0px;
-}</string>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="systemButtonsFrameLayout_2">
-                  <property name="spacing">
-                   <number>8</number>
-                  </property>
-                  <property name="leftMargin">
-                   <number>5</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>1</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>1</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>1</number>
-                  </property>
-                  <item>
-                   <widget class="CENTAUR_NAMESPACE::SystemPushButton" name="closeButton">
-                    <property name="minimumSize">
-                     <size>
-                      <width>13</width>
-                      <height>13</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>13</width>
-                      <height>13</height>
-                     </size>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">QPushButton{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(230,80,2);
-}
-
-QPushButton:hover{
-border: 0px;
-border-radius: 6px;
-background-color:  rgb(232,94,22);
-}
-
-QPushButton:pressed{
-border: 0px;
-border-radius: 6px;
-background-color: rgb(238,136,83);
-}</string>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="titleSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
                 <widget class="QLabel" name="titleLabel">
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -688,11 +598,6 @@ border-bottom: 2px solid rgb(33,150,243);
    <extends>QFrame</extends>
    <header>../../Library/cui/include/ResizableFrame.hpp</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CENTAUR_NAMESPACE::SystemPushButton</class>
-   <extends>QPushButton</extends>
-   <header>../../Library/cui/include/SystemPushButton.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

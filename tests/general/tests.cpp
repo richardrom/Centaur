@@ -94,11 +94,9 @@ TEST_CASE("UUID unordered_maps no random collisions")
     std::unordered_map<cen::uuid, int> l;
 
     int col = 0;
-    for (uint i = 0; i < 1'000'000; ++i)
-    {
+    for (uint i = 0; i < 1'000'000; ++i) {
         auto id = cen::uuid::generate();
-        if (auto iter = l.find(id); iter != l.end())
-        {
+        if (auto iter = l.find(id); iter != l.end()) {
             ++col;
             std::cout << id.to_string() << "<-->" << iter->first.to_string() << "\n";
         }
@@ -339,16 +337,14 @@ TEST_CASE("Protocol: Encryption")
 
     const std::string pl = "asdasdas";
 
-    try
-    {
+    try {
 
         const auto e = CENTAUR_PROTOCOL_NAMESPACE::Encryption::EncryptAES(pl, "keyasdasdasdasddkeyasdasdasdasdd", "3331231231231231");
 
         const auto d = CENTAUR_PROTOCOL_NAMESPACE::Encryption::DecryptAES(e, "keyasdasdasdasddkeyasdasdasdasdd", "3331231231231231");
 
         CHECK(pl == d);
-    } catch (const std::exception &ex)
-    {
+    } catch (const std::exception &ex) {
         std::string d = ex.what();
     }
 }

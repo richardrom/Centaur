@@ -15,6 +15,7 @@ struct PixmapMemCacheDialog::Impl
 {
     inline Impl() :
         ui { new Ui::PixmapMemCacheDialog } { }
+
     inline ~Impl() = default;
 
     std::unique_ptr<Ui::PixmapMemCacheDialog> ui;
@@ -35,11 +36,10 @@ PixmapMemCacheDialog::PixmapMemCacheDialog(QWidget *parent) :
     connect(ui()->cancelButton, &QPushButton::released, this, &PixmapMemCacheDialog::onCancel);
 
     connect(ui()->resetButton, &QPushButton::released, this, [&]() {
-        QSettings settings("CentaurProject", "Centaur");
+        QSettings settings;
         settings.beginGroup("advancedSettings-PixmapCache");
         auto value = settings.value("default", -1).toInt();
-        if (value == -1)
-        {
+        if (value == -1) {
             // Ideally, this situation must not arise because CentaurApp::loadInterfaceState() writes this value at startup
             value = 10240; // Qt documentation value
         }
@@ -62,15 +62,14 @@ Ui::PixmapMemCacheDialog *PixmapMemCacheDialog::ui()
 
 void PixmapMemCacheDialog::onAccept() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("PixmapMemCacheDialog");
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
 
     double multiplier;
     auto index = ui()->memUnits->currentIndex();
-    switch (index)
-    {
+    switch (index) {
         case Kilo:
             multiplier = 1'000;
             break;
@@ -104,7 +103,7 @@ void PixmapMemCacheDialog::onAccept() noexcept
 
 void PixmapMemCacheDialog::onCancel() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("PixmapMemCacheDialog");
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
@@ -114,7 +113,7 @@ void PixmapMemCacheDialog::onCancel() noexcept
 
 void PixmapMemCacheDialog::restoreInterface() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("PixmapMemCacheDialog");
     restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();

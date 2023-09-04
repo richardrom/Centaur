@@ -51,7 +51,7 @@ private:
     int m_rightDiff { 0 };
     int m_leftDiff { 0 };
     int m_topDiff { 0 };
-    QRect m_activeFrames[8];
+    std::array<QRect, 8> m_activeFrames;
     QPoint m_startPoint;
     QWidget *m_topLevelWidget;
 };

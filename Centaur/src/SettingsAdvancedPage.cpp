@@ -21,8 +21,7 @@ namespace
     {
         decltype(bytes) mem = bytes / 1000;
         int maxUnit         = 0;
-        while (mem && maxUnit < 4)
-        {
+        while (mem && maxUnit < 4) {
             ++maxUnit;
             mem /= 1000;
         }
@@ -32,8 +31,7 @@ namespace
 
     auto bytesToString(integer auto bytes, int unit = -1, bool appendUnit = true) -> QString
     {
-        switch (unit == -1 ? bytesSizeMaxUnit(bytes) : unit)
-        {
+        switch (unit == -1 ? bytesSizeMaxUnit(bytes) : unit) {
             case 1:
                 return QString("%1%2").arg(static_cast<qreal>(bytes) / 1'000., 0, 'f', 3).arg(appendUnit ? " KB" : "");
             case 2:
@@ -60,43 +58,41 @@ SettingsDialog::AdvancedImpl::AdvancedImpl() :
 
 void SettingsDialog::initAdvancedWidget() noexcept
 {
-    ui()->memTableView->initialize(ui()->editAdvanceSearch, 3, 0, 2, nullptr, 1);
+    /* ui()->memTableView->initialize(ui()->editAdvanceSearch, 3, 0, 2, nullptr, 1);
 
-    ui()->memTableView->sortByColumn(0, Qt::AscendingOrder);
-    ui()->memTableView->getModel()->setHorizontalHeaderLabels({ tr("Option"), tr("Value"), { "" } });
-    ui()->memTableView->horizontalHeader()->setSortIndicator(0, Qt::SortOrder::AscendingOrder);
+     ui()->memTableView->sortByColumn(0, Qt::AscendingOrder);
+     ui()->memTableView->getModel()->setHorizontalHeaderLabels({ tr("Option"), tr("Value"), { "" } });
+     ui()->memTableView->horizontalHeader()->setSortIndicator(0, Qt::SortOrder::AscendingOrder);
 
-    ui()->memTableView->setButtons(OptionsWidget::edit);
+     ui()->memTableView->setButtons(OptionsWidget::edit);
 
-    ui()->memTableView->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
-    ui()->memTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui()->memTableView->setGridStyle(Qt::NoPen);
-    ui()->memTableView->setSortingEnabled(true);
-    ui()->memTableView->sortByColumn(0, Qt::AscendingOrder);
+     ui()->memTableView->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+     ui()->memTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+     ui()->memTableView->setGridStyle(Qt::NoPen);
+     ui()->memTableView->setSortingEnabled(true);
+     ui()->memTableView->sortByColumn(0, Qt::AscendingOrder);
 
-    ui()->memTableView->insertRowWithOptions(0, { _advImpl->_pixmapCache, _advImpl->_pixmapCacheValue, new QStandardItem() }, false);
+     ui()->memTableView->insertRowWithOptions(0, { _advImpl->_pixmapCache, _advImpl->_pixmapCacheValue, new QStandardItem() }, false);
 
-    connect(ui()->memTableView, &OptionsTableWidget::editItemPressed, this,
-        [&](QStandardItem *item) {
-            if (item == _advImpl->_pixmapCacheValue)
-            {
-                int unit = bytesSizeMaxUnit(QPixmapCache::cacheLimit());
-                PixmapMemCacheDialog dlg(this);
+     connect(ui()->memTableView, &OptionsTableWidget::editItemPressed, this,
+         [&](QStandardItem *item) {
+             if (item == _advImpl->_pixmapCacheValue) {
+                 int unit = bytesSizeMaxUnit(QPixmapCache::cacheLimit());
+                 PixmapMemCacheDialog dlg(this);
 
-                dlg.setData(bytesToString(QPixmapCache::cacheLimit(), unit, false), unit);
+                 dlg.setData(bytesToString(QPixmapCache::cacheLimit(), unit, false), unit);
 
-                if (dlg.exec() == QDialog::Accepted)
-                {
-                    _advImpl->_pixmapCacheValue->setText(bytesToString(dlg.memory));
-                    QSettings settings("CentaurProject", "Centaur");
-                    settings.beginGroup("advancedSettings-PixmapCache");
-                    settings.setValue("size", dlg.memory);
-                    settings.endGroup();
+                 if (dlg.exec() == QDialog::Accepted) {
+                     _advImpl->_pixmapCacheValue->setText(bytesToString(dlg.memory));
+                     QSettings settings;
+                     settings.beginGroup("advancedSettings-PixmapCache");
+                     settings.setValue("size", dlg.memory);
+                     settings.endGroup();
 
-                    QPixmapCache::setCacheLimit(dlg.memory);
-                }
-            }
-        });
+                     QPixmapCache::setCacheLimit(dlg.memory);
+                 }
+             }
+         });*/
 }
 
 END_CENTAUR_NAMESPACE

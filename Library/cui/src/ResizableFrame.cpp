@@ -13,12 +13,11 @@
 BEGIN_CENTAUR_NAMESPACE
 
 ResizableFrame::ResizableFrame(QWidget *parent) :
-    QFrame(parent)
+    QFrame(parent),
+    m_topLevelWidget(parent)
 {
     setMouseTracking(true);
 
-
-    m_topLevelWidget = parent;
     while (m_topLevelWidget->parentWidget() != nullptr)
         m_topLevelWidget = m_topLevelWidget->parentWidget();
 }
@@ -27,14 +26,13 @@ void ResizableFrame::mousePressEvent(QMouseEvent *event)
 {
     const QPoint localPoint = event->pos();
 
-    for (int i = 0; i < 8; ++i)
-    {
-        if (m_activeFrames[i].contains(localPoint))
-        {
+    auto idx = 0UL;
+    while (idx < m_activeFrames.size() || m_mouseAt >= 0) {
+        if (m_activeFrames.at(idx).contains(localPoint)) {
             grabMouse();
-            m_mouseAt = i;
-            break;
+            m_mouseAt = static_cast<int>(idx);
         }
+        ++idx;
     }
 
     m_startPoint = event->globalPosition().toPoint();
@@ -52,22 +50,18 @@ void ResizableFrame::mouseMoveEvent(QMouseEvent *event)
     const QPoint localPoint = event->pos();
     QRect geometry          = m_topLevelWidget->geometry();
 
-    auto cursor             = Qt::ArrowCursor;
-    int mouseAt             = m_mouseAt;
-    if (mouseAt == -1)
-    {
-        for (int i = 0; i < 8; ++i)
-        {
-            if (m_activeFrames[i].contains(localPoint))
-            {
+    auto cursor = Qt::ArrowCursor;
+    int mouseAt = m_mouseAt;
+    if (mouseAt == -1) {
+        for (int i = 0; i < 8; ++i) {
+            if (m_activeFrames[i].contains(localPoint)) {
                 mouseAt = i;
                 break;
             }
         }
     }
 
-    switch (mouseAt)
-    {
+    switch (mouseAt) {
         case HotSpots::topLeftCorner:
             C_FALLTHROUGH;
         case HotSpots::bottomRightCorner:
@@ -94,14 +88,11 @@ void ResizableFrame::mouseMoveEvent(QMouseEvent *event)
 
     setCursor(cursor);
 
-    if (event->buttons() & Qt::LeftButton)
-    {
+    if (event->buttons() & Qt::LeftButton) {
         const QPoint globalPoint = event->globalPosition().toPoint();
 
-        if (const QPoint diff = m_startPoint - globalPoint; diff != QPoint(0, 0))
-        {
-            switch (m_mouseAt)
-            {
+        if (const QPoint diff = m_startPoint - globalPoint; diff != QPoint(0, 0)) {
+            switch (m_mouseAt) {
                 case HotSpots::topLeftCorner:
                     geometry.setTopLeft(globalPoint - QPoint { m_leftDiff, m_topDiff });
                     break;
