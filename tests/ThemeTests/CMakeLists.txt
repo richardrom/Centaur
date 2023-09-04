@@ -45,13 +45,13 @@ ADD_EXECUTABLE(ThemeTest
         ${INCLUDE_FILSE}
         ${SOURCE_FILES}
         ${UI_FILES}
-        )
+)
 
 
 TARGET_INCLUDE_DIRECTORIES(ThemeTest PRIVATE
         ${CENT_CUI_INCLUDE_PATH}
         ${CENT_GLOBAL_INCLUDE_PATH}
-        )
+        "${CMAKE_BINARY_DIR}/config")
 
 ADD_DEPENDENCIES(ThemeTest
         CentTheme

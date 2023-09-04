@@ -52,7 +52,8 @@ SET(INCLUDE_FILES
         include/DeletableTable.hpp
         include/CDialog.hpp
         include/cui.hpp
-        include/WindowFrame.hpp)
+        include/WindowFrame.hpp
+        include/TitleFrame.hpp)
 
 SET(SOURCE_FILES
         src/EditorDelegate.cpp
@@ -76,7 +77,8 @@ SET(SOURCE_FILES
         src/DeletableTable.cpp
         src/CDialog.cpp
         src/cui.cpp
-        src/WindowFrame.cpp)
+        src/WindowFrame.cpp
+        src/TitleFrame.cpp)
 
 SET(UI_FILES
         rcc/resources.qrc

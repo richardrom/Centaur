@@ -68,21 +68,21 @@ SET(UI_FILES
         ui/StatusDialog.ui
         ../../Library/Helpers/qrc/options.qrc
         qrc/resource.qrc
-        )
+)
 
 
 ADD_LIBRARY(BinanceSPOT SHARED
         ${INCLUDE_FILES}
         ${SOURCE_FILES}
         ${UI_FILES}
-        )
+)
 
 
 TARGET_INCLUDE_DIRECTORIES(BinanceSPOT PRIVATE
         include
         ../../Library/Exchanges/BinanceAPI/include
-        ../../Library/Protocol/include
-        ../../Library/cui/include
+        ${CENT_PROTOCOL_INCLUDE_PATH}
+        ${CENT_CUI_INCLUDE_PATH}
         ${CENT_GLOBAL_INCLUDE_PATH})
 
 
