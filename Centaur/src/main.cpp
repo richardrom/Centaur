@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     const auto applicationFont = QFontDatabase::addApplicationFont(fontFile);
     if (applicationFont != -1) {
         const auto families = QFontDatabase::applicationFontFamilies(applicationFont);
-        const QFont font(families);
+        const QFont font(families, 12);
         QApplication::setFont(font);
     }
 #ifndef QT_NO_DEBUG_OUTPUT
