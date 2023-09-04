@@ -324,6 +324,14 @@ struct DialogInformation
     FrameInformation frameInformation;
 };
 
+struct TitleBarInformation
+{
+    QBrush backgroundBrush { Qt::NoBrush };
+    FrameInformation frameInformation;
+    FontTextLayout font;
+    QPen fontPen;
+};
+
 using ToolButtonInformation = PushButtonInformation;
 
 using ColorMap            = std::unordered_map<QString, QColor>;
@@ -343,6 +351,7 @@ using TableViewMap        = std::unordered_map<QString, TableViewInformation>;
 using CheckBoxMap         = std::unordered_map<QString, CheckBoxInformation>;
 using GroupBoxMap         = std::unordered_map<QString, GroupBoxInformation>;
 using DialogMap           = std::unordered_map<QString, DialogInformation>;
+using TitleBarMap         = std::unordered_map<QString, TitleBarInformation>;
 
 struct ThemeConstants
 {
@@ -376,6 +385,7 @@ struct UIElements
     CheckBoxMap checkBoxOverride;
     GroupBoxMap groupBoxOverride;
     DialogMap dialogOverride;
+    TitleBarMap titleBarOverride;
     PushButtonInformation pushButtonInformation;
     ToolButtonInformation toolButtonInformation;
     LineEditInformation lineEditInformation;
@@ -388,6 +398,7 @@ struct UIElements
     CheckBoxInformation checkBoxInformation;
     GroupBoxInformation groupBoxInformation;
     DialogInformation dialogInformation;
+    TitleBarInformation titleBarInformation;
 };
 
 #if defined(C_GNU_CLANG)
