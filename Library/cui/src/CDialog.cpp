@@ -44,7 +44,7 @@ void CDialog::onAccept() noexcept
     accept();
 }
 
-void CDialog::restoreInterface() noexcept
+void CDialog::restoreDialogInterface() noexcept
 {
     const QString &objectName = this->objectName();
     assert(!objectName.isEmpty());

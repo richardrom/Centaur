@@ -20,6 +20,7 @@ BEGIN_CENTAUR_NAMESPACE
 
 class CENT_LIBRARY CDialog : public QDialog
 {
+    Q_OBJECT
 public:
     explicit CDialog(QWidget *parent = nullptr);
     ~CDialog() override;
@@ -32,14 +33,15 @@ protected slots:
     /// \brief Stores the saved dialog state and emits the accept signal.
     virtual void onAccept() noexcept;
 
-protected:
+public:
     /// \brief Load the store dialog state
     /// \note The dialog name will be used to store the data. Having an empty object name will assert the execution
-    void restoreInterface() noexcept;
+    void restoreDialogInterface() noexcept;
     /// \brief Save the store dialog state
     /// \note The dialog name will be used to store the data. Having an empty object name will assert the execution
-    void saveInterface() noexcept;
+    virtual void saveInterface() noexcept;
 
+protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
