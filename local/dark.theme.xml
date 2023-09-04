@@ -64,6 +64,7 @@
         <brush name="white-brush" format="regular" color="white"/>
         <brush name="accent-brush" format="regular" color="main-color"/>
         <brush name="main-dark-brush" format="regular" color="main-dark"/>
+        <brush name="main-frame-background" format="regular" color="main-dark"/>
         <brush name="main-lighten-10p-brush" format="regular" color="main-lighten-10p"/>
         <brush name="main-lighten-15p-brush" format="regular" color="main-lighten-15p"/>
         <brush name="main-lighten-25p-brush" format="regular" color="main-lighten-25p"/>
@@ -144,6 +145,7 @@
             </colors>
         </brush>
 
+
         <brush name="main-dialog-background" format="linear-gradient">
             <points>
                 <x-start>0.5</x-start>
@@ -155,6 +157,19 @@
                 <color name="main-dark-lighten-3p">0.1</color>
                 <color name="main-dark-lighten-6p">0.0</color>
                 <color name="main-dark">0.2</color>
+            </colors>
+        </brush>
+
+        <brush name="main-title-brush" format="linear-gradient">
+            <points>
+                <x-start>0.5</x-start>
+                <y-start>0.0</y-start>
+                <x-end>0.5</x-end>
+                <y-end>1.0</y-end>
+            </points>
+            <colors>
+                <color name="main-dark-lighten-3p">0.0</color>
+                <color name="main-dark-lighten-6p">1.0</color>
             </colors>
         </brush>
 
@@ -487,6 +502,19 @@
             <frame name="group-box-frame">
                 <border-radius-x>0</border-radius-x>
                 <border-radius-y>0</border-radius-y>
+            </frame>
+
+            <frame name="main-frame">
+                <!--Specifiyng the radius for all borders will force the painter to use the pens-->
+                <border-radius-top-left>6.0</border-radius-top-left>
+                <border-radius-top-right>6.0</border-radius-top-right>
+                <border-radius-bottom-left>6.0</border-radius-bottom-left>
+                <border-radius-bottom-right>6.0</border-radius-bottom-right>
+                <!--CDialog ignores padding and margin-->
+                <border-left-pen>border-gray-5c-pen</border-left-pen>
+                <border-right-pen>border-gray-6e-pen</border-right-pen>
+                <border-top-pen>border-gray-6e-pen</border-top-pen>
+                <border-bottom-pen>border-gray-5c-pen</border-bottom-pen>
             </frame>
 
             <frame name="c-dialog-frame">
@@ -1121,6 +1149,10 @@
     Usually this custom widgets are implemented in the CUI (Centaur User Interface) library
     -->
     <cui-elements>
+        <main-frame>
+            <frame>main-frame</frame>
+            <background-brush>main-frame-background</background-brush>
+        </main-frame>
         <c-dialogs>
             <c-dialog>
                 <frame>c-dialog-frame</frame>
@@ -1129,22 +1161,20 @@
             </c-dialog>
         </c-dialogs>
         <title-bar>
+            <bar name="mainFrameTitle">
+                <frame>title-frame</frame>
+                <background-brush>main-title-brush</background-brush>
+                <font>title-font</font>
+                <font-pen>title-font-pen</font-pen>
+            </bar>
             <bar>
                 <frame>title-frame</frame>
                 <background-brush>title-brush</background-brush>
                 <font>title-font</font>
                 <font-pen>title-font-pen</font-pen>
-                <windows-frame>
-                    <system-menu-position>left</system-menu-position>
-                </windows-frame>
-                <linux-frame>
-                    <system-menu-position>right</system-menu-position>
-                </linux-frame>
-                <macos-frame>
-                    <system-menu-position>right</system-menu-position>
-                </macos-frame>
-
             </bar>
+
+
         </title-bar>
     </cui-elements>
 </theme>
