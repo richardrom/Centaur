@@ -54,7 +54,8 @@ SET(INCLUDE_FILES
         include/cui.hpp
         include/WindowFrame.hpp
         include/TitleFrame.hpp
-        include/MainWindowFrame.hpp)
+        include/MainWindowFrame.hpp
+        include/CommandsFrame.hpp)
 
 SET(SOURCE_FILES
         src/EditorDelegate.cpp
@@ -84,7 +85,8 @@ SET(SOURCE_FILES
 
 SET(UI_FILES
         rcc/resources.qrc
-        ui/OptionsWidget.ui)
+        ui/OptionsWidget.ui
+        src/CommandsFrame.cpp)
 
 SET(LIBCUI cui)
 

@@ -173,6 +173,20 @@
             </colors>
         </brush>
 
+        <brush name="commands-frame-background" format="linear-gradient">
+            <points>
+                <x-start>0.5</x-start>
+                <y-start>0.0</y-start>
+                <x-end>0.5</x-end>
+                <y-end>1.0</y-end>
+            </points>
+            <colors>
+                <color name="main-dark-lighten-6p">0.0</color>
+                <color name="main-dark-lighten-3p">1.0</color>
+            </colors>
+        </brush>
+
+
         <brush name="title-brush" format="linear-gradient">
             <points>
                 <x-start>0.5</x-start>
@@ -1153,6 +1167,9 @@
             <frame>main-frame</frame>
             <background-brush>main-frame-background</background-brush>
         </main-frame>
+        <commands-frame>
+            <background-brush>commands-frame-background</background-brush>
+        </commands-frame>
         <c-dialogs>
             <c-dialog>
                 <frame>c-dialog-frame</frame>
