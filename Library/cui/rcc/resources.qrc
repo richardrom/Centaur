@@ -48,7 +48,6 @@
 
 
     <qresource prefix="ui/global">
-        <file alias="extension">../res/svg/extension_white_48dp.svg</file>
         <file alias="warning">../res/svg/warning.svg</file>
         <file alias="drop-right">../res/svg/arrow_right_white_48dp.svg</file>
         <file alias="drop-down">../res/svg/arrow_drop_down_white_48dp.svg</file>

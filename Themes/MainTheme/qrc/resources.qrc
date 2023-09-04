@@ -7,7 +7,9 @@
         <file alias="check-arrow-gray">../res/svg/check_gray_48dp.svg</file>
         <file alias="up-arrow-white">../res/svg/expand_less_white_48dp.svg</file>
         <file alias="down-arrow-white">../res/svg/expand_more_white_48dp.svg</file>
+    </qresource>
 
-
+    <qresource prefix="/svg/commands">
+        <file alias="extension">../res/svg/</file>
     </qresource>
 </RCC>
