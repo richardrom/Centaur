@@ -74,6 +74,7 @@ namespace CENTAUR_NAMESPACE
         {
             return QString::fromStdString(to_string(brackets, upper));
         }
+
         C_NODISCARD auto to_quuid(bool upper = false) const -> QUuid
         {
             // Brackets are mandatory according to QUuid documentation
@@ -86,27 +87,25 @@ namespace CENTAUR_NAMESPACE
 
         C_NODISCARD static auto generate() -> cen::uuid;
 
-        C_NODISCARD inline unsigned char *bytes() const
+        C_NODISCARD inline const uint8_t *bytes() const
         {
-            return reinterpret_cast<unsigned char *>(&data.uuid_bytes);
+            return data.data();
+        }
+
+        C_NODISCARD inline auto view() const -> auto
+        {
+            return data;
         }
 
     private:
-        struct CENTAUR_UUID_ALIGNMENT data_
-        {
-            unsigned char uuid_bytes[16]; // not null-terminated
-        } mutable data {};
-        friend bool operator==(const uuid &id1, const uuid &id2) noexcept;
+        std::array<uint8_t, 16> data;
 
-        // Make sure reinterpret_cast<const uint64_t *>(id.bytes()) in the std::hash<> does not misbehave
-        static_assert(std::alignment_of<data_>::value >= std::alignment_of<std::uint64_t>::value, "Invalid UUID data alignment");
+        friend bool operator==(const uuid &id1, const uuid &id2) noexcept;
 
     public:
         inline bool operator<(const uuid &id) const
         {
-            auto thisBytes = reinterpret_cast<const uint64_t *>(bytes());
-            auto u1        = reinterpret_cast<const uint64_t *>(id.bytes());
-            return std::tie(thisBytes[0], thisBytes[1]) < std::tie(u1[0], u1[1]);
+            return data < id.data;
         }
     };
 
@@ -117,11 +116,9 @@ namespace CENTAUR_NAMESPACE
 #ifdef QT_INCLUDED
     inline bool operator==(const uuid &id1, const QString &str) noexcept
     {
-        try
-        {
+        try {
             return id1 == str.toStdString();
-        } catch (C_UNUSED const std::exception &ex)
-        {
+        } catch (C_UNUSED const std::exception &ex) {
             return false;
         }
     }
@@ -137,9 +134,13 @@ namespace std
     {
         inline std::size_t operator()(const CENTAUR_NAMESPACE::uuid &id) const
         {
-            auto u1 = reinterpret_cast<const uint64_t *>(id.bytes());
+            const auto view = id.view();
+
+            auto _u64_1 = (static_cast<uint64_t>(view.at(0)) << 56) + (static_cast<uint64_t>(view.at(1)) << 48) + (static_cast<uint64_t>(view.at(2)) << 40) + (static_cast<uint64_t>(view.at(3)) << 32) + (static_cast<uint64_t>(view.at(4)) << 24) + (static_cast<uint64_t>(view.at(5)) << 16) + (static_cast<uint64_t>(view.at(6)) << 8) + static_cast<uint64_t>(view.at(7));
+            auto _u64_2 = (static_cast<uint64_t>(view.at(8)) << 56) + (static_cast<uint64_t>(view.at(9)) << 48) + (static_cast<uint64_t>(view.at(10)) << 40) + (static_cast<uint64_t>(view.at(11)) << 32) + (static_cast<uint64_t>(view.at(12)) << 24) + (static_cast<uint64_t>(view.at(13)) << 16) + (static_cast<uint64_t>(view.at(14)) << 8) + static_cast<uint64_t>(view.at(15));
+
             std::hash<uint64_t> hs;
-            return hs(u1[0]) ^ hs(u1[1]);
+            return hs(_u64_1) ^ hs(_u64_2);
         }
     };
 } // namespace std

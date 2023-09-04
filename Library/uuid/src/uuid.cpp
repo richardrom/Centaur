@@ -128,8 +128,7 @@ cen::uuid::uuid(std::string uuidString, bool checkForBrackets) :
     if (str.empty())
         throw std::runtime_error("empty string");
 
-    if (checkForBrackets)
-    {
+    if (checkForBrackets) {
         if (str.back() != '}' || str.front() != '{')
             throw std::runtime_error("uuid missing a bracket");
         if (str.size() != 38)
@@ -138,8 +137,7 @@ cen::uuid::uuid(std::string uuidString, bool checkForBrackets) :
         str.erase(0, 1);
         str.pop_back();
     }
-    else
-    {
+    else {
 
         if (str.size() != 36)
             throw std::runtime_error("uuid invalid size");
@@ -147,8 +145,7 @@ cen::uuid::uuid(std::string uuidString, bool checkForBrackets) :
 
     std::size_t sub = 0, idx = 0;
     std::array<std::string, 5> uuid_blocks;
-    for (const auto d : wo_bracket)
-    {
+    for (const auto d : wo_bracket) {
         if (str[d] != '-')
             throw std::runtime_error("wrong format: '-' missing");
 
@@ -158,11 +155,9 @@ cen::uuid::uuid(std::string uuidString, bool checkForBrackets) :
     uuid_blocks[idx] = str.substr(sub, str.size());
 
     std::size_t d_idx = 0, f_idx = 0;
-    uint8_t format[2];
-    for (const auto &b : uuid_blocks)
-    {
-        for (const auto &ch : b)
-        {
+    std::array<uint8_t, 2> format;
+    for (const auto &b : uuid_blocks) {
+        for (const auto &ch : b) {
             auto f = std::find_if(uuid_valid_chars.begin(), uuid_valid_chars.end(), [ch = ch](char h) {
                 return ch == h;
             });
@@ -178,9 +173,8 @@ cen::uuid::uuid(std::string uuidString, bool checkForBrackets) :
 
             ++f_idx;
 
-            if (f_idx == 2)
-            {
-                data.uuid_bytes[d_idx] = static_cast<unsigned char>(format[0] << 4 | format[1]);
+            if (f_idx == 2) {
+                data[d_idx] = static_cast<unsigned char>(format[0] << 4 | format[1]);
 
                 f_idx = 0;
                 ++d_idx;
@@ -196,13 +190,11 @@ cen::uuid::uuid(uint32_t u1, uint16_t w1, uint16_t w2, uint16_t w3, uint8_t b1, 
     CENTAUR_WARN_PUSH()
     CENTAUR_WARN_OFF("-Wunreachable-code")
 #endif
-    if (endiannessCheck)
-    {
-        if (std::endian::native == std::endian::big)
-        {
-            auto *p32 = reinterpret_cast<uint32_t *>(data.uuid_bytes);
-            auto *p16 = reinterpret_cast<uint16_t *>(data.uuid_bytes);
-            auto *p8  = reinterpret_cast<uint8_t *>(data.uuid_bytes);
+    if (endiannessCheck) {
+        if (std::endian::native == std::endian::big) {
+            auto *p32 = reinterpret_cast<uint32_t *>(data.data());
+            auto *p16 = reinterpret_cast<uint16_t *>(data.data());
+            auto *p8  = reinterpret_cast<uint8_t *>(data.data());
 
             p32[0] = u1;
             p16[2] = w1;
@@ -215,9 +207,8 @@ cen::uuid::uuid(uint32_t u1, uint16_t w1, uint16_t w2, uint16_t w3, uint8_t b1, 
             p8[14] = b5;
             p8[15] = b6;
         }
-        else
-        {
-            auto *p8   = reinterpret_cast<uint8_t *>(data.uuid_bytes);
+        else {
+            auto *p8   = reinterpret_cast<uint8_t *>(data.data());
             auto *u8   = reinterpret_cast<uint8_t *>(const_cast<uint32_t *>(&u1));
             auto *w1_8 = reinterpret_cast<uint8_t *>(const_cast<uint16_t *>(&w1));
             auto *w2_8 = reinterpret_cast<uint8_t *>(const_cast<uint16_t *>(&w2));
@@ -241,11 +232,10 @@ cen::uuid::uuid(uint32_t u1, uint16_t w1, uint16_t w2, uint16_t w3, uint8_t b1, 
             p8[15] = b6;
         }
     }
-    else
-    {
-        auto *p32 = reinterpret_cast<uint32_t *>(data.uuid_bytes);
-        auto *p16 = reinterpret_cast<uint16_t *>(data.uuid_bytes);
-        auto *p8  = reinterpret_cast<uint8_t *>(data.uuid_bytes);
+    else {
+        auto *p32 = reinterpret_cast<uint32_t *>(data.data());
+        auto *p16 = reinterpret_cast<uint16_t *>(data.data());
+        auto *p8  = reinterpret_cast<uint8_t *>(data.data());
 
         p32[0] = u1;
         p16[2] = w1;
@@ -265,21 +255,19 @@ cen::uuid::uuid(uint32_t u1, uint16_t w1, uint16_t w2, uint16_t w3, uint8_t b1, 
 }
 
 cen::uuid::uuid(const cen::uuid &id) :
-    data {}
+    data { id.data }
 {
-    memcpy(data.uuid_bytes, id.data.uuid_bytes, sizeof(data.uuid_bytes) / sizeof(data.uuid_bytes[0]));
 }
 
 cen::uuid::uuid(cen::uuid &&id) noexcept :
     data {}
 {
-    memcpy(data.uuid_bytes, id.data.uuid_bytes, sizeof(data.uuid_bytes) / sizeof(data.uuid_bytes[0]));
-    memset(id.data.uuid_bytes, 0, sizeof(data.uuid_bytes) / sizeof(data.uuid_bytes[0]));
+    std::move(id.data.begin(), id.data.end(), data.begin());
 }
 
 cen::uuid &cen::uuid::operator=(const cen::uuid &id)
 {
-    memcpy(data.uuid_bytes, id.data.uuid_bytes, sizeof(data.uuid_bytes) / sizeof(data.uuid_bytes[0]));
+    data = id.data;
     return *this;
 }
 
@@ -302,11 +290,10 @@ auto cen::uuid::to_string(bool brackets, bool upper) const -> std::string
         return uuid_chars_lower;
     }();
 
-    for (uint32_t i = 0; i < 16; ++i)
-    {
+    for (uint32_t i = 0; i < 16; ++i) {
         if (i == 4 || i == 6 || i == 8 || i == 10)
             str += '-';
-        str += char_set[data.uuid_bytes[i]];
+        str += char_set[data.at(i)];
     }
     if (brackets)
         str += "}";
@@ -316,7 +303,8 @@ auto cen::uuid::to_string(bool brackets, bool upper) const -> std::string
 cen::uuid::uuid(uint8_t *raw, std::size_t size) :
     data {}
 {
-    memcpy(&data.uuid_bytes, raw, size);
+    if (size == 16)
+        std::copy(data.begin(), data.end(), raw);
 }
 
 auto cen::uuid::generate() -> cen::uuid
@@ -329,19 +317,17 @@ auto cen::uuid::generate() -> cen::uuid
 
 bool cen::operator==(const uuid &id1, const uuid &id2) noexcept
 {
-    return memcmp(id1.data.uuid_bytes, id2.data.uuid_bytes, sizeof(id1.data.uuid_bytes) / sizeof(id1.data.uuid_bytes[0])) == 0;
+    return id1.data == id2.data;
 }
 
 bool cen::operator==(const uuid &id1, const std::string &str) noexcept
 {
-    try
-    {
+    try {
         bool testForCurly = false;
         if (!str.empty() && str[0] == '{')
             testForCurly = true;
         return id1 == cen::uuid { str, testForCurly };
-    } catch (C_UNUSED const std::exception &ex)
-    {
+    } catch (C_UNUSED const std::exception &ex) {
         return false;
     }
 }
