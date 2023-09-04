@@ -10,18 +10,22 @@
 
 #include "QtCore/qcoreapplication.h"
 #include "TestApplication.hpp"
+#include "core-naming.hpp"
+#include <QDir>
 #include <QException>
 #include <QFontDatabase>
+#include <QStandardPaths>
 
 int main(int argc, char *argv[])
 try {
     QApplication app(argc, argv);
-    QCoreApplication::setOrganizationName("CentaurProject");
-    QCoreApplication::setOrganizationDomain("centaur.com");
-    QCoreApplication::setApplicationName("Centaur-Theme-Test");
+    QCoreApplication::setOrganizationName(cen::defines::_organization_Name);
+    QCoreApplication::setOrganizationDomain(cen::defines::_organization_Domain);
+    QCoreApplication::setApplicationName(cen::defines::_application_Name);
 
-    const QString themeLib       = QApplication::applicationDirPath() + "/../lib/libCentTheme.dylib";
-    const QString extraLocalPath = QApplication::applicationDirPath() + "/../../../local";
+    const QString appLocalDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    const QString themeLib             = QApplication::applicationDirPath() + "/../lib/libCentTheme.dylib";
+    const QString extraLocalPath       = QString(QDir::toNativeSeparators("%1/Plugins/extra")).arg(appLocalDataLocation);
 
 #ifdef Q_OS_MAC
     const QString fontFile = extraLocalPath + "/Inter-VariableFont_slnt,wght.ttf";
