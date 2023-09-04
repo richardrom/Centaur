@@ -51,7 +51,10 @@
         <color name="gray-e0">#E0E0E0</color>
         <color name="gray-b0">#B0B0B0</color>
         <color name="gray-78">#787878</color>
-        <color name="glow-green">#65ac46</color>
+        <color name="gray-5c">#5c5c5c</color>
+        <color name="gray-6e">#6e6e6e</color>
+
+
         <color name="blue">blue</color>
         <color name="red">red</color>
     </colors>
@@ -60,6 +63,7 @@
         <brush name="black-brush" format="regular" color="black"/>
         <brush name="white-brush" format="regular" color="white"/>
         <brush name="accent-brush" format="regular" color="main-color"/>
+        <brush name="main-dark-brush" format="regular" color="main-dark"/>
         <brush name="main-lighten-10p-brush" format="regular" color="main-lighten-10p"/>
         <brush name="main-lighten-15p-brush" format="regular" color="main-lighten-15p"/>
         <brush name="main-lighten-25p-brush" format="regular" color="main-lighten-25p"/>
@@ -84,8 +88,8 @@
         <brush name="gray-78-brush" format="regular" color="gray-78"/>
         <brush name="gray-e0-brush" format="regular" color="gray-e0"/>
         <brush name="gray-b0-brush" format="regular" color="gray-b0"/>
-
-
+        <brush name="gray-5c-brush" format="regular" color="gray-5c"/>
+        <brush name="gray-6e-brush" format="regular" color="gray-6e"/>
         <brush name="progress-bar-brush" format="linear-gradient">
             <points>
                 <x-start>0.5</x-start>
@@ -100,19 +104,6 @@
             </colors>
         </brush>
 
-        <brush name="progress-bar-green-brush" format="linear-gradient">
-            <points>
-                <x-start>0.5</x-start>
-                <y-start>0</y-start>
-                <x-end>0.5</x-end>
-                <y-end>1.0</y-end>
-            </points>
-            <colors>
-                <color name="glow-green">0</color>
-                <color name="main-color">0.5</color>
-                <color name="glow-green">1.0</color>
-            </colors>
-        </brush>
 
         <brush name="header-empty-area-brush" format="linear-gradient">
             <points>
@@ -153,6 +144,32 @@
             </colors>
         </brush>
 
+        <brush name="main-dialog-background" format="linear-gradient">
+            <points>
+                <x-start>0.5</x-start>
+                <y-start>0.0</y-start>
+                <x-end>0.5</x-end>
+                <y-end>1.0</y-end>
+            </points>
+            <colors>
+                <color name="main-dark-lighten-3p">0.1</color>
+                <color name="main-dark-lighten-6p">0.0</color>
+                <color name="main-dark">0.2</color>
+            </colors>
+        </brush>
+
+        <brush name="title-brush" format="linear-gradient">
+            <points>
+                <x-start>0.5</x-start>
+                <y-start>0.0</y-start>
+                <x-end>0.5</x-end>
+                <y-end>1.0</y-end>
+            </points>
+            <colors>
+                <color name="black">0</color>
+                <color name="main-dark">1.0</color>
+            </colors>
+        </brush>
     </brushes>
 
     <pens>
@@ -181,11 +198,14 @@
         <pen name="gray-78-pen" width="1.0" brush="gray-78-brush"/>
         <pen name="gray-e0-pen" width="1.0" brush="gray-e0-brush"/>
         <pen name="gray-b0-pen" width="1.0" brush="gray-b0-brush"/>
+        <pen name="border-gray-5c-pen" width="1.5" brush="gray-5c-brush"/>
+        <pen name="border-gray-6e-pen" width="1.5" brush="gray-6e-brush"/>
         <pen name="disable-text-pen" width="1.0" brush="disable-text-brush"/>
         <pen name="disable-pen" width="1.0" brush="disable-color-brush"/>
         <pen name="table-grid-pen" width="0.2" brush="disable-text-brush">
             <style>dash</style>
         </pen>
+        <pen name="title-font-pen" width="1.1" brush="white-brush"/>
 
     </pens>
 
@@ -302,6 +322,17 @@
                 <horizontal-alignment>left</horizontal-alignment>
                 <wrap-mode>at-word-or-anywhere</wrap-mode>
             </options>
+            <style size="115%">
+                <weight>medium</weight>
+            </style>
+        </font>
+
+        <font name="title-font">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>center</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
             <style size="110%">
                 <weight>medium</weight>
             </style>
@@ -345,23 +376,22 @@
             <frame name="generic">
                 <!-- No properties on the generic frame -->
             </frame>
+
             <frame name="button-frame">
-                <border-radius-x>10.0</border-radius-x>
-                <border-radius-y>10.0</border-radius-y>
+                <border-radius-x>5.0</border-radius-x>
+                <border-radius-y>5.0</border-radius-y>
                 <margins>
                     <top>3</top>
                     <left>3</left>
                     <bottom>3</bottom>
                     <right>3</right>
                 </margins>
-                <padding>
-                    <left>10</left>
-                </padding>
+
             </frame>
 
             <frame name="button-frame-default">
-                <border-radius-x>10.0</border-radius-x>
-                <border-radius-y>10.0</border-radius-y>
+                <border-radius-x>5.0</border-radius-x>
+                <border-radius-y>5.0</border-radius-y>
                 <margins>
                     <top>3</top>
                     <left>3</left>
@@ -371,8 +401,8 @@
             </frame>
 
             <frame name="button-frame-focus">
-                <border-radius-x>10.0</border-radius-x>
-                <border-radius-y>10.0</border-radius-y>
+                <border-radius-x>5.0</border-radius-x>
+                <border-radius-y>5.0</border-radius-y>
                 <margins>
                     <top>3</top>
                     <left>3</left>
@@ -382,16 +412,18 @@
             </frame>
 
             <frame name="editor-frame">
-                <border-radius-x>3.0</border-radius-x>
-                <border-radius-y>3.0</border-radius-y>
+                <border-radius-top-left>0.0</border-radius-top-left>
+                <border-radius-top-right>0.0</border-radius-top-right>
+                <border-radius-bottom-right>0.0</border-radius-bottom-right>
+                <border-radius-bottom-left>0.0</border-radius-bottom-left>
                 <padding>
                     <left>5</left>
                 </padding>
             </frame>
 
             <frame name="combo-frame">
-                <border-radius-x>3.0</border-radius-x>
-                <border-radius-y>3.0</border-radius-y>
+                <border-radius-x>0.0</border-radius-x>
+                <border-radius-y>0.0</border-radius-y>
                 <margins>
                     <top>3</top>
                     <left>3</left>
@@ -456,13 +488,33 @@
                 <border-radius-x>0</border-radius-x>
                 <border-radius-y>0</border-radius-y>
             </frame>
+
+            <frame name="c-dialog-frame">
+                <!--Specifiyng the radius for all borders will force the painter to use the pens-->
+                <border-radius-top-left>6.0</border-radius-top-left>
+                <border-radius-top-right>6.0</border-radius-top-right>
+                <border-radius-bottom-left>6.0</border-radius-bottom-left>
+                <border-radius-bottom-right>6.0</border-radius-bottom-right>
+                <!--CDialog ignores padding and margin-->
+                <border-left-pen>border-gray-5c-pen</border-left-pen>
+                <border-right-pen>border-gray-6e-pen</border-right-pen>
+                <border-top-pen>border-gray-6e-pen</border-top-pen>
+                <border-bottom-pen>border-gray-5c-pen</border-bottom-pen>
+            </frame>
+
+            <frame name="title-frame">
+                <border-radius-top-left>6.0</border-radius-top-left>
+                <border-radius-top-right>6.0</border-radius-top-right>
+                <border-radius-bottom-left>0.0</border-radius-bottom-left>
+                <border-radius-bottom-right>0.0</border-radius-bottom-right>
+            </frame>
         </frames>
 
         <menus item-height="25" separator-height="10" left-padding="15">
             <empty-area-brush>main-darken-85p-brush</empty-area-brush>
             <panel-brush>main-darken-95p-brush</panel-brush>
             <separator-pen>gray-e0-pen</separator-pen>
-            <separator-brush></separator-brush>
+            <!--<separator-brush></separator-brush>-->
             <selected-brush>main-darken-75p-brush</selected-brush>
             <disabled-pen>gray-78-pen</disabled-pen>
             <enabled-pen>gray-e0-pen</enabled-pen>
@@ -473,18 +525,12 @@
         </menus>
 
         <buttons>
-            <button name="pushButton">
+            <button>
                 <animations>
-                    <animation hint="color" to="background" start="main-lighten-10p" end="main-lighten-25p">
+                    <animation hint="color" to="background" start="main-color" end="main-lighten-25p">
                         <hover-in>hover-enter</hover-in>
                         <hover-out>hover-exit</hover-out>
                     </animation>
-
-                    <animation hint="color" to="border" start="main-darken-15p" end="main-darken-20p">
-                        <hover-in>hover-enter</hover-in>
-                        <hover-out>hover-exit</hover-out>
-                    </animation>
-
                 </animations>
 
                 <default>
@@ -517,27 +563,6 @@
                     </state-pressed>
                 </default>
 
-                <disabled>
-                    <state-normal>
-                        <frame>button-frame</frame>
-                        <frame-brush>disable-color-brush</frame-brush>
-                        <font>button-font</font>
-                        <font-pen>disable-text-pen</font-pen>
-                    </state-normal>
-                </disabled>
-
-            </button>
-
-            <button name="pushButton_6" copy="pushButton"/>
-
-            <button>
-                <animations>
-                    <animation hint="color" to="background" start="main-color" end="main-lighten-25p">
-                        <hover-in>hover-enter</hover-in>
-                        <hover-out>hover-exit</hover-out>
-                    </animation>
-                </animations>
-
                 <enabled>
                     <state-normal>
                         <frame>button-frame</frame>
@@ -560,7 +585,7 @@
                     </state-focus>
                     <state-pressed>
                         <frame>button-frame-focus</frame>
-                        <frame-brush>main-lighten-15p-brush</frame-brush>
+                        <frame-brush>white-brush</frame-brush>
                         <font>button-focus-font</font>
                         <font-pen>black-pen</font-pen>
                     </state-pressed>
@@ -676,9 +701,17 @@
         </combo-boxes>
 
         <progress-bar>
-            <bar glow-effect="1">
+            <bar>
+                <frame>progress-bar-frame</frame>
+                <disabled-groove-brush>disable-text-brush</disabled-groove-brush>
+                <disable-bar-brush>disable-color-brush</disable-bar-brush>
+                <groove-brush>progress-bar-brush</groove-brush>
+                <bar-brush>main-dark-brush</bar-brush>
+            </bar>
+
+            <bar name="initializationProgressBar" glow-effect="1">
                 <effect>
-                    <!-- Is preferably to apply a margin to the brush-->
+                    <!-- It is preferable to apply a margin to the brush-->
                     <x-offset>0</x-offset>
                     <y-offset>0</y-offset>
                     <effect-color>main-color</effect-color>
@@ -690,24 +723,6 @@
                 <disable-bar-brush>disable-color-brush</disable-bar-brush>
                 <groove-brush>progress-bar-brush</groove-brush>
                 <bar-brush>main-darken-40p-des-20p-brush</bar-brush>
-
-            </bar>
-
-            <bar name="progressBar_6" glow-effect="1">
-                <effect>
-                    <!-- Is preferably to apply a margin to the brush-->
-                    <x-offset>0</x-offset>
-                    <y-offset>0</y-offset>
-                    <effect-color>glow-green</effect-color>
-                    <blur-radius>20</blur-radius>
-                </effect>
-
-                <frame>progress-bar-frame</frame>
-                <disabled-groove-brush>disable-text-brush</disabled-groove-brush>
-                <disable-bar-brush>disable-color-brush</disable-bar-brush>
-                <groove-brush>progress-bar-green-brush</groove-brush>
-                <bar-brush>main-darken-40p-des-20p-brush</bar-brush>
-
             </bar>
         </progress-bar>
 
@@ -1085,7 +1100,7 @@
                 <frame>group-box-frame</frame>
                 <contents-brush>main-dark-lighten-3p-brush</contents-brush>
                 <header-brush>main-dark-lighten-6p-brush</header-brush>
-                <header-height>25</header-height>
+                <header-height>30</header-height>
                 <header-indicator-width>1</header-indicator-width>
                 <header-indicator-brush>accent-brush</header-indicator-brush>
                 <header-indicator-brush-disabled>disable-color-brush</header-indicator-brush-disabled>
@@ -1105,5 +1120,31 @@
     However, custom widgets can have more properties and animations and or override their parent behavior and geometry,
     Usually this custom widgets are implemented in the CUI (Centaur User Interface) library
     -->
+    <cui-elements>
+        <c-dialogs>
+            <c-dialog>
+                <frame>c-dialog-frame</frame>
+                <background-brush>main-dialog-background</background-brush>
+                <border-pen>white-pen</border-pen>
+            </c-dialog>
+        </c-dialogs>
+        <title-bar>
+            <bar>
+                <frame>title-frame</frame>
+                <background-brush>title-brush</background-brush>
+                <font>title-font</font>
+                <font-pen>title-font-pen</font-pen>
+                <windows-frame>
+                    <system-menu-position>left</system-menu-position>
+                </windows-frame>
+                <linux-frame>
+                    <system-menu-position>right</system-menu-position>
+                </linux-frame>
+                <macos-frame>
+                    <system-menu-position>right</system-menu-position>
+                </macos-frame>
 
+            </bar>
+        </title-bar>
+    </cui-elements>
 </theme>
