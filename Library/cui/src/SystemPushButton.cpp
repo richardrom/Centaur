@@ -71,6 +71,11 @@ void SystemPushButton::paintEvent(C_UNUSED QPaintEvent *event)
 #if defined(Q_OS_MAC)
 
     const QBrush brush = [&]() -> QBrush {
+        if (!this->isEnabled()) {
+            static constexpr int grayValue = 0x60;
+            return QBrush { QColor(grayValue, grayValue, grayValue) };
+        }
+
         switch (P_IMPL()->buttonClass) {
             case ButtonClass::Close:
                 {
