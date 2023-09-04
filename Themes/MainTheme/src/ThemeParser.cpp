@@ -177,6 +177,7 @@ struct theme::ThemeParser::Impl
     auto parseCheckBoxInformation(const QDomElement &element) -> void;
     auto parseToolButtonInformation(const QDomElement &element) -> void;
     auto parseGroupBoxInformation(const QDomElement &element) -> void;
+    auto parseMainFrame(const QDomElement &element) -> void;
     auto parseCDialog(const QDomElement &element) -> void;
     auto parseTitleBar(const QDomElement &element) -> void;
 
@@ -366,7 +367,10 @@ void theme::ThemeParser::loadTheme(const std::string &file)
                 NODE_ELEMENT(cuiElementsNode, cuiElement)
                 const auto nodeName = cuiElement.tagName();
 
-                if (nodeName == "c-dialogs") {
+                if (nodeName == "main-frame") {
+                    P_IMPL()->parseMainFrame(cuiElement);
+                }
+                else if (nodeName == "c-dialogs") {
                     P_IMPL()->parseCDialog(cuiElement);
                 }
                 else if (nodeName == "title-bar") {
@@ -2548,6 +2552,34 @@ auto theme::ThemeParser::Impl::parseGroupBoxInformation(const QDomElement &eleme
     }
 }
 
+auto theme::ThemeParser::Impl::parseMainFrame(const QDomElement &element) -> void
+{
+    using namespace Qt::Literals::StringLiterals;
+    CENTAUR_THEME_INTERFACE_NAMESPACE::MainFrameInformation mffo;
+    NODE_ITERATOR(mainFrameNode, element)
+    {
+
+        NODE_ELEMENT(mainFrameNode, mainFrameElement)
+
+        const QString nodeName  = mainFrameElement.tagName();
+        const QString nodeValue = mainFrameElement.text();
+
+        if (nodeName == "frame") {
+            mffo.frameInformation = getFrameInformation(nodeValue);
+        }
+        else if (nodeName == "background-brush") {
+            mffo.backgroundBrush = getBrush(nodeValue);
+        }
+        else if (nodeName == "border-pen" && !nodeValue.isEmpty()) {
+            mffo.borderPen = getPen(nodeValue);
+        }
+        else {
+            errors.emplace_back(u"node '%1' is not recognized in the main-frame information"_s.arg(nodeName));
+        }
+    }
+    parser->uiElements.mainFrameInformation = mffo;
+}
+
 auto theme::ThemeParser::Impl::parseCDialog(const QDomElement &element) -> void
 {
     using namespace Qt::Literals::StringLiterals;
@@ -2608,7 +2640,7 @@ auto theme::ThemeParser::Impl::parseTitleBar(const QDomElement &element) -> void
         }
 
         const auto name = titleElement.attribute("name");
-
+ 
         NODE_ITERATOR(uiNode, titleElement)
         {
             NODE_ELEMENT(uiNode, uiElement)
