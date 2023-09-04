@@ -30,39 +30,29 @@ SettingsDialog::Impl::Impl() :
 }
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
-    QDialog { parent },
+    CDialog { parent },
     _impl { new Impl },
     _sesImpl { new SessionImpl },
     _advImpl { new AdvancedImpl },
     _sctImpl { new ShortcutsImpl }
 {
     ui()->setupUi(this);
-    connect(ui()->acceptButton, &QPushButton::released, this, &SettingsDialog::onAccept);
+    setAccept(ui()->acceptButton);
     connect(ui()->treeWidget, &QTreeWidget::itemPressed, this, &SettingsDialog::treeItemPressed);
 
-    QString path = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-    QDir directory(path);
-    if (!directory.exists())
-    {
+    const QString path = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    const QDir directory(path);
+    if (!directory.exists()) {
         logInfo("settings", "Application path does not exist.");
-        if (directory.mkpath(path))
+        if (directory.mkpath(path)) {
             logInfo("settings", "Application path was created");
+        }
         else
             logError("settings", "Application path was not created");
     }
 
-    ui()->titleFrame->overrideParent(this);
-    ui()->mainSettingsFrame->overrideParent(this);
-
-#ifdef Q_OS_MAC
-    setWindowFlag(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_TranslucentBackground);
-#endif
-
-    ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
-    connect(ui()->closeButton, &SystemPushButton::systemPressed, this, [&]() {
-        reject();
-    });
+    ui()->titleFrame->setFrameTitle(tr("Settings"));
+    ui()->titleFrame->setSystemPushButton(TitleFrame::SystemButtons::Close);
 
     ui()->warnLabel->setVisible(false);
     ui()->warnIconLabel->setVisible(false);
@@ -73,8 +63,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     // Don't initialize on first time start
     // Because when this dialog will be shown on first time the main services will not be started
     // And these pages or even the settings widgets from plugins might use this services
-    if (!SettingsDialog::isFirstTimeStarted())
-    {
+    if (!SettingsDialog::isFirstTimeStarted()) {
         initAdvancedWidget();
         initPluginsWidget();
         initShortcutsWidget();
@@ -95,15 +84,14 @@ Ui::SettingsDialog *SettingsDialog::ui()
 
 bool SettingsDialog::isFirstTimeStarted() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("__Session__");
     const auto value = settings.value("__time__").toBool();
     settings.endGroup();
 
-    if (!value)
-    {
+    if (!value) {
         // Encryption needs multiples of 16-bytes for the key
-        // In case the user do not insert a 16-byte password, this string will pad the data
+        // In case the user does not insert a 16-byte password, this string will pad the data
         settings.beginGroup("user.password");
         settings.setValue("pad", QString::fromStdString(AESSym::createUniqueId(100, 32)));
         settings.endGroup();
@@ -118,7 +106,7 @@ bool SettingsDialog::isFirstTimeStarted() noexcept
 
 void SettingsDialog::onAccept() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("SettingsDialog");
     settings.setValue("geometry", saveGeometry());
     settings.setValue("splitter", ui()->splitter->saveState());
@@ -153,7 +141,8 @@ void SettingsDialog::onAccept() noexcept
 
 void SettingsDialog::restoreInterface() noexcept
 {
-    QSettings settings("CentaurProject", "Centaur");
+    restoreDialogInterface();
+    QSettings settings;
     settings.beginGroup("SettingsDialog");
     restoreGeometry(settings.value("geometry").toByteArray());
     ui()->splitter->restoreState(settings.value("splitter").toByteArray());
@@ -210,36 +199,29 @@ void SettingsDialog::initializeTree() noexcept
 
 void SettingsDialog::treeItemPressed(QTreeWidgetItem *item, C_UNUSED int column) noexcept
 {
-    if (item == _impl->sessionItem)
-    {
+    if (item == _impl->sessionItem) {
         setPage(Pages::Session);
     }
-    else if (item == _impl->advancedItem)
-    {
+    else if (item == _impl->advancedItem) {
         setPage(Pages::Advanced);
     }
-    else if (item == _impl->pluginsItem)
-    {
+    else if (item == _impl->pluginsItem) {
         setPage(Pages::Plugins);
     }
-    else if (item == _impl->shortcutsItem)
-    {
+    else if (item == _impl->shortcutsItem) {
         setPage(Pages::Shortcuts);
     }
-    else
-    {
-        auto pg = _impl->pluginSettingsPages.find(item);
-        if (pg != _impl->pluginSettingsPages.end())
-        {
-            ui()->stackedWidget->setCurrentWidget(pg->second);
+    else {
+        auto pgPages = _impl->pluginSettingsPages.find(item);
+        if (pgPages != _impl->pluginSettingsPages.end()) {
+            ui()->stackedWidget->setCurrentWidget(pgPages->second);
         }
     }
 }
 
 void SettingsDialog::setPage(SettingsDialog::Pages page) noexcept
 {
-    switch (page)
-    {
+    switch (page) {
         case Pages::Session: ui()->stackedWidget->setCurrentWidget(ui()->sessionPage); break;
         case Pages::Advanced: ui()->stackedWidget->setCurrentWidget(ui()->advancedPage); break;
         case Pages::Plugins: ui()->stackedWidget->setCurrentWidget(ui()->pluginsPage); break;

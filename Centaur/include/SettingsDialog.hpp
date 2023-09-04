@@ -14,17 +14,18 @@
 #define CENTAUR_SETTINGSDIALOG_HPP
 
 #include "Centaur.hpp"
-#include <QDialog>
+#include <CDialog.hpp>
 #include <QTableWidgetItem>
 #include <QTreeWidgetItem>
 
 BEGIN_CENTAUR_NAMESPACE
+
 namespace Ui
 {
     class SettingsDialog;
 }
 
-class SettingsDialog : public QDialog
+class SettingsDialog : public CDialog
 {
     enum class StatusMode
     {
@@ -66,7 +67,7 @@ protected:
 protected slots:
     void treeItemPressed(QTreeWidgetItem *item, int column) noexcept;
     void onAddUser() noexcept;
-    void onAccept() noexcept;
+
     void onAllow2FA(bool checked) noexcept;
     void pluginsTableItemChanged(QTableWidgetItem *item) noexcept;
     void installPlugin() noexcept;
@@ -81,6 +82,8 @@ protected slots:
 protected:
     void restoreInterface() noexcept;
     void resetTablesValues() noexcept;
+
+    void onAccept() noexcept override;
 
 private:
     void openUserInformationData() noexcept;
