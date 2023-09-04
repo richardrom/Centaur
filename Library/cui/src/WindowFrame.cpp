@@ -213,7 +213,7 @@ void WindowFrame::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
-void WindowFrame::mouseDoubleClickEvent(QMouseEvent *event)
+void WindowFrame::mouseDoubleClickEvent(C_UNUSED QMouseEvent *event)
 {
     if (P_IMPL()->mode == WindowFrame::FrameMode::Resizable)
         return;
