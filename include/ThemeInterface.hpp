@@ -339,6 +339,11 @@ struct TitleBarInformation
     QPen fontPen;
 };
 
+struct CommandFrameInformation
+{
+    QBrush backgroundBrush { Qt::NoBrush };
+};
+
 using ToolButtonInformation = PushButtonInformation;
 
 using ColorMap            = std::unordered_map<QString, QColor>;
@@ -407,6 +412,7 @@ struct UIElements
     DialogInformation dialogInformation;
     TitleBarInformation titleBarInformation;
     MainFrameInformation mainFrameInformation;
+    CommandFrameInformation commandFrameInformation;
 };
 
 #if defined(C_GNU_CLANG)

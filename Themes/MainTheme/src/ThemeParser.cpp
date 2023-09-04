@@ -180,6 +180,7 @@ struct theme::ThemeParser::Impl
     auto parseMainFrame(const QDomElement &element) -> void;
     auto parseCDialog(const QDomElement &element) -> void;
     auto parseTitleBar(const QDomElement &element) -> void;
+    auto parseCommandsFrame(const QDomElement &element) -> void;
 
     C_NODISCARD auto parseStates(const QDomElement &element) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::Elements;
     C_NODISCARD auto parseElementState(const QDomElement &element) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::ElementState;
@@ -375,6 +376,9 @@ void theme::ThemeParser::loadTheme(const std::string &file)
                 }
                 else if (nodeName == "title-bar") {
                     P_IMPL()->parseTitleBar(cuiElement);
+                }
+                else if (nodeName == "commands-frame") {
+                    P_IMPL()->parseCommandsFrame(cuiElement);
                 }
             }
         }
@@ -2640,7 +2644,7 @@ auto theme::ThemeParser::Impl::parseTitleBar(const QDomElement &element) -> void
         }
 
         const auto name = titleElement.attribute("name");
- 
+
         NODE_ITERATOR(uiNode, titleElement)
         {
             NODE_ELEMENT(uiNode, uiElement)
@@ -2671,4 +2675,25 @@ auto theme::ThemeParser::Impl::parseTitleBar(const QDomElement &element) -> void
         else
             parser->uiElements.titleBarOverride[name] = tbfo;
     }
+}
+
+auto theme::ThemeParser::Impl::parseCommandsFrame(const QDomElement &element) -> void
+{
+    using namespace Qt::Literals::StringLiterals;
+    CENTAUR_THEME_INTERFACE_NAMESPACE::CommandFrameInformation cffo;
+    NODE_ITERATOR(commandsFrameNode, element)
+    {
+        NODE_ELEMENT(commandsFrameNode, commandsFrameElement)
+
+        const QString nodeName  = commandsFrameElement.tagName();
+        const QString nodeValue = commandsFrameElement.text();
+
+        if (nodeName == "background-brush") {
+            cffo.backgroundBrush = getBrush(nodeValue);
+        }
+        else {
+            errors.emplace_back(u"node '%1' is not recognized in the commands-frame information"_s.arg(nodeName));
+        }
+    }
+    parser->uiElements.commandFrameInformation = cffo;
 }
