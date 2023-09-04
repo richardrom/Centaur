@@ -19,26 +19,20 @@
 #include "OrderbookDialog.hpp"
 #include "SettingsDialog.hpp"
 #include "SplashDialog.hpp"
-#include <QApplication>
+#include "core-naming.hpp"
 #include <QAreaSeries>
 #include <QChartView>
 #include <QDateTimeAxis>
 #include <QDirIterator>
-#include <QFile>
 #include <QFileInfo>
 #include <QGraphicsBlurEffect>
-#include <QImageReader>
-#include <QMenu>
-#include <QMessageBox>
 #include <QProcess>
-#include <QResizeEvent>
 #include <QShortcut>
 #include <QSqlError>
 #include <QSqlField>
-#include <QStandardPaths>
-#include <QTextStream>
 #include <QTimer>
 #include <QtCharts/QValueAxis>
+#include <WindowFrame.hpp>
 #include <utility>
 
 /// \brief This structure hold the 'data' set to Impl::orderbookDepth and Impl::depthChart to properly
