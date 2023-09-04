@@ -61,6 +61,8 @@ struct TitleFrame::Impl
     SystemPushButton *closeButton { nullptr };
     SystemPushButton *minimizeButton { nullptr };
     SystemPushButton *maximizeButton { nullptr }; // Under macOS, this is the fullscreen button
+
+    bool previousFullScreenStatusWasMax = false;
 };
 
 void TitleFrame::Impl::initData(QWidget *titleWidget)
@@ -73,7 +75,6 @@ void TitleFrame::Impl::initData(QWidget *titleWidget)
         }
         else
             uiInformation = std::addressof(cuiTheme()->uiElements().titleBarInformation);
-        uiInformation = std::addressof(cuiTheme()->uiElements().titleBarInformation);
 
         const CENTAUR_THEME_INTERFACE_NAMESPACE::FrameInformation &fifo = uiInformation->frameInformation;
 
@@ -118,6 +119,19 @@ TitleFrame::TitleFrame(QWidget *parent) :
             // On Dialogs, set only the close button by default
             setSystemPushButton(TitleFrame::SystemButtons::Close);
         }
+    }
+    else if (strcmp(parentClassName, "cen::MainWindowFrame") == 0) {
+        // Override to the top most QWidget
+        overrideMovableParent();
+        setSystemPushButton(
+            TitleFrame::SystemButtons::Close
+            | TitleFrame::SystemButtons::Minimize
+#ifdef Q_OS_MAC
+            | TitleFrame::SystemButtons::Fullscreen
+#else
+            | TitleFrame::SystemButtons::Maximize
+#endif /*Q_OS_MAC*/
+        );
     }
 }
 
@@ -385,6 +399,14 @@ void TitleFrame::setSystemPushButton(int buttons)
                 qobject_cast<QDialog *>(activeParent()),
                 &QDialog::reject);
         }
+        else {
+            connect(P_IMPL()->closeButton,
+                &SystemPushButton::buttonPressed,
+                activeParent(),
+                [activeParent = activeParent()] {
+                    activeParent->close();
+                });
+        }
     }
 
     if (buttons & TitleFrame::SystemButtons::Minimize) {
@@ -398,11 +420,33 @@ void TitleFrame::setSystemPushButton(int buttons)
     }
 
 #ifdef Q_OS_MAC
-    if (buttons & TitleFrame::SystemButtons::Fullscreen)
+    if (buttons & TitleFrame::SystemButtons::Fullscreen) {
         P_IMPL()->maximizeButton = new SystemPushButton(SystemPushButton::ButtonClass::Fullscreen, this);
+        connect(P_IMPL()->maximizeButton,
+            &SystemPushButton::buttonPressed,
+            activeParent(),
+            [parent             = activeParent(),
+                &prevStatus     = P_IMPL()->previousFullScreenStatusWasMax,
+                &minimizeButton = P_IMPL()->minimizeButton] {
+                if (!parent->isFullScreen()) {
+                    prevStatus = parent->isMaximized();
+                    parent->showFullScreen();
+                    minimizeButton->setEnabled(false);
+                }
+                else {
+                    minimizeButton->setEnabled(true);
+                    if (prevStatus) {
+                        parent->showMaximized();
+                    }
+                    else
+                        parent->showNormal();
+                }
+            });
+    }
 #else
     if (buttons & TitleFrame::SystemButtons::Maximize)
         P_IMPL()->maximizeButton = new SystemPushButton(this);
+        // TODO: Maximize button
 #endif /*Q_OS_MAC*/
 
     showSystemButtons();
