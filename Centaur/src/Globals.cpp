@@ -49,10 +49,11 @@ auto AESSym::createUniqueId(int rounds, std::size_t maxSize) -> std::string
     std::mt19937 gen(rd());
 
     for (int i = 0; i < rounds; ++i)
-        std::shuffle(characters.begin(), characters.begin() + 124, gen);
+        std::shuffle(characters.begin(), characters.end(), gen);
 
     return { characters.data(), maxSize };
 }
+
 /*
 auto AESSym::encrypt(const QByteArray &data, const QByteArray &key) -> QString
 {
@@ -174,15 +175,15 @@ END_CENTAUR_NAMESPACE
 
 namespace
 {
-// clang-format off
-    #if defined(__clang__) || defined(__GNUC__)
+    // clang-format off
+#ifdef C_GNU_CLANG
     CENTAUR_WARN_PUSH()
     CENTAUR_WARN_OFF("-Wexit-time-destructors")
     CENTAUR_WARN_OFF("-Wglobal-constructors")
-    #endif
+#endif
     // clang-format on
     const QString emptyString {};
-#if defined(__clang__) || defined(__GNUC__)
+#if C_GNU_CLANG
     CENTAUR_WARN_POP()
 #endif
 
@@ -192,8 +193,7 @@ QPixmap cen::findAssetImage(int size, const QString &asset, CENTAUR_INTERFACE_NA
 {
     QPixmap px;
     const auto [sourceFile, cachePath] = [&]() -> QPair<QString, QString> {
-        switch (source)
-        {
+        switch (source) {
             case CENTAUR_INTERFACE_NAMESPACE::AssetImageSource::Stock:
                 return { g_globals->paths.resPath + "/Images/stk_img.zip",
                     g_globals->paths.resPath + "/Images/Cache/Stock" };
@@ -208,10 +208,8 @@ QPixmap cen::findAssetImage(int size, const QString &asset, CENTAUR_INTERFACE_NA
 
     auto createDirectory = [](const QString &directory) {
         QDir cacheDirectory(directory);
-        if (!cacheDirectory.exists())
-        {
-            if (!cacheDirectory.mkpath(directory))
-            {
+        if (!cacheDirectory.exists()) {
+            if (!cacheDirectory.mkpath(directory)) {
                 logError("FindImage", QCoreApplication::translate("trace", "Image cache directory %1 not created").arg(directory));
             }
             else
@@ -244,27 +242,21 @@ QPixmap cen::findAssetImage(int size, const QString &asset, CENTAUR_INTERFACE_NA
             QString("%1/%2_%3.gif").arg(cachePath, asset).arg(size)
         };
 
-    for (const auto &inCache : cacheFiles)
-    {
-        if (QFileInfo::exists(inCache))
-        {
+    for (const auto &inCache : cacheFiles) {
+        if (QFileInfo::exists(inCache)) {
             logTrace("FindImage", QCoreApplication::translate("trace", "%1 find in file system cache").arg(asset));
 
             // According to the Qt documentation QPixmap::load uses QPixmapCache internally
-            if (!px.load(inCache))
-            {
+            if (!px.load(inCache)) {
                 logTrace("FindImage", QCoreApplication::translate("error", "Failed to load %1 file from file system cache").arg(inCache));
-                if (QFile::remove(inCache))
-                {
+                if (QFile::remove(inCache)) {
                     logWarn("FindImage", QCoreApplication::translate("warning", "%1 removed from file system cache because of data corruption").arg(inCache));
                 }
-                else
-                {
+                else {
                     logTrace("FindImage", QCoreApplication::translate("error", "Attempt to to remove %1 file from file system cache  because of data corruption failed").arg(inCache));
                 }
             }
-            else
-            {
+            else {
                 logTrace("FindImage", QCoreApplication::translate("trace", "File %1 loaded into the pixmap").arg(asset));
                 if (inCache.endsWith("svg", Qt::CaseInsensitive))
                     px.scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -276,8 +268,7 @@ QPixmap cen::findAssetImage(int size, const QString &asset, CENTAUR_INTERFACE_NA
     int zip_error    = ZIP_ER_OK;
     auto zip_archive = zip_open(sourceFile.toLocal8Bit().constData(), ZIP_RDONLY, &zip_error);
 
-    if (zip_error != ZIP_ER_OK || zip_archive == nullptr)
-    {
+    if (zip_error != ZIP_ER_OK || zip_archive == nullptr) {
         logError("FindImage", QCoreApplication::translate("error", "File %1 could not be found").arg(sourceFile));
 
         QErrorMessage errMessage(caller);
@@ -301,8 +292,7 @@ QPixmap cen::findAssetImage(int size, const QString &asset, CENTAUR_INTERFACE_NA
 #endif
     QString actualFileName;
     zip_int64_t fileIndex = -1;
-    for (const auto &compressedFile : zipFiles)
-    {
+    for (const auto &compressedFile : zipFiles) {
         actualFileName = compressedFile;
         fileIndex      = zip_name_locate(zip_archive, compressedFile.toLocal8Bit().constData(), ZIP_FL_NOCASE | ZIP_FL_ENC_UTF_8);
         if (fileIndex != -1)
@@ -310,8 +300,7 @@ QPixmap cen::findAssetImage(int size, const QString &asset, CENTAUR_INTERFACE_NA
     }
 
     zip_stat_t st;
-    if (fileIndex == -1)
-    {
+    if (fileIndex == -1) {
         logWarn("FindImage", QCoreApplication::translate("error", "Image for asset %1 could not be found").arg(asset));
         zip_close(zip_archive);
         return {};
@@ -321,25 +310,20 @@ QPixmap cen::findAssetImage(int size, const QString &asset, CENTAUR_INTERFACE_NA
 
     auto fileData = zip_fopen_index(zip_archive, static_cast<zip_uint64_t>(fileIndex), 0);
 
-    if (stats != -1)
-    {
-        if (st.size > 0)
-        {
+    if (stats != -1) {
+        if (st.size > 0) {
             QScopedArrayPointer<char> _file_bytes(new char[st.size + 1ull]);
             auto bytes_read = zip_fread(fileData, _file_bytes.get(), st.size);
 
-            if (bytes_read > 0)
-            {
+            if (bytes_read > 0) {
                 // In order to use QPixmapCache, we must save the file and then attempt to load it with QPixmap::load
                 const QString filePath = QString("%1/%2").arg(cachePath, actualFileName);
                 QFile _cache_qfile(filePath);
-                if (_cache_qfile.open(QIODeviceBase::WriteOnly))
-                {
+                if (_cache_qfile.open(QIODeviceBase::WriteOnly)) {
                     auto bytesWritten = _cache_qfile.write(_file_bytes.get(), static_cast<qint64>(st.size));
                     _cache_qfile.close();
 
-                    if (bytesWritten > 0)
-                    {
+                    if (bytesWritten > 0) {
                         auto b = px.load(filePath);
 
                         if (b)
@@ -354,16 +338,14 @@ QPixmap cen::findAssetImage(int size, const QString &asset, CENTAUR_INTERFACE_NA
                 else
                     logError("FindImage", QCoreApplication::translate("error", "File for asset %1 could not be created/open").arg(asset));
             }
-            else
-            {
+            else {
                 logError("FindImage", QCoreApplication::translate("error", "Image data for asset %1 was not read").arg(asset));
             }
         }
         else
             logError("FindImage", QCoreApplication::translate("error", "Image data size for asset %1 is not valid").arg(asset));
     }
-    else
-    {
+    else {
         logError("FindImage", QCoreApplication::translate("error", "Image data stats for asset %1 are not valid").arg(asset));
     }
 
