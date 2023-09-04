@@ -317,6 +317,13 @@ struct GroupBoxInformation
     int headerHeight { -1 };
 };
 
+struct MainFrameInformation
+{
+    QBrush backgroundBrush { Qt::NoBrush };
+    QPen borderPen { Qt::NoPen };
+    FrameInformation frameInformation;
+};
+
 struct DialogInformation
 {
     QBrush backgroundBrush { Qt::NoBrush };
@@ -399,6 +406,7 @@ struct UIElements
     GroupBoxInformation groupBoxInformation;
     DialogInformation dialogInformation;
     TitleBarInformation titleBarInformation;
+    MainFrameInformation mainFrameInformation;
 };
 
 #if defined(C_GNU_CLANG)
