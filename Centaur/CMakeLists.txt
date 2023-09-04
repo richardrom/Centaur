@@ -188,7 +188,7 @@ IF (CNT_USE_PCH)
             <QAction> <QDir> <QDirIterator> <QMenu> <QMessageBox> <QSortFilterProxyModel> <QStandardPaths> <QAreaSeries>
             <QChartView> <QDateTimeAxis> <QGraphicsBlurEffect> <QImageReader> <QResizeEvent> <QShortcut> <QSqlRecord> <QFileInfo>
             <QSettings> <QDialog> <QFile> <QWidget> <QLabel> <QCoreApplication> <QTextStream> <QVariant> <QPixmap> <QIcon>
-            <QApplication> <QFrame> <QHBoxLayout> <QMainWindow> <QPushButton> <QScrollArea> <QSpacerItem> <QSplitter> <QStackedWidget>
+            <QFrame> <QHBoxLayout> <QMainWindow> <QPushButton> <QScrollArea> <QSpacerItem> <QSplitter> <QStackedWidget>
             <QToolButton> <QVBoxLayout> <QKeySequenceEdit>
             <rapidjson/document.h>
             <rapidjson/ostreamwrapper.h>

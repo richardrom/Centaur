@@ -53,7 +53,8 @@ SET(INCLUDE_FILES
         include/CDialog.hpp
         include/cui.hpp
         include/WindowFrame.hpp
-        include/TitleFrame.hpp)
+        include/TitleFrame.hpp
+        include/MainWindowFrame.hpp)
 
 SET(SOURCE_FILES
         src/EditorDelegate.cpp
@@ -78,7 +79,8 @@ SET(SOURCE_FILES
         src/CDialog.cpp
         src/cui.cpp
         src/WindowFrame.cpp
-        src/TitleFrame.cpp)
+        src/TitleFrame.cpp
+        src/MainWindowFrame.cpp)
 
 SET(UI_FILES
         rcc/resources.qrc
