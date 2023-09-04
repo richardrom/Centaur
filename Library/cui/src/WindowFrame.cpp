@@ -227,7 +227,6 @@ void WindowFrame::mouseDoubleClickEvent(QMouseEvent *event)
         P_IMPL()->normalGeometry = activeParent()->geometry();
         activeParent()->showMaximized();
     }
-    QWidget::mouseDoubleClickEvent(event);
 }
 
 void WindowFrame::resizeEvent(QResizeEvent *event)

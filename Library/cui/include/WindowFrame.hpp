@@ -21,6 +21,7 @@ BEGIN_CENTAUR_NAMESPACE
 /// \brief A resizable and moveable frame
 class CENT_LIBRARY WindowFrame : public QFrame
 {
+    Q_OBJECT
 public:
     enum class FrameMode
     {
@@ -41,9 +42,11 @@ public:
     /// \return The parent found
     auto overrideMovableParent() -> QWidget *;
 
-protected:
+    /// \brief Get the movable parent
+    /// \return A widget that is receiving all the resizing and moving events
     C_NODISCARD QWidget *activeParent() const;
 
+protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
