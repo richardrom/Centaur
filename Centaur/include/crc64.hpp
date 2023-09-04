@@ -17,7 +17,7 @@
 
 namespace CENTAUR_NAMESPACE::crc64
 {
-    static constexpr uint64_t crc64Table[256] = {
+    static constexpr std::array<uint64_t, 256> crc64Table = {
         UINT64_C(0x0000000000000000),
         UINT64_C(0x7ad870c830358979),
         UINT64_C(0xf5b0e190606b12f2),
@@ -281,15 +281,23 @@ namespace CENTAUR_NAMESPACE::crc64
         if (len == 0)
             return 0;
 
-        crc        = crc ^ 0xFFFFFFFFFFFFFFFFULL;
-        auto _data = data;
+        constexpr unsigned long long int _i64 = 0xFFFFFFFFFFFFFFFFULL;
 
-        for (int64_t i = 0; i < static_cast<int64_t>(len); ++i)
-        {
-            crc = crc64Table[static_cast<uint64_t>(*_data) ^ (crc & 0xFF)] ^ (crc >> 8);
+        crc = crc ^ _i64;
+#ifdef C_GNU_CLANG
+        CENTAUR_WARN_PUSH()
+        CENTAUR_WARN_OFF("-Wunsafe-buffer-usage")
+#endif
+        const auto *_data = data;
+
+        for (int64_t i = 0; i < static_cast<int64_t>(len); ++i) {
+            crc = crc64Table.at(static_cast<uint64_t>(*_data) ^ (crc & 0xFF)) ^ (crc >> 8);
             _data++;
         }
-        crc = crc ^ 0xFFFFFFFFFFFFFFFFULL;
+#ifdef C_GNU_CLANG
+        CENTAUR_WARN_POP()
+#endif
+        crc = crc ^ _i64;
         return crc;
     }
 
