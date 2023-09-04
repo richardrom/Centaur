@@ -148,8 +148,10 @@ CentaurApp::CentaurApp(QWidget *parent) :
     QMainWindow(parent),
     _impl { new Impl(this) }
 {
+    setWindowFlag(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_TranslucentBackground);
 
-    auto *splashScreen = new SplashDialog(this);
+    std::unique_ptr<SplashDialog> splashScreen = std::make_unique<SplashDialog>(this);
     splashScreen->setDisplayText(tr("Setting up user interface"));
     splashScreen->setProgressRange(0, 7);
     splashScreen->setProgressPos(0);
@@ -174,18 +176,13 @@ CentaurApp::CentaurApp(QWidget *parent) :
     g_globals->paths.appPath = CFStringGetCStringPtr(macPath, CFStringGetSystemEncoding());
     CFRelease(appUrlRef);
     CFRelease(macPath);
-    setWindowFlag(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_TranslucentBackground);
 
-    /* TODO: On Final Release. Plugins Path must be in the Application Data path
-     * This is more of an issue on MacOS Bundles
-     * QString data = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-     */
+    // TODO: On Final Release. Plugins Path must be in the Application Data path
     g_globals->paths.pluginsPath = g_globals->paths.appPath + "/Contents/Plugins";
 
 #else
 
-#endif /*Q_OS_MAC*/
+#endif // Q_OS_MAC
 
     g_globals->paths.resPath = g_globals->paths.appPath + "/Contents/Resources";
 
@@ -212,18 +209,17 @@ CentaurApp::CentaurApp(QWidget *parent) :
     splashScreen->step();
 
     // Load plugins
-    loadPlugins(splashScreen);
+    loadPlugins(splashScreen.get());
     splashScreen->step();
 
-    // Load the favorites list. Since all plugins must be loaded
+    // Load the "favorites list". Since all plugins must be loaded
     splashScreen->setDisplayText(tr("Adding favorites watchlist"));
     loadFavoritesWatchList();
     splashScreen->step();
 
     END_TIME_SEC(initializationTimeStart, initializationTimeEnd, initializationTime);
-    logInfo("app", QString("Opening time: %1").arg(initializationTime.count(), 0, 'f', 4));
+    logInfo("app", QString("Opening time: ##00BFFF#%1#").arg(initializationTime.count(), 0, 'f', 4));
     splashScreen->hide();
-    delete splashScreen;
 }
 
 CentaurApp::~CentaurApp()
@@ -236,9 +232,7 @@ CentaurApp::~CentaurApp()
         _impl->loggerThread->join();
     }
 
-    if (g_credentials != nullptr)
-        delete g_credentials;
-
+    delete g_credentials;
     delete g_globals;
 }
 
@@ -289,7 +283,7 @@ void CentaurApp::credentialsStatus() noexcept
 void CentaurApp::keepAliveCredentialStatus() noexcept
 {
     // TODO Set an advance setting for this
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("__Session__data");
     const auto time = settings.value("__securing_time__", 300'000).toInt();
     settings.endGroup();
@@ -407,15 +401,17 @@ void CentaurApp::initializeInterface() noexcept
 {
     logTrace("app", "CentaurApp::initializeInterface()");
 
-    ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::close);
-    ui()->minimizeButton->setButtonClass(SystemPushButton::ButtonClass::minimize);
-#ifdef Q_OS_MAC
-    ui()->maximizeButton->setButtonClass(SystemPushButton::ButtonClass::fullscreen);
-    ui()->maximizeButton->linkFullScreen(ui()->closeButton, ui()->minimizeButton);
-#else
-    ui()->maximizeButton->setButtonClass(SystemPushButton::ButtonClass::maximize);
-    ui()->maximizeButton->linkMaximize(ui()->closeButton, ui()->minimizeButton);
-#endif
+    /*
+        ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::close);
+        ui()->minimizeButton->setButtonClass(SystemPushButton::ButtonClass::minimize);
+    #ifdef Q_OS_MAC
+        ui()->maximizeButton->setButtonClass(SystemPushButton::ButtonClass::fullscreen);
+        ui()->maximizeButton->linkFullScreen(ui()->closeButton, ui()->minimizeButton);
+    #else
+        ui()->maximizeButton->setButtonClass(SystemPushButton::ButtonClass::maximize);
+        ui()->maximizeButton->linkMaximize(ui()->closeButton, ui()->minimizeButton);
+    #endif
+    */
 
     connect(ui()->settingsButton, &QPushButton::released, this, &CentaurApp::onShowSettings);
     connect(ui()->pluginsViewButton, &QPushButton::released, this, &CentaurApp::onShowPlugins);
@@ -504,18 +500,18 @@ void CentaurApp::initializeInterface() noexcept
     });
 
     ui()->porfolioList->linkSearchEdit(ui()->porfolioSearch);
-    /*
-    QPixmap pm;
-    g_globals->symIcons.find(32, "BTC", &pm, Globals::AssetIcons::Crypto, this);
-    ui()->porfolioList->insertItem(pm, "Bitcoin", "Binance SPOT", "BTC", "$ 45.02 USD", "0.023 BTC");
-    g_globals->symIcons.find(32, "ETH", &pm, Globals::AssetIcons::Crypto, this);
-    ui()->porfolioList->insertItem(pm, "Ethereum", "Binance SPOT", "ETH", "$ 450.31 USD", "0.25 ETH");
-    g_globals->symIcons.find(32, "BNB", &pm, Globals::AssetIcons::Crypto, this);
-    ui()->porfolioList->insertItem(pm, "Binance Coin", "Binance BNB", "BNB", "$ 125.02 USD", "0.505 BNB");
-    g_globals->symIcons.find(32, "TRX", &pm, Globals::AssetIcons::Crypto, this);
-    ui()->porfolioList->insertItem(pm, "Tron", "Binance SPOT", "TRX", "$ 85.97 USD", "1250.2548 TRX");
-    g_globals->symIcons.find(32, "DOT", &pm, Globals::AssetIcons::Crypto, this);
-    ui()->porfolioList->insertItem(pm, "Polkadot", "Binance SPOT", "DOT", "$ 0.23 USD", "0.0023 DOT");*/
+
+    //    QPixmap pm;
+    //    g_globals->symIcons.find(32, "BTC", &pm, Globals::AssetIcons::Crypto, this);
+    //    ui()->porfolioList->insertItem(pm, "Bitcoin", "Binance SPOT", "BTC", "$ 45.02 USD", "0.023 BTC");
+    //    g_globals->symIcons.find(32, "ETH", &pm, Globals::AssetIcons::Crypto, this);
+    //    ui()->porfolioList->insertItem(pm, "Ethereum", "Binance SPOT", "ETH", "$ 450.31 USD", "0.25 ETH");
+    //    g_globals->symIcons.find(32, "BNB", &pm, Globals::AssetIcons::Crypto, this);
+    //    ui()->porfolioList->insertItem(pm, "Binance Coin", "Binance BNB", "BNB", "$ 125.02 USD", "0.505 BNB");
+    //    g_globals->symIcons.find(32, "TRX", &pm, Globals::AssetIcons::Crypto, this);
+    //    ui()->porfolioList->insertItem(pm, "Tron", "Binance SPOT", "TRX", "$ 85.97 USD", "1250.2548 TRX");
+    //    g_globals->symIcons.find(32, "DOT", &pm, Globals::AssetIcons::Crypto, this);
+    //    ui()->porfolioList->insertItem(pm, "Polkadot", "Binance SPOT", "DOT", "$ 0.23 USD", "0.0023 DOT");
 
     ui()->watchListWidget->linkSearchEdit(ui()->watchListSearch);
 
@@ -665,7 +661,7 @@ void CentaurApp::initializeShortcuts() noexcept
 {
     namespace json = rapidjson;
 
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
     settings.beginGroup("Settings.Keymap");
     const auto savedKeymap = settings.value("keymap", ".").toString();
     settings.endGroup();
@@ -702,11 +698,11 @@ void CentaurApp::initializeShortcuts() noexcept
         return;
     }
 
-    json::SchemaDocument schemaDoc(schemaJSONDoc);
+    const json::SchemaDocument schemaDoc(schemaJSONDoc);
     json::SchemaValidator schemaValidator(schemaDoc);
 
     // Read the json files
-    QStringList searchPaths {
+    const QStringList searchPaths {
         g_globals->paths.resPath + "/Keymap/",                                              // internal files
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/keymap/" // user defined
     };
@@ -714,7 +710,7 @@ void CentaurApp::initializeShortcuts() noexcept
     for (const auto &path : searchPaths) {
         QDirIterator it(path, QDirIterator::NoIteratorFlags);
         while (it.hasNext()) {
-            QFileInfo nfo(it.next());
+            const QFileInfo nfo(it.next());
             if (nfo.completeSuffix() != "keymap.json") {
                 logWarn("initializeShortcuts", tr("An extraneous file (%1) in a keymap path (%2) was found").arg(nfo.fileName(), path));
                 continue;
@@ -755,7 +751,7 @@ void CentaurApp::loadShortcuts(const rapidjson::Document &document) noexcept
 {
 
     auto doConnection = [&](auto &json, auto &&func) {
-        auto shortcut = new QShortcut(QKeySequence::fromString(json["shortcut"].GetString(), QKeySequence::PortableText), this);
+        auto *shortcut = new QShortcut(QKeySequence::fromString(json["shortcut"].GetString(), QKeySequence::PortableText), this);
 
         this->connect(shortcut, &QShortcut::activated, this, func);
     };
@@ -780,22 +776,14 @@ void CentaurApp::saveInterfaceState() noexcept
 {
     logTrace("app", "CentaurApp::saveInterfaceState()");
 
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
 
     settings.beginGroup("mainWindow");
     settings.setValue("geometry", saveGeometry());
     settings.setValue("state", saveState());
     settings.endGroup();
 
-    settings.beginGroup("LogDialog");
-    settings.setValue("geometry", _impl->logDialog->saveGeometry());
-    settings.endGroup();
-
-    settings.beginGroup("loggingListState");
-    settings.setValue("geometry", _impl->logDialog->tableWidget()->saveGeometry());
-    settings.setValue("h-geometry", _impl->logDialog->tableWidget()->horizontalHeader()->saveGeometry());
-    settings.setValue("state", _impl->logDialog->tableWidget()->horizontalHeader()->saveState());
-    settings.endGroup();
+    _impl->logDialog->saveInterface();
 
     settings.beginGroup("Splitter0");
     settings.setValue("geometry", ui()->splitter->saveGeometry());
@@ -809,7 +797,7 @@ void CentaurApp::loadInterfaceState() noexcept
 {
     logTrace("app", "CentaurApp::loadInterfaceState()");
 
-    QSettings settings("CentaurProject", "Centaur");
+    QSettings settings;
 
     settings.beginGroup("mainWindow");
     restoreGeometry(settings.value("geometry").toByteArray());
@@ -825,7 +813,7 @@ void CentaurApp::loadInterfaceState() noexcept
     settings.beginGroup("advancedSettings-PixmapCache");
     // Always write the default
     settings.setValue("default", QPixmapCache::cacheLimit());
-    int pixCacheValue = settings.value("size", -1).toInt();
+    const int pixCacheValue = settings.value("size", -1).toInt();
     if (pixCacheValue == -1 || pixCacheValue > 1'073'741'824 || pixCacheValue < 10'240'000) {
         logError("loadInterfaceState", QString(tr("Pixmap Cache Memory Value is not correct (%1)")).arg(pixCacheValue));
     }
@@ -950,7 +938,7 @@ void CentaurApp::onAddToWatchList(const QString &symbol, const QString &sender, 
     auto interface = _impl->exchangeList.find(uuid { sender.toStdString(), false });
 
     if (interface == _impl->exchangeList.end()) {
-        logError("watchlist", QString(tr("The sender '%1' is not registered.")).arg(sender));
+        logError("watchlist", QString(tr("The sender %1 is not registered.")).arg(sender));
         return;
     }
 
