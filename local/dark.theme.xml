@@ -268,6 +268,7 @@
             <style>dash</style>
         </pen>
         <pen name="title-font-pen" width="1.1" brush="white-brush"/>
+        <pen name="main-dark-pen" width="1.0" brush="main-dark-brush"/>
 
     </pens>
 
@@ -748,6 +749,42 @@
         </buttons>
 
         <line-editors>
+            <editor name="watchlistSearchEdit" text-color="black" disable-color="disable-text-color" placeholder-color="gray-5c">
+                <animations>
+
+                    <animation hint="color" to="border" start="main-darken-40p-des-20p" end="main-color">
+                        <focus-in>focus-in</focus-in>
+                        <focus-out>focus-out</focus-out>
+                    </animation>
+                </animations>
+
+                <enabled>
+                    <state-normal>
+                        <frame>editor-frame</frame>
+                        <frame-brush>white-brush</frame-brush>
+                        <font>regular-font</font>
+                        <frame-pen>main-darken-40p-des-20p-pen-3.0-pen</frame-pen>
+                    </state-normal>
+                    <state-hover>
+                        <frame>editor-frame</frame>
+                        <frame-brush>white-brush</frame-brush>
+                    </state-hover>
+                    <state-focus>
+                        <frame>editor-frame</frame>
+                        <frame-brush>white-brush</frame-brush>
+                        <frame-pen>main-color-pen-3.0-pen</frame-pen>
+                    </state-focus>
+                </enabled>
+
+                <disabled>
+                    <state-normal>
+                        <frame>editor-frame</frame>
+                        <frame-brush>disable-color-brush</frame-brush>
+                    </state-normal>
+                </disabled>
+            </editor>
+
+
             <editor text-color="white" disable-color="disable-text-color" placeholder-color="gray-b0">
 
                 <animations>
