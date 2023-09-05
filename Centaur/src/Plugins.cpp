@@ -240,96 +240,98 @@ bool CENTAUR_NAMESPACE::CentaurApp::initExchangePlugin(CENTAUR_NAMESPACE::plugin
 CENTAUR_NAMESPACE::OptionsTableWidget *CENTAUR_NAMESPACE::CentaurApp::populateExchangeSymbolList(CENTAUR_NAMESPACE::plugin::IExchange *exchange) noexcept
 {
     logTrace("plugins", "CentaurApp::populateExchangeSymbolList");
+    /*
+        const auto [name, icon] = exchange->getSymbolListName();
 
-    const auto [name, icon] = exchange->getSymbolListName();
+        QPushButton *button;
+        // Add the button
+        if (icon != nullptr)
+            button = new QPushButton(*icon, name, ui()->scrollAreaWidgetContents);
+        else
+            button = new QPushButton(name, ui()->scrollAreaWidgetContents);
 
-    QPushButton *button;
-    // Add the button
-    if (icon != nullptr)
-        button = new QPushButton(*icon, name, ui()->scrollAreaWidgetContents);
-    else
-        button = new QPushButton(name, ui()->scrollAreaWidgetContents);
+        button->setMinimumSize(QSize(0, 30));
+        button->setCheckable(true);
+        button->setAutoExclusive(true);
+        button->setStyleSheet(exchangeListButton);
+        button->setIconSize(QSize { 16, 16 });
+        ui()->exchangesButtonsLayout->addWidget(button);
 
-    button->setMinimumSize(QSize(0, 30));
-    button->setCheckable(true);
-    button->setAutoExclusive(true);
-    button->setStyleSheet(exchangeListButton);
-    button->setIconSize(QSize { 16, 16 });
-    ui()->exchangesButtonsLayout->addWidget(button);
+        auto widget         = new QWidget();
+        auto verticalLayout = new QVBoxLayout(widget);
+        verticalLayout->setSpacing(2);
+        verticalLayout->setContentsMargins(2, 2, 2, 2);
 
-    auto widget         = new QWidget();
-    auto verticalLayout = new QVBoxLayout(widget);
-    verticalLayout->setSpacing(2);
-    verticalLayout->setContentsMargins(2, 2, 2, 2);
+        auto editCtrl = new SearchLineEdit(widget);
+        editCtrl->setPlaceholderText(tr("Search..."));
+        editCtrl->setClearButtonEnabled(true);
+        editCtrl->setStyleSheet(exchangeSearchLineEdit);
+        verticalLayout->addWidget(editCtrl);
 
-    auto editCtrl = new SearchLineEdit(widget);
-    editCtrl->setPlaceholderText(tr("Search..."));
-    editCtrl->setClearButtonEnabled(true);
-    editCtrl->setStyleSheet(exchangeSearchLineEdit);
-    verticalLayout->addWidget(editCtrl);
+        auto symbolsList = new OptionsTableWidget(widget);
+        symbolsList->setStyleSheet(exchangeTable);
+        symbolsList->initialize(editCtrl, 1, -1, -1, nullptr);
 
-    auto symbolsList = new OptionsTableWidget(widget);
-    symbolsList->setStyleSheet(exchangeTable);
-    symbolsList->initialize(editCtrl, 1, -1, -1, nullptr);
+        symbolsList->sortByColumn(0, Qt::AscendingOrder);
+        symbolsList->getModel()->setHorizontalHeaderLabels({ tr("Symbols") });
+        symbolsList->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
+        symbolsList->horizontalHeader()->setSortIndicator(0, Qt::SortOrder::AscendingOrder);
 
-    symbolsList->sortByColumn(0, Qt::AscendingOrder);
-    symbolsList->getModel()->setHorizontalHeaderLabels({ tr("Symbols") });
-    symbolsList->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
-    symbolsList->horizontalHeader()->setSortIndicator(0, Qt::SortOrder::AscendingOrder);
+        symbolsList->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+        symbolsList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        symbolsList->setGridStyle(Qt::NoPen);
+        symbolsList->setSortingEnabled(true);
+        symbolsList->sortByColumn(0, Qt::AscendingOrder);
+        symbolsList->verticalHeader()->setVisible(false);
 
-    symbolsList->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
-    symbolsList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    symbolsList->setGridStyle(Qt::NoPen);
-    symbolsList->setSortingEnabled(true);
-    symbolsList->sortByColumn(0, Qt::AscendingOrder);
-    symbolsList->verticalHeader()->setVisible(false);
+        verticalLayout->addWidget(symbolsList);
 
-    verticalLayout->addWidget(symbolsList);
+        ui()->stackedWidget->addWidget(widget);
 
-    ui()->stackedWidget->addWidget(widget);
+        connect(button, &QPushButton::clicked, this, [&, widget, symbolsList, exchange](bool clicked) {
+            if (clicked) {
+                if (symbolsList->getRowCount() == 0) {
 
-    connect(button, &QPushButton::clicked, this, [&, widget, symbolsList, exchange](bool clicked) {
-        if (clicked) {
-            if (symbolsList->getRowCount() == 0) {
+                    auto symbols = exchange->getSymbolList();
+                    for (const auto &[sym, symIcon] : symbols) {
 
-                auto symbols = exchange->getSymbolList();
-                for (const auto &[sym, icon] : symbols) {
+                        auto item  = new QStandardItem(sym);
+                        int curRow = symbolsList->getRowCount();
+                        item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
-                    auto item  = new QStandardItem(sym);
-                    int curRow = symbolsList->getRowCount();
-                    item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+                        item->setIcon(*symIcon);
 
-                    item->setIcon(*icon);
-
-                    symbolsList->insertRowWithOptions(curRow, { item }, false);
+                        symbolsList->insertRowWithOptions(curRow, { item }, false);
+                    }
                 }
+
+                ui()->stackedWidget->setCurrentWidget(widget);
             }
+        });
 
-            ui()->stackedWidget->setCurrentWidget(widget);
-        }
-    });
+        connect(symbolsList, &OptionsTableWidget::customContextMenuRequested, this, [&, symbolsList, exchange](const QPoint &pos) {
+            // Show the context menu
+            QModelIndex index = symbolsList->indexAt(pos).siblingAtColumn(0);
+            auto itemData     = index.data(Qt::DisplayRole).toString();
 
-    connect(symbolsList, &OptionsTableWidget::customContextMenuRequested, this, [&, symbolsList, exchange](const QPoint &pos) {
-        // Show the context menu
-        QModelIndex index = symbolsList->indexAt(pos).siblingAtColumn(0);
-        auto itemData     = index.data(Qt::DisplayRole).toString();
+            if (!itemData.isEmpty()) {
+                QMenu contextMenu("Context menu", this);
 
-        if (!itemData.isEmpty()) {
-            QMenu contextMenu("Context menu", this);
+                QAction action(tr("Add '%1' to the watchlist").arg(itemData), this);
+                contextMenu.addAction(&action);
 
-            QAction action(tr("Add '%1' to the watchlist").arg(itemData), this);
-            contextMenu.addAction(&action);
+                connect(&action, &QAction::triggered, this,
+                    [&]() { onAddToWatchList(itemData, exchange->getPluginUUID().to_qstring(false), true); });
 
-            connect(&action, &QAction::triggered, this,
-                [&]() { onAddToWatchList(itemData, exchange->getPluginUUID().to_qstring(false), true); });
+                contextMenu.exec(symbolsList->mapToGlobal(pos));
+            }
+        });
 
-            contextMenu.exec(symbolsList->mapToGlobal(pos));
-        }
-    });
+        logInfo("plugins", "Exchange list populated");
 
-    logInfo("plugins", "Exchange list populated");
+        return symbolsList;*/
 
-    return symbolsList;
+    return nullptr;
 }
 
 void cen::CentaurApp::initStatusPlugin(CENTAUR_PLUGIN_NAMESPACE::IStatus *status) noexcept
