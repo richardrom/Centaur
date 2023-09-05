@@ -37,7 +37,7 @@ void CommandsFrame::paintEvent(QPaintEvent *event)
     }
 
     QPainter painter(this);
-    painter.fillRect(event->rect(), P_IMPL()->uiInformation->backgroundBrush);
+    painter.fillRect(rect(), P_IMPL()->uiInformation->backgroundBrush);
 }
 
 END_CENTAUR_NAMESPACE
