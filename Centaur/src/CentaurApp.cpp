@@ -27,12 +27,13 @@
 #include <QFileInfo>
 #include <QGraphicsBlurEffect>
 #include <QProcess>
+#include <QPropertyAnimation>
 #include <QShortcut>
 #include <QSqlError>
 #include <QSqlField>
 #include <QTimer>
 #include <QtCharts/QValueAxis>
-#include <WindowFrame.hpp>
+#include <cui.hpp>
 #include <utility>
 
 /// \brief This structure hold the 'data' set to Impl::orderbookDepth and Impl::depthChart to properly
@@ -404,17 +405,35 @@ void CentaurApp::initializeInterface() noexcept
 #endif
     ui()->mainFrameTitle->setFrameTitle(applicationTitle);
 
-    /*
-        ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::close);
-        ui()->minimizeButton->setButtonClass(SystemPushButton::ButtonClass::minimize);
-    #ifdef Q_OS_MAC
-        ui()->maximizeButton->setButtonClass(SystemPushButton::ButtonClass::fullscreen);
-        ui()->maximizeButton->linkFullScreen(ui()->closeButton, ui()->minimizeButton);
-    #else
-        ui()->maximizeButton->setButtonClass(SystemPushButton::ButtonClass::maximize);
-        ui()->maximizeButton->linkMaximize(ui()->closeButton, ui()->minimizeButton);
-    #endif
-    */
+    auto *viewPluginsButton      = ui()->mainFrameTitle->createToolButton("viewPluginsButton");
+    auto *viewLogsButton         = ui()->mainFrameTitle->createToolButton("viewLogsButton");
+    auto *viewServerStatusButton = ui()->mainFrameTitle->createToolButton("viewServerStatusButton");
+
+    viewPluginsButton->setToolTip(tr("Show the plugins settings"));
+    viewLogsButton->setToolTip(tr("Show the Logs Window"));
+    viewServerStatusButton->setToolTip(tr("Show the internal server status"));
+
+    auto loadIcon = [](const QString &url) {
+        QIcon pluginIcon;
+        pluginIcon.addFile(url, QSize(), QIcon::Normal, QIcon::Off);
+        return pluginIcon;
+    };
+
+    // The normal state of the side panel is in the visible state
+    // So, only toggle the view of the panel if its was store as contracted
+    if (m_sidePanelContracted) {
+        const bool currentAnimationStatus = m_useAnimations;
+        // Prevent use animations in the early initialization step
+        m_useAnimations = false;
+        // Toggle the flag, so onToggleSidePanel() hides the bar
+        m_sidePanelContracted = !m_sidePanelContracted;
+        onToggleSidePanel();
+        m_useAnimations = currentAnimationStatus;
+    }
+
+    viewPluginsButton->setIcon(loadIcon(QString::fromUtf8(":/svg/commands/extension")));
+    viewLogsButton->setIcon(loadIcon(QString::fromUtf8(":/svg/commands/terminal")));
+    viewServerStatusButton->setIcon(loadIcon(QString::fromUtf8(":/svg/commands/server-red")));
 
     connect(ui()->settingsButton, &QPushButton::released, this, &CentaurApp::onShowSettings);
     connect(ui()->pluginsViewButton, &QPushButton::released, this, &CentaurApp::onShowPlugins);

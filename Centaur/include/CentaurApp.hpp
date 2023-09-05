@@ -42,6 +42,7 @@ class LogDialog;
 class OptionsTableWidget;
 class SplashDialog;
 class OrderbookDialog;
+
 class CentaurApp final : public QMainWindow
 {
     struct ExchangeInformation
@@ -70,6 +71,7 @@ private:
     void initializeInterface() noexcept;
     /// \brief Initialize keyboard shortcuts
     void initializeShortcuts() noexcept;
+    /// \brief Load the shortcuts
     void loadShortcuts(const rapidjson::Document &document) noexcept;
     /// \brief Load the internal centaur database file
     void initializeDatabaseServices() noexcept;
@@ -103,6 +105,7 @@ public:
 
 private slots:
     void credentialsStatus() noexcept;
+    void onToggleSidePanel() noexcept;
     void onShowPlugins() noexcept;
     void onShowLogDialog() noexcept;
     void onShowSettings() noexcept;
@@ -135,7 +138,12 @@ protected:
 private:
     struct Impl;
     std::unique_ptr<Impl> _impl;
+
+private:
+    bool m_useAnimations { false };
+    bool m_sidePanelContracted { false };
 };
+
 extern CentaurApp *g_app;
 
 END_CENTAUR_NAMESPACE
