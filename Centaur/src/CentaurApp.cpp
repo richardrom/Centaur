@@ -460,8 +460,8 @@ void CentaurApp::initializeInterface() noexcept
     });
 
     connect(_impl->orderbookDepth, &QAction::triggered, this, [&, action = _impl->orderbookDepth](C_UNUSED bool trigger) {
-        const auto actionData = _impl->orderbookDepth->data().value<OrderBookDepthInformation>();
-        QString objectName    = QString("%1%2orderbook").arg(actionData.source, actionData.symbol);
+        const auto actionData    = _impl->orderbookDepth->data().value<OrderBookDepthInformation>();
+        const QString objectName = QString("%1%2orderbook").arg(actionData.source, actionData.symbol);
 
         auto *dlgExists = this->findChild<OrderbookDialog *>(objectName);
         if (dlgExists != nullptr) {
@@ -481,8 +481,8 @@ void CentaurApp::initializeInterface() noexcept
     });
 
     connect(_impl->depthChart, &QAction::triggered, this, [&, action = _impl->depthChart](C_UNUSED bool trigger) {
-        const auto actionData       = _impl->depthChart->data().value<OrderBookDepthInformation>();
-        QString orderBookObjectName = QString("%1%2orderbook").arg(actionData.source, actionData.symbol);
+        const auto actionData             = _impl->depthChart->data().value<OrderBookDepthInformation>();
+        const QString orderBookObjectName = QString("%1%2orderbook").arg(actionData.source, actionData.symbol);
 
         auto *orderBookExists = this->findChild<OrderbookDialog *>(orderBookObjectName);
         if (orderBookExists == nullptr) {
@@ -490,8 +490,8 @@ void CentaurApp::initializeInterface() noexcept
             return;
         }
 
-        QString objectName = QString("%1%2depth").arg(actionData.source, actionData.symbol);
-        auto *dlgExists    = this->findChild<DepthChartDialog *>(objectName);
+        const QString objectName = QString("%1%2depth").arg(actionData.source, actionData.symbol);
+        auto *dlgExists          = this->findChild<DepthChartDialog *>(objectName);
         if (dlgExists != nullptr) {
             // Bring upfront
             dlgExists->show();
@@ -540,15 +540,15 @@ void CentaurApp::initializeInterface() noexcept
         if (symbol.isEmpty() || source.isEmpty())
             return;
 
-        QPoint menuPoint = ui()->watchListWidget->mapToGlobal(pt);
+        const QPoint menuPoint = ui()->watchListWidget->mapToGlobal(pt);
 
         auto actions = _impl->exchangeMenuActions[uuid { source.toStdString(), false }];
 
         QMenu menu(this);
 
-        auto exchBase = _impl->exchangeList[uuid { source.toStdString(), false }].exchange;
+        auto *exchBase = _impl->exchangeList[uuid { source.toStdString(), false }].exchange;
 
-        OrderBookDepthInformation obdi { symbol, source };
+        const OrderBookDepthInformation obdi { symbol, source };
 
         _impl->orderbookDepth->setData(QVariant::fromValue(obdi));
         _impl->depthChart->setData(QVariant::fromValue(obdi));
@@ -582,8 +582,9 @@ void CentaurApp::initializeInterface() noexcept
         for (auto &action : actions) {
             // Update the symbol name
 
-            if (action->isSeparator())
+            if (action->isSeparator()) {
                 menu.addSeparator();
+            }
             else {
                 action->setData(symbol);
                 menu.addAction(action);
