@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1011</width>
-    <height>647</height>
+    <width>1013</width>
+    <height>649</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,16 +19,10 @@
   <property name="windowTitle">
    <string>TraderApp</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true"/>
-  </property>
   <widget class="QWidget" name="centralWidget">
-   <property name="styleSheet">
-    <string notr="true"/>
-   </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0">
     <property name="spacing">
-     <number>-1</number>
+     <number>0</number>
     </property>
     <property name="leftMargin">
      <number>0</number>
@@ -43,49 +37,49 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="CENTAUR_NAMESPACE::ResizableFrame" name="mainFrameFrame">
+     <widget class="CENTAUR_NAMESPACE::MainWindowFrame" name="mainWindowFrame">
       <property name="font">
        <font>
         <family>.AppleSystemUIFont</family>
        </font>
       </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
+      </property>
+      <property name="lineWidth">
+       <number>0</number>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
         <number>0</number>
        </property>
        <property name="leftMargin">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="bottomMargin">
-        <number>0</number>
+        <number>1</number>
        </property>
        <item>
-        <widget class="CENTAUR_NAMESPACE::MovableFrame" name="titleFrame">
+        <widget class="CENTAUR_NAMESPACE::TitleFrame" name="mainFrameTitle">
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>70</height>
+           <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>75</height>
+           <height>25</height>
           </size>
          </property>
          <property name="cursor">
@@ -97,22 +91,14 @@
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
-         <property name="styleSheet">
-          <string notr="true">QFrame{
-background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1  rgb(2,5,8), stop: 0 rgb(6,10,12));
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-border-bottom-left-radius: 0px;
-border-bottom-right-radius: 0px;
-border: 0px;
-}</string>
-         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Plain</enum>
+         </property>
+         <property name="lineWidth">
+          <number>0</number>
          </property>
          <layout class="QVBoxLayout" name="titleFrameLayout">
           <property name="spacing">
@@ -130,485 +116,185 @@ border: 0px;
           <property name="bottomMargin">
            <number>1</number>
           </property>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="CENTAUR_NAMESPACE::CommandsFrame" name="commandsFrame">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>55</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="lineWidth">
+          <number>0</number>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
-           <widget class="QFrame" name="titleBarFrame">
+           <widget class="QToolButton" name="toolBarDashboard">
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>20</height>
+              <width>41</width>
+              <height>41</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>16777215</width>
-              <height>20</height>
+              <width>41</width>
+              <height>41</height>
              </size>
             </property>
-            <property name="styleSheet">
-             <string notr="true">QFrame{
-background-color: rgba(0,0,0,0);
-border: 0px;
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-}</string>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+            <property name="toolTip">
+             <string>Show dashboard</string>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
+            <property name="text">
+             <string/>
             </property>
-            <layout class="QHBoxLayout" name="titleBarFrameLayout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="sizeConstraint">
-              <enum>QLayout::SetNoConstraint</enum>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QFrame" name="titleBarFrame2">
-               <property name="styleSheet">
-                <string notr="true">QFrame{
-background-color: rgba(0,0,0,0);
-border: 0px;
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-}</string>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QHBoxLayout" name="titleBarFrameLayout2">
-                <property name="spacing">
-                 <number>-1</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="titleLabel">
-                  <property name="text">
-                   <string>Centaur 0.1.0</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QFrame" name="centerHelperFrame">
-                  <property name="maximumSize">
-                   <size>
-                    <width>100</width>
-                    <height>60</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">QFrame{
-background-color: rgba(0,0,0,0);
-border: 0px;
-}</string>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_4">
-                   <property name="spacing">
-                    <number>1</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <spacer name="centerHelperVertical1">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QToolButton" name="pluginsViewButton">
-                     <property name="minimumSize">
-                      <size>
-                       <width>20</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>20</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QToolButton{
-	border-radius: 5px;
-}
-
-QToolButton:hover{
-	background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 0  rgb(58,58,58), stop: 1 rgb(68,68,68));
-	border-radius: 10px;
-}
-
-QToolButton:pressed{
-	background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1  rgb(85,85,85), stop: 0 rgb(95,95,95));
-	border-radius: 10px;
-}</string>
-                     </property>
-                     <property name="text">
-                      <string>Database
-</string>
-                     </property>
-                     <property name="icon">
-                      <iconset resource="../../Library/cui/rcc/resources.qrc">
-                       <normaloff>:/ui/global/extension</normaloff>:/ui/global/extension</iconset>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>16</width>
-                       <height>16</height>
-                      </size>
-                     </property>
-                     <property name="checkable">
-                      <bool>false</bool>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                     <property name="toolButtonStyle">
-                      <enum>Qt::ToolButtonIconOnly</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QToolButton" name="serverStatusButton">
-                     <property name="minimumSize">
-                      <size>
-                       <width>20</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>20</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QToolButton{
-	border-radius: 5px;
-}
-
-QToolButton:hover{
-	background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 0  rgb(58,58,58), stop: 1 rgb(68,68,68));
-	border-radius: 10px;
-}
-
-QToolButton:pressed{
-	background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1  rgb(85,85,85), stop: 0 rgb(95,95,95));
-	border-radius: 10px;
-}</string>
-                     </property>
-                     <property name="text">
-                      <string>...</string>
-                     </property>
-                     <property name="icon">
-                      <iconset resource="../qrc/resource.qrc">
-                       <normaloff>:/img/server_red</normaloff>:/img/server_red</iconset>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QToolButton" name="logsViewButtton">
-                     <property name="minimumSize">
-                      <size>
-                       <width>20</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>20</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QToolButton{
-	border-radius: 5px;
-}
-
-QToolButton:hover{
-	background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 0  rgb(58,58,58), stop: 1 rgb(68,68,68));
-	border-radius: 10px;
-}
-
-QToolButton:pressed{
-	background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1  rgb(85,85,85), stop: 0 rgb(95,95,95));
-	border-radius: 10px;
-}</string>
-                     </property>
-                     <property name="text">
-                      <string>Database
-</string>
-                     </property>
-                     <property name="icon">
-                      <iconset resource="../qrc/resource.qrc">
-                       <normaloff>:/img/terminal</normaloff>:/img/terminal</iconset>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>16</width>
-                       <height>16</height>
-                      </size>
-                     </property>
-                     <property name="checkable">
-                      <bool>false</bool>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                     <property name="toolButtonStyle">
-                      <enum>Qt::ToolButtonIconOnly</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="centerHelperVertical2">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
+            <property name="icon">
+             <iconset>
+              <normalon>:/svg/panel/dashboard</normalon>
+             </iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="commandsFrame">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <spacer name="horizontalSpacerUser">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>10</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="userImage">
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>50</height>
+              <width>48</width>
+              <height>48</height>
+             </size>
+            </property>
+            <property name="sizeIncrement">
+             <size>
+              <width>48</width>
+              <height>48</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="userData">
+            <property name="text">
+             <string>__user_data__</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="settingsButton">
+            <property name="minimumSize">
+             <size>
+              <width>41</width>
+              <height>41</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>16777215</width>
-              <height>55</height>
+              <width>41</width>
+              <height>41</height>
              </size>
             </property>
-            <property name="styleSheet">
-             <string notr="true">QFrame{
-background-color: rgba(0,0,0,0);
-border: 0px;
-}</string>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+            <property name="toolTip">
+             <string>Show settings</string>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
+            <property name="text">
+             <string/>
             </property>
-            <layout class="QHBoxLayout" name="commandsLayout">
-             <property name="spacing">
-              <number>-1</number>
-             </property>
-             <property name="leftMargin">
-              <number>5</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>5</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>10</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLabel" name="userImage">
-               <property name="minimumSize">
-                <size>
-                 <width>48</width>
-                 <height>48</height>
-                </size>
-               </property>
-               <property name="sizeIncrement">
-                <size>
-                 <width>48</width>
-                 <height>48</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="userData">
-               <property name="styleSheet">
-                <string notr="true">QLabel{
-font-size:  14px;
-}
-
-</string>
-               </property>
-               <property name="text">
-                <string>__user_data__</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="settingsButton">
-               <property name="minimumSize">
-                <size>
-                 <width>41</width>
-                 <height>41</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>41</width>
-                 <height>41</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">QToolButton{
-	border-radius: 5px;
-}
-
-QToolButton:hover{
-	background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 0  rgb(58,58,58), stop: 1 rgb(68,68,68));
-	border-radius: 10px;
-}
-
-QToolButton:pressed{
-	background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1  rgb(85,85,85), stop: 0 rgb(95,95,95));
-	border-radius: 10px;
-}</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normalon>:/img/settings</normalon>
-                </iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>32</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <property name="icon">
+             <iconset>
+              <normalon>:/img/settings</normalon>
+             </iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="CENTAUR_NAMESPACE::MovableFrame" name="frame">
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
+        <widget class="QFrame" name="mainUIWidget">
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="lineWidth">
+          <number>0</number>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="spacing">
@@ -627,1601 +313,163 @@ QToolButton:pressed{
            <number>0</number>
           </property>
           <item>
-           <widget class="QSplitter" name="splitter">
+           <widget class="CENTAUR_NAMESPACE::SidePanelFrame" name="sideBarLeftFrame">
+            <property name="minimumSize">
+             <size>
+              <width>45</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>255</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
             <property name="lineWidth">
-             <number>1</number>
+             <number>0</number>
             </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="opaqueResize">
-             <bool>true</bool>
-            </property>
-            <property name="handleWidth">
-             <number>3</number>
-            </property>
-            <property name="childrenCollapsible">
-             <bool>false</bool>
-            </property>
-            <widget class="QFrame" name="sideBarLeftFrame">
-             <property name="styleSheet">
-              <string notr="true">QFrame{
-background-color: rgb(11,15,17);
-/*
-background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1 rgb(22,25,30), stop: 0 rgb(23,28,35));*/
-border-top-left-radius: 0px;
-border-top-right-radius: 0px;
-border-bottom-left-radius: 0px;
-border-bottom-right-radius: 0px;
-border: 0px;
-}</string>
+            <layout class="QVBoxLayout" name="sideBarLeftFrameLayout">
+             <property name="spacing">
+              <number>0</number>
              </property>
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
+             <property name="leftMargin">
+              <number>5</number>
              </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
+             <property name="topMargin">
+              <number>12</number>
              </property>
-             <layout class="QVBoxLayout" name="sideBarLeftFrameLayout">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-              <property name="leftMargin">
-               <number>5</number>
-              </property>
-              <property name="topMargin">
-               <number>12</number>
-              </property>
-              <property name="rightMargin">
-               <number>12</number>
-              </property>
-              <property name="bottomMargin">
-               <number>12</number>
-              </property>
-              <item>
-               <widget class="CENTAUR_NAMESPACE::ChevronButton" name="exchangesButton">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>30</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>30</height>
-                 </size>
-                </property>
-                <property name="palette">
-                 <palette>
-                  <active>
-                   <colorrole role="WindowText">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>204</red>
-                      <green>204</green>
-                      <blue>204</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Button">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="0">
-                      <red>28</red>
-                      <green>35</green>
-                      <blue>43</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Text">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>204</red>
-                      <green>204</green>
-                      <blue>204</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="ButtonText">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>204</red>
-                      <green>204</green>
-                      <blue>204</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Base">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="0">
-                      <red>28</red>
-                      <green>35</green>
-                      <blue>43</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Window">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="0">
-                      <red>28</red>
-                      <green>35</green>
-                      <blue>43</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="PlaceholderText">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="128">
-                      <red>204</red>
-                      <green>204</green>
-                      <blue>204</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                  </active>
-                  <inactive>
-                   <colorrole role="WindowText">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>204</red>
-                      <green>204</green>
-                      <blue>204</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Button">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="0">
-                      <red>28</red>
-                      <green>35</green>
-                      <blue>43</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Text">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>204</red>
-                      <green>204</green>
-                      <blue>204</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="ButtonText">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>204</red>
-                      <green>204</green>
-                      <blue>204</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Base">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="0">
-                      <red>28</red>
-                      <green>35</green>
-                      <blue>43</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Window">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="0">
-                      <red>28</red>
-                      <green>35</green>
-                      <blue>43</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="PlaceholderText">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="128">
-                      <red>204</red>
-                      <green>204</green>
-                      <blue>204</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                  </inactive>
-                  <disabled>
-                   <colorrole role="WindowText">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>192</red>
-                      <green>192</green>
-                      <blue>192</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Button">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>157</red>
-                      <green>158</green>
-                      <blue>164</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Text">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>192</red>
-                      <green>192</green>
-                      <blue>192</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="ButtonText">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>192</red>
-                      <green>192</green>
-                      <blue>192</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Base">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>157</red>
-                      <green>158</green>
-                      <blue>164</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="Window">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>157</red>
-                      <green>158</green>
-                      <blue>164</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                   <colorrole role="PlaceholderText">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="128">
-                      <red>192</red>
-                      <green>192</green>
-                      <blue>192</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                  </disabled>
-                 </palette>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">
-
-QPushButton{
-font-size: 14px;
-font-weight: 600;
-color:  #cccccc;
-border: 0px;
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-border-bottom-left-radius: 0px;
-border-bottom-right-radius: 0px;
-background-color: rgba(28,35,43, 0);
-text-align: left;
-padding:  0 0 0 15;
-}
-
-QPushButton:default{
-font-weight: 800;
-color:  #0d3C61;
-border: 0px;
-border-radius:  5px;
-border: 2px solid rgba(144,203,249,100);
-background-color: #2196f3;
-}
-
-
-
-QPushButton:hover, QPushButton:hover:default{
-	background-color:  rgb(55,61,68);
-}
-
-QPushButton:pressed{
-background-color: rgb(62,68,75);
-}
-
-QPushButton::on{
-background-color: rgb(51,57,64);
-}
-
-
-QPushButton:pressed:default{
-background-color:  rgb(51,57,64);
-}
-
-QPushButton:disabled{
-color: #c0c0c0;
-background-color: #9D9EA4;
-}
-</string>
-                </property>
-                <property name="text">
-                 <string>Exchanges</string>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_6">
-                <property name="spacing">
+             <property name="rightMargin">
+              <number>5</number>
+             </property>
+             <property name="bottomMargin">
+              <number>12</number>
+             </property>
+             <item>
+              <widget class="QFrame" name="sidePanelStatusFrame">
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="sidePanelToggleLayout">
+                <property name="leftMargin">
                  <number>0</number>
                 </property>
                 <property name="topMargin">
                  <number>0</number>
                 </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>12</number>
+                </property>
                 <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_6">
-                  <property name="spacing">
-                   <number>0</number>
+                 <spacer name="sidePanelStatusFrameSpacerLeft">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
                   </property>
-                  <property name="rightMargin">
-                   <number>0</number>
+                  <property name="sizeType">
+                   <enum>QSizePolicy::Expanding</enum>
                   </property>
-                  <item>
-                   <widget class="QScrollArea" name="scrollArea_3">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>56</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="verticalScrollBarPolicy">
-                     <enum>Qt::ScrollBarAlwaysOff</enum>
-                    </property>
-                    <property name="widgetResizable">
-                     <bool>true</bool>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                    <widget class="QWidget" name="scrollAreaWidgetContents_3">
-                     <property name="geometry">
-                      <rect>
-                       <x>0</x>
-                       <y>0</y>
-                       <width>74</width>
-                       <height>485</height>
-                      </rect>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QWidget {
-background-color: transparent;
-}</string>
-                     </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_7">
-                      <item>
-                       <widget class="QToolButton" name="toolButton_9">
-                        <property name="minimumSize">
-                         <size>
-                          <width>50</width>
-                          <height>50</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>50</height>
-                         </size>
-                        </property>
-                        <property name="styleSheet">
-                         <string notr="true">QToolButton {
-background-color: black;
-}</string>
-                        </property>
-                        <property name="text">
-                         <string>Watchlist</string>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="../qrc/resource.qrc">
-                          <normaloff>:/svg/favorites/star</normaloff>:/svg/favorites/star</iconset>
-                        </property>
-                        <property name="iconSize">
-                         <size>
-                          <width>35</width>
-                          <height>35</height>
-                         </size>
-                        </property>
-                        <property name="checkable">
-                         <bool>true</bool>
-                        </property>
-                        <property name="toolButtonStyle">
-                         <enum>Qt::ToolButtonTextUnderIcon</enum>
-                        </property>
-                        <property name="autoRaise">
-                         <bool>false</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QToolButton" name="toolButton_7">
-                        <property name="minimumSize">
-                         <size>
-                          <width>50</width>
-                          <height>50</height>
-                         </size>
-                        </property>
-                        <property name="styleSheet">
-                         <string notr="true">QToolButton {
-background-color: white;
-}</string>
-                        </property>
-                        <property name="text">
-                         <string>...</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <spacer name="verticalSpacer">
-                        <property name="orientation">
-                         <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>20</width>
-                          <height>40</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </widget>
-                   </widget>
-                  </item>
-                 </layout>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                 <item>
-                 <widget class="QFrame" name="exchangesFrame">
+                 <widget class="QToolButton" name="sidePanelViewButton">
                   <property name="minimumSize">
                    <size>
-                    <width>200</width>
-                    <height>0</height>
+                    <width>35</width>
+                    <height>35</height>
                    </size>
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>16777215</width>
-                    <height>16777215</height>
+                    <width>35</width>
+                    <height>35</height>
                    </size>
                   </property>
-                  <property name="styleSheet">
-                   <string notr="true">QFrame{
-background-color: rgb(16,20,22);
-/*
-background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1  rgb(53,61,66), stop: 0 rgb(79,85,90));*/
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-border-bottom-left-radius: 10px;
-border-bottom-right-radius: 10px;
-border: 0px;
-}</string>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
                   </property>
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
+                  <property name="toolTip">
+                   <string>Contract/Expand the menu panel</string>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
+                  <property name="text">
+                   <string/>
                   </property>
-                  <layout class="QVBoxLayout" name="exchangeFrameLayou">
-                   <property name="spacing">
-                    <number>1</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>5</number>
-                   </property>
-                   <item>
-                    <widget class="QFrame" name="exchangeStackedFrame">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>100</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QFrame{
-border-radius: 0px;
-}</string>
-                     </property>
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_4">
-                      <property name="spacing">
-                       <number>0</number>
-                      </property>
-                      <property name="leftMargin">
-                       <number>5</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>10</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>5</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QStackedWidget" name="stackedWidget">
-                        <property name="styleSheet">
-                         <string notr="true"/>
-                        </property>
-                        <widget class="QWidget" name="watchListPage">
-                         <layout class="QVBoxLayout" name="verticalLayout_5">
-                          <property name="spacing">
-                           <number>0</number>
-                          </property>
-                          <property name="leftMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="topMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="rightMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="bottomMargin">
-                           <number>0</number>
-                          </property>
-                          <item>
-                           <widget class="WatchlistWidget" name="watchListWidget">
-                            <property name="font">
-                             <font>
-                              <family>Inter</family>
-                             </font>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">WatchlistWidget {
-border-radius: 0px;
-}</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="CENTAUR_NAMESPACE::SearchLineEdit" name="watchListSearch">
-                            <property name="font">
-                             <font>
-                              <family>Inter</family>
-                             </font>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">QLineEdit{
-border: 0px;
-color: black;
-background-color: rgb(220,220,220);
-border-radius:  0px;
-min-height: 25px;
-padding: 0 0 0 5;
-}
-
-
-QLineEdit:hover{
-background-color:  rgb(232,232,232);
-}
-
-
-
-QLineEdit:focus{
-background-color:  rgb(240,240,240);
-border: 2px solid #56aff6;
-}
-</string>
-                            </property>
-                            <property name="placeholderText">
-                             <string>Search...</string>
-                            </property>
-                            <property name="clearButtonEnabled">
-                             <bool>true</bool>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </widget>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="buttonsStackedFrame">
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QFrame{
-background: transparent;
-
-border-top-left-radius: 0px;
-border-top-right-radius: 0px;
-border-bottom-left-radius: 0px;
-border-bottom-right-radius: 0px;
-border: 0px;
-}</string>
-                     </property>
-                     <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Plain</enum>
-                     </property>
-                     <property name="lineWidth">
-                      <number>0</number>
-                     </property>
-                     <layout class="QVBoxLayout" name="buttonsStackerFrameLayout">
-                      <property name="spacing">
-                       <number>0</number>
-                      </property>
-                      <property name="leftMargin">
-                       <number>5</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>5</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QScrollArea" name="scrollArea">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>30</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>16777215</width>
-                          <height>30</height>
-                         </size>
-                        </property>
-                        <property name="palette">
-                         <palette>
-                          <active>
-                           <colorrole role="WindowText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="216">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Button">
-                            <brush brushstyle="LinearGradientPattern">
-                             <gradient startx="0.500000000000000" starty="0.000000000000000" endx="0.500000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-                              <gradientstop position="0.000000000000000">
-                               <color alpha="255">
-                                <red>79</red>
-                                <green>85</green>
-                                <blue>90</blue>
-                               </color>
-                              </gradientstop>
-                              <gradientstop position="1.000000000000000">
-                               <color alpha="255">
-                                <red>53</red>
-                                <green>61</green>
-                                <blue>66</blue>
-                               </color>
-                              </gradientstop>
-                             </gradient>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Light">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>55</red>
-                              <green>55</green>
-                              <blue>55</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Midlight">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>52</red>
-                              <green>52</green>
-                              <blue>52</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Dark">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>191</red>
-                              <green>191</green>
-                              <blue>191</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Mid">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>36</red>
-                              <green>36</green>
-                              <blue>36</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Text">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="216">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="BrightText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>55</red>
-                              <green>55</green>
-                              <blue>55</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="ButtonText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="216">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Base">
-                            <brush brushstyle="LinearGradientPattern">
-                             <gradient startx="0.500000000000000" starty="0.000000000000000" endx="0.500000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-                              <gradientstop position="0.000000000000000">
-                               <color alpha="255">
-                                <red>79</red>
-                                <green>85</green>
-                                <blue>90</blue>
-                               </color>
-                              </gradientstop>
-                              <gradientstop position="1.000000000000000">
-                               <color alpha="255">
-                                <red>53</red>
-                                <green>61</green>
-                                <blue>66</blue>
-                               </color>
-                              </gradientstop>
-                             </gradient>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Window">
-                            <brush brushstyle="LinearGradientPattern">
-                             <gradient startx="0.500000000000000" starty="0.000000000000000" endx="0.500000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-                              <gradientstop position="0.000000000000000">
-                               <color alpha="255">
-                                <red>79</red>
-                                <green>85</green>
-                                <blue>90</blue>
-                               </color>
-                              </gradientstop>
-                              <gradientstop position="1.000000000000000">
-                               <color alpha="255">
-                                <red>53</red>
-                                <green>61</green>
-                                <blue>66</blue>
-                               </color>
-                              </gradientstop>
-                             </gradient>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Shadow">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>0</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Highlight">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>116</red>
-                              <green>82</green>
-                              <blue>55</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="HighlightedText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="216">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Link">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>53</red>
-                              <green>134</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="LinkVisited">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>255</red>
-                              <green>0</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="AlternateBase">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>152</red>
-                              <green>152</green>
-                              <blue>152</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="NoRole">
-                            <brush brushstyle="NoBrush">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>0</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="ToolTipBase">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="63">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="ToolTipText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>0</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="PlaceholderText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="63">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </active>
-                          <inactive>
-                           <colorrole role="WindowText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="216">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Button">
-                            <brush brushstyle="LinearGradientPattern">
-                             <gradient startx="0.500000000000000" starty="0.000000000000000" endx="0.500000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-                              <gradientstop position="0.000000000000000">
-                               <color alpha="255">
-                                <red>79</red>
-                                <green>85</green>
-                                <blue>90</blue>
-                               </color>
-                              </gradientstop>
-                              <gradientstop position="1.000000000000000">
-                               <color alpha="255">
-                                <red>53</red>
-                                <green>61</green>
-                                <blue>66</blue>
-                               </color>
-                              </gradientstop>
-                             </gradient>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Light">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>55</red>
-                              <green>55</green>
-                              <blue>55</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Midlight">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>52</red>
-                              <green>52</green>
-                              <blue>52</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Dark">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>191</red>
-                              <green>191</green>
-                              <blue>191</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Mid">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>36</red>
-                              <green>36</green>
-                              <blue>36</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Text">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="216">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="BrightText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>55</red>
-                              <green>55</green>
-                              <blue>55</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="ButtonText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>0</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Base">
-                            <brush brushstyle="LinearGradientPattern">
-                             <gradient startx="0.500000000000000" starty="0.000000000000000" endx="0.500000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-                              <gradientstop position="0.000000000000000">
-                               <color alpha="255">
-                                <red>79</red>
-                                <green>85</green>
-                                <blue>90</blue>
-                               </color>
-                              </gradientstop>
-                              <gradientstop position="1.000000000000000">
-                               <color alpha="255">
-                                <red>53</red>
-                                <green>61</green>
-                                <blue>66</blue>
-                               </color>
-                              </gradientstop>
-                             </gradient>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Window">
-                            <brush brushstyle="LinearGradientPattern">
-                             <gradient startx="0.500000000000000" starty="0.000000000000000" endx="0.500000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-                              <gradientstop position="0.000000000000000">
-                               <color alpha="255">
-                                <red>79</red>
-                                <green>85</green>
-                                <blue>90</blue>
-                               </color>
-                              </gradientstop>
-                              <gradientstop position="1.000000000000000">
-                               <color alpha="255">
-                                <red>53</red>
-                                <green>61</green>
-                                <blue>66</blue>
-                               </color>
-                              </gradientstop>
-                             </gradient>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Shadow">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>0</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Highlight">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>54</red>
-                              <green>54</green>
-                              <blue>54</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="HighlightedText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="216">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Link">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="LinkVisited">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>255</red>
-                              <green>0</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="AlternateBase">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>152</red>
-                              <green>152</green>
-                              <blue>152</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="NoRole">
-                            <brush brushstyle="NoBrush">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>0</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="ToolTipBase">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="63">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="ToolTipText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>0</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="PlaceholderText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="63">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </inactive>
-                          <disabled>
-                           <colorrole role="WindowText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="63">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Button">
-                            <brush brushstyle="LinearGradientPattern">
-                             <gradient startx="0.500000000000000" starty="0.000000000000000" endx="0.500000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-                              <gradientstop position="0.000000000000000">
-                               <color alpha="255">
-                                <red>79</red>
-                                <green>85</green>
-                                <blue>90</blue>
-                               </color>
-                              </gradientstop>
-                              <gradientstop position="1.000000000000000">
-                               <color alpha="255">
-                                <red>53</red>
-                                <green>61</green>
-                                <blue>66</blue>
-                               </color>
-                              </gradientstop>
-                             </gradient>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Light">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>55</red>
-                              <green>55</green>
-                              <blue>55</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Midlight">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>52</red>
-                              <green>52</green>
-                              <blue>52</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Dark">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>191</red>
-                              <green>191</green>
-                              <blue>191</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Mid">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>36</red>
-                              <green>36</green>
-                              <blue>36</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Text">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="63">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="BrightText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>55</red>
-                              <green>55</green>
-                              <blue>55</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="ButtonText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="63">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Base">
-                            <brush brushstyle="LinearGradientPattern">
-                             <gradient startx="0.500000000000000" starty="0.000000000000000" endx="0.500000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-                              <gradientstop position="0.000000000000000">
-                               <color alpha="255">
-                                <red>79</red>
-                                <green>85</green>
-                                <blue>90</blue>
-                               </color>
-                              </gradientstop>
-                              <gradientstop position="1.000000000000000">
-                               <color alpha="255">
-                                <red>53</red>
-                                <green>61</green>
-                                <blue>66</blue>
-                               </color>
-                              </gradientstop>
-                             </gradient>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Window">
-                            <brush brushstyle="LinearGradientPattern">
-                             <gradient startx="0.500000000000000" starty="0.000000000000000" endx="0.500000000000000" endy="1.000000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-                              <gradientstop position="0.000000000000000">
-                               <color alpha="255">
-                                <red>79</red>
-                                <green>85</green>
-                                <blue>90</blue>
-                               </color>
-                              </gradientstop>
-                              <gradientstop position="1.000000000000000">
-                               <color alpha="255">
-                                <red>53</red>
-                                <green>61</green>
-                                <blue>66</blue>
-                               </color>
-                              </gradientstop>
-                             </gradient>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Shadow">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>0</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Highlight">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>54</red>
-                              <green>54</green>
-                              <blue>54</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="HighlightedText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="63">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Link">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="LinkVisited">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>255</red>
-                              <green>0</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="AlternateBase">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>152</red>
-                              <green>152</green>
-                              <blue>152</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="NoRole">
-                            <brush brushstyle="NoBrush">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>0</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="ToolTipBase">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="63">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="ToolTipText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>0</red>
-                              <green>0</green>
-                              <blue>0</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="PlaceholderText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="63">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </disabled>
-                         </palette>
-                        </property>
-                        <property name="styleSheet">
-                         <string notr="true">QScrollArea{
-background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1  rgb(53,61,66), stop: 0 rgb(79,85,90));
-border-top-left-radius: 0px;
-border-top-right-radius: 0px;
-border-bottom-left-radius: 0px;
-border-bottom-right-radius: 0px;
-border: 0px;
-}</string>
-                        </property>
-                        <property name="verticalScrollBarPolicy">
-                         <enum>Qt::ScrollBarAlwaysOff</enum>
-                        </property>
-                        <property name="horizontalScrollBarPolicy">
-                         <enum>Qt::ScrollBarAlwaysOff</enum>
-                        </property>
-                        <property name="sizeAdjustPolicy">
-                         <enum>QAbstractScrollArea::AdjustToContents</enum>
-                        </property>
-                        <property name="widgetResizable">
-                         <bool>true</bool>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                        <widget class="QWidget" name="scrollAreaWidgetContents">
-                         <property name="geometry">
-                          <rect>
-                           <x>0</x>
-                           <y>0</y>
-                           <width>190</width>
-                           <height>30</height>
-                          </rect>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">QWidget{
-background: transparent;
-
-border-top-left-radius: 0px;
-border-top-right-radius: 0px;
-border-bottom-left-radius: 0px;
-border-bottom-right-radius: 0px;
-border: 0px;
-}
-</string>
-                         </property>
-                         <layout class="QHBoxLayout" name="exchangesButtonsLayout">
-                          <property name="spacing">
-                           <number>0</number>
-                          </property>
-                          <property name="leftMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="topMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="rightMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="bottomMargin">
-                           <number>0</number>
-                          </property>
-                          <item>
-                           <widget class="QPushButton" name="watchlistButton">
-                            <property name="minimumSize">
-                             <size>
-                              <width>0</width>
-                              <height>30</height>
-                             </size>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">	
-
-QPushButton{
-font-size: 12px;
-font-weight: 600;
-color:  #cccccc;
-border: 0px;
-border-top-left-radius: 0px;
-border-top-right-radius: 0px;
-border-bottom-left-radius: 10px;
-border-bottom-right-radius: 10px;
-background-color: rgba(28,35,43, 0);
-text-align: center;
-padding:  0 2 0 2;
-}
-
-QPushButton:default{
-font-weight: 800;
-color:  #0d3C61;
-border: 0px;
-border-radius:  5px;
-border: 2px solid rgba(144,203,249,100);
-background-color: #2196f3;
-}
-
-
-
-QPushButton:hover, QPushButton:hover:default{
-	background-color:  rgb(55,61,68);
-}
-
-QPushButton:pressed{
-background-color: rgb(62,68,75);
-}
-
-QPushButton::on{
-background-color: rgb(51,57,64);
-}
-
-
-QPushButton:pressed:default{
-background-color:  rgb(51,57,64);
-}
-
-QPushButton:disabled{
-color: #c0c0c0;
-background-color: #9D9EA4;
-}
-</string>
-                            </property>
-                            <property name="text">
-                             <string>Watchlist</string>
-                            </property>
-                            <property name="icon">
-                             <iconset resource="../qrc/resource.qrc">
-                              <normaloff>:/svg/favorites/star</normaloff>:/svg/favorites/star</iconset>
-                            </property>
-                            <property name="checkable">
-                             <bool>true</bool>
-                            </property>
-                            <property name="autoExclusive">
-                             <bool>true</bool>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </widget>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                  </layout>
+                  <property name="icon">
+                   <iconset resource="../../Themes/MainTheme/qrc/resources.qrc">
+                    <normaloff>:/svg/panel/menu-open</normaloff>
+                    <normalon>:/svg/panel/dashboard</normalon>:/svg/panel/menu-open</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
                  </widget>
                 </item>
+                <item>
+                 <spacer name="sidePanelStatusFrameSpacerRight">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeType">
+                   <enum>QSizePolicy::Fixed</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>0</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
                </layout>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QFrame" name="middeleFrame">
-             <property name="minimumSize">
-              <size>
-               <width>500</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
-              <property name="leftMargin">
-               <number>12</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>12</number>
-              </property>
-              <item>
-               <widget class="CENTAUR_NAMESPACE::SquarifyWidget" name="widget" native="true"/>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QFrame" name="framePortfolio">
-             <property name="styleSheet">
-              <string notr="true">QFrame{
-background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1  rgb(16,24,31), stop: 0 rgb(23,31,38));
-border-top-left-radius: 0px;
-border-top-right-radius: 0px;
-border-bottom-left-radius: 0px;
-border-bottom-right-radius: 0px;
-border: 0px;
-}</string>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <item>
-               <widget class="QFrame" name="framePortfolio2">
-                <property name="minimumSize">
-                 <size>
-                  <width>200</width>
-                  <height>0</height>
-                 </size>
+              </widget>
+             </item>
+             <item>
+              <widget class="QScrollArea" name="sidePanelScrollArea">
+               <property name="styleSheet">
+                <string notr="true">QScrollArea#sidePanelScrollArea{background-color: rgba(0,0,0,0);}
+QWidget#scrollAreaWidgetContents{background-color: rgba(0,0,0,0);}</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <property name="lineWidth">
+                <number>0</number>
+               </property>
+               <property name="widgetResizable">
+                <bool>true</bool>
+               </property>
+               <widget class="QWidget" name="scrollAreaWidgetContents">
+                <property name="geometry">
+                 <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>245</width>
+                  <height>476</height>
+                 </rect>
                 </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">QFrame{
-background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1  rgb(53,61,66), stop: 0 rgb(79,85,90));
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-border-bottom-left-radius: 10px;
-border-bottom-right-radius: 10px;
-border: 0px;
-}</string>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QVBoxLayout" name="exchangeFrameLayou_2">
+                <layout class="QVBoxLayout" name="scrollAreaWidgetContentsLayou">
                  <property name="spacing">
-                  <number>10</number>
+                  <number>-1</number>
                  </property>
                  <property name="leftMargin">
                   <number>0</number>
@@ -2233,123 +481,259 @@ border: 0px;
                   <number>0</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>5</number>
+                  <number>0</number>
                  </property>
                  <item>
-                  <widget class="CENTAUR_NAMESPACE::ChevronButton" name="porfolioButton">
+                  <widget class="QToolButton" name="viewDashboardButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="minimumSize">
                     <size>
-                     <width>0</width>
-                     <height>30</height>
+                     <width>35</width>
+                     <height>35</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
-                     <height>30</height>
+                     <height>16777215</height>
                     </size>
                    </property>
-                   <property name="styleSheet">
-                    <string notr="true">
-
-QPushButton{
-font-size: 14px;
-font-weight: 600;
-color:  #cccccc;
-border: 0px;
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-border-bottom-left-radius: 0px;
-border-bottom-right-radius: 0px;
-background-color: rgba(28,35,43, 0);
-text-align: left;
-padding:  0 0 0 15;
-}
-
-QPushButton:default{
-font-weight: 800;
-color:  #0d3C61;
-border: 0px;
-border-radius:  5px;
-border: 2px solid rgba(144,203,249,100);
-background-color: #2196f3;
-}
-
-
-
-QPushButton:hover, QPushButton:hover:default{
-	background-color:  rgb(55,61,68);
-}
-
-QPushButton:pressed{
-background-color: rgb(62,68,75);
-}
-
-QPushButton::on{
-background-color: rgb(51,57,64);
-}
-
-
-QPushButton:pressed:default{
-background-color:  rgb(51,57,64);
-}
-
-QPushButton:disabled{
-color: #c0c0c0;
-background-color: #9D9EA4;
-}
-</string>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="toolTip">
+                    <string>Show Dashboard</string>
                    </property>
                    <property name="text">
-                    <string>Porfolio</string>
+                    <string>Dashboard</string>
                    </property>
-                   <property name="checkable">
-                    <bool>true</bool>
+                   <property name="icon">
+                    <iconset resource="../../Themes/MainTheme/qrc/resources.qrc">
+                     <normaloff>:/svg/panel/dashboard</normaloff>:/svg/panel/dashboard</iconset>
                    </property>
-                   <property name="checked">
-                    <bool>true</bool>
+                   <property name="iconSize">
+                    <size>
+                     <width>32</width>
+                     <height>32</height>
+                    </size>
+                   </property>
+                   <property name="toolButtonStyle">
+                    <enum>Qt::ToolButtonTextBesideIcon</enum>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QFrame" name="porfolioWidgetsFrame">
+                  <widget class="QToolButton" name="viewFavoritesButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="minimumSize">
                     <size>
-                     <width>0</width>
-                     <height>0</height>
+                     <width>35</width>
+                     <height>35</height>
                     </size>
                    </property>
-                   <property name="styleSheet">
-                    <string notr="true">QFrame{
-	border-radius: 0px;
-}</string>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>35</height>
+                    </size>
                    </property>
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
                    </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
+                   <property name="toolTip">
+                    <string>Show favorites</string>
                    </property>
-                   <layout class="QVBoxLayout" name="verticalLayout_3">
-                    <property name="spacing">
-                     <number>0</number>
-                    </property>
-                    <property name="leftMargin">
-                     <number>5</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>10</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>5</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>0</number>
-                    </property>
-                    <item>
-                     <widget class="CENTAUR_NAMESPACE::SearchLineEdit" name="porfolioSearch">
-                      <property name="styleSheet">
-                       <string notr="true">QLineEdit{
+                   <property name="text">
+                    <string>Favorites</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../../Themes/MainTheme/qrc/resources.qrc">
+                     <normaloff>:/svg/panel/favorites</normaloff>:/svg/panel/favorites</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>32</width>
+                     <height>32</height>
+                    </size>
+                   </property>
+                   <property name="toolButtonStyle">
+                    <enum>Qt::ToolButtonTextBesideIcon</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="viewExchangesButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>35</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="toolTip">
+                    <string>Show Exchanges</string>
+                   </property>
+                   <property name="text">
+                    <string>Exchanges</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../../Themes/MainTheme/qrc/resources.qrc">
+                     <normaloff>:/svg/panel/currency-exchange</normaloff>:/svg/panel/currency-exchange</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>32</width>
+                     <height>32</height>
+                    </size>
+                   </property>
+                   <property name="toolButtonStyle">
+                    <enum>Qt::ToolButtonTextBesideIcon</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="middeleFrame">
+            <property name="minimumSize">
+             <size>
+              <width>500</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <property name="lineWidth">
+             <number>0</number>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <property name="leftMargin">
+              <number>12</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>12</number>
+             </property>
+             <item>
+              <widget class="CENTAUR_NAMESPACE::SquarifyWidget" name="widget" native="true">
+               <widget class="WatchlistWidget" name="watchListWidget">
+                <property name="geometry">
+                 <rect>
+                  <x>60</x>
+                  <y>30</y>
+                  <width>192</width>
+                  <height>443</height>
+                 </rect>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>Inter</family>
+                 </font>
+                </property>
+               </widget>
+               <widget class="CENTAUR_NAMESPACE::SearchLineEdit" name="watchListSearch">
+                <property name="geometry">
+                 <rect>
+                  <x>270</x>
+                  <y>200</y>
+                  <width>190</width>
+                  <height>25</height>
+                 </rect>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>Inter</family>
+                 </font>
+                </property>
+                <property name="placeholderText">
+                 <string>Search...</string>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>true</bool>
+                </property>
+               </widget>
+               <widget class="QPushButton" name="watchlistButton">
+                <property name="geometry">
+                 <rect>
+                  <x>260</x>
+                  <y>470</y>
+                  <width>190</width>
+                  <height>30</height>
+                 </rect>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Watchlist</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../qrc/resource.qrc">
+                  <normaloff>:/svg/favorites/star</normaloff>:/svg/favorites/star</iconset>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>true</bool>
+                </property>
+               </widget>
+               <widget class="CENTAUR_NAMESPACE::SearchLineEdit" name="porfolioSearch">
+                <property name="geometry">
+                 <rect>
+                  <x>110</x>
+                  <y>0</y>
+                  <width>256</width>
+                  <height>25</height>
+                 </rect>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QLineEdit{
 border: 0px;
 color: black;
 background-color: rgb(220,220,220);
@@ -2369,26 +753,27 @@ background-color:  rgb(240,240,240);
 border: 2px solid #56aff6;
 }
 </string>
-                      </property>
-                      <property name="placeholderText">
-                       <string>Search...</string>
-                      </property>
-                      <property name="clearButtonEnabled">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="PortfolioWidget" name="porfolioList"/>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                </layout>
+                </property>
+                <property name="placeholderText">
+                 <string>Search...</string>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>true</bool>
+                </property>
                </widget>
-              </item>
-             </layout>
-            </widget>
+               <widget class="PortfolioWidget" name="porfolioList">
+                <property name="geometry">
+                 <rect>
+                  <x>200</x>
+                  <y>170</y>
+                  <width>256</width>
+                  <height>468</height>
+                 </rect>
+                </property>
+               </widget>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -2639,21 +1024,10 @@ border-bottom-right-radius: 10px;
    <header>../../Library/cui/include/SearchLineEdit.hpp</header>
   </customwidget>
   <customwidget>
-   <class>CENTAUR_NAMESPACE::MovableFrame</class>
+   <class>CENTAUR_NAMESPACE::TitleFrame</class>
    <extends>QFrame</extends>
-   <header>../../Library/cui/include/MovableFrame.hpp</header>
+   <header>../../Library/cui/include/TitleFrame.hpp</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CENTAUR_NAMESPACE::ResizableFrame</class>
-   <extends>QFrame</extends>
-   <header>../../Library/cui/include/ResizableFrame.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CENTAUR_NAMESPACE::ChevronButton</class>
-   <extends>QPushButton</extends>
-   <header>../../Library/cui/include/ChevronButton.hpp</header>
   </customwidget>
   <customwidget>
    <class>CENTAUR_NAMESPACE::SquarifyWidget</class>
@@ -2671,7 +1045,28 @@ border-bottom-right-radius: 10px;
    <extends>QListView</extends>
    <header>../include/PortfolioWidget.hpp</header>
   </customwidget>
+  <customwidget>
+   <class>CENTAUR_NAMESPACE::MainWindowFrame</class>
+   <extends>QFrame</extends>
+   <header>../../Library/cui/include/MainWindowFrame.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CENTAUR_NAMESPACE::CommandsFrame</class>
+   <extends>QFrame</extends>
+   <header>../../Library/cui/include/CommandsFrame.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CENTAUR_NAMESPACE::SidePanelFrame</class>
+   <extends>QFrame</extends>
+   <header>../../Library/cui/include/SidePanelFrame.hpp</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>settingsButton</tabstop>
+ </tabstops>
  <resources>
   <include location="../qrc/resource.qrc"/>
   <include location="../../Library/cui/rcc/resources.qrc"/>
