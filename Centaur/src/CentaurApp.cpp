@@ -523,7 +523,7 @@ void CentaurApp::initializeInterface() noexcept
         onRemoveWatchList(actionData.source, actionData.symbol);
     });
 
-    ui()->porfolioList->linkSearchEdit(ui()->porfolioSearch);
+    // ui()->porfolioList->linkSearchEdit(ui()->porfolioSearch);
 
     //    QPixmap pm;
     //    g_globals->symIcons.find(32, "BTC", &pm, Globals::AssetIcons::Crypto, this);
@@ -537,71 +537,71 @@ void CentaurApp::initializeInterface() noexcept
     //    g_globals->symIcons.find(32, "DOT", &pm, Globals::AssetIcons::Crypto, this);
     //    ui()->porfolioList->insertItem(pm, "Polkadot", "Binance SPOT", "DOT", "$ 0.23 USD", "0.0023 DOT");
 
-    ui()->watchListWidget->linkSearchEdit(ui()->watchListSearch);
+    //  ui()->watchListWidget->linkSearchEdit(ui()->watchListSearch);
+    /*
+        connect(ui()->watchListWidget, &WatchlistWidget::mouseRightClick, this, [&](const QPoint &pt) {
+            const auto &[symbol, source] = ui()->watchListWidget->sourceFromPoint(pt);
 
-    connect(ui()->watchListWidget, &WatchlistWidget::mouseRightClick, this, [&](const QPoint &pt) {
-        const auto &[symbol, source] = ui()->watchListWidget->sourceFromPoint(pt);
+            if (symbol.isEmpty() || source.isEmpty())
+                return;
 
-        if (symbol.isEmpty() || source.isEmpty())
-            return;
+            const QPoint menuPoint = ui()->watchListWidget->mapToGlobal(pt);
 
-        const QPoint menuPoint = ui()->watchListWidget->mapToGlobal(pt);
+            auto actions = _impl->exchangeMenuActions[uuid { source.toStdString(), false }];
 
-        auto actions = _impl->exchangeMenuActions[uuid { source.toStdString(), false }];
+            QMenu menu(this);
 
-        QMenu menu(this);
+            auto *exchBase = _impl->exchangeList[uuid { source.toStdString(), false }].exchange;
 
-        auto *exchBase = _impl->exchangeList[uuid { source.toStdString(), false }].exchange;
+            const OrderBookDepthInformation obdi { symbol, source };
 
-        const OrderBookDepthInformation obdi { symbol, source };
+            _impl->orderbookDepth->setData(QVariant::fromValue(obdi));
+            _impl->depthChart->setData(QVariant::fromValue(obdi));
+            _impl->removeWatchlist->setData(QVariant::fromValue(obdi));
 
-        _impl->orderbookDepth->setData(QVariant::fromValue(obdi));
-        _impl->depthChart->setData(QVariant::fromValue(obdi));
-        _impl->removeWatchlist->setData(QVariant::fromValue(obdi));
-
-        menu.addAction(_impl->orderbookDepth);
-        menu.addAction(_impl->depthChart);
-        menu.addSeparator();
-
-        if (exchBase != nullptr) {
-            const auto pluginInformation = pluginInformationFromBase(exchBase);
-            auto candleView              = exchBase->supportedTimeFrames();
-            if (!candleView.empty()) {
-                QMenu *candleMenu = menu.addMenu("Charts");
-
-                for (const auto &cd : candleView) {
-                    if (cd == plugin::TimeFrame::nullTime)
-                        candleMenu->addSeparator();
-                    else {
-                        auto iter = _impl->candleActions->actions.find(cd);
-                        if (iter != _impl->candleActions->actions.end()) {
-                            iter->second->setData(QVariant::fromValue(obdi));
-                            candleMenu->addAction(iter->second);
-                        }
-                    }
-                }
-                menu.addSeparator();
-            }
-        }
-
-        for (auto &action : actions) {
-            // Update the symbol name
-
-            if (action->isSeparator()) {
-                menu.addSeparator();
-            }
-            else {
-                action->setData(symbol);
-                menu.addAction(action);
-            }
-        }
-        if (!actions.isEmpty())
+            menu.addAction(_impl->orderbookDepth);
+            menu.addAction(_impl->depthChart);
             menu.addSeparator();
 
-        menu.addAction(_impl->removeWatchlist);
+            if (exchBase != nullptr) {
+                const auto pluginInformation = pluginInformationFromBase(exchBase);
+                auto candleView              = exchBase->supportedTimeFrames();
+                if (!candleView.empty()) {
+                    QMenu *candleMenu = menu.addMenu("Charts");
 
-        menu.exec(menuPoint);
-    });
+                    for (const auto &cd : candleView) {
+                        if (cd == plugin::TimeFrame::nullTime)
+                            candleMenu->addSeparator();
+                        else {
+                            auto iter = _impl->candleActions->actions.find(cd);
+                            if (iter != _impl->candleActions->actions.end()) {
+                                iter->second->setData(QVariant::fromValue(obdi));
+                                candleMenu->addAction(iter->second);
+                            }
+                        }
+                    }
+                    menu.addSeparator();
+                }
+            }
+
+            for (auto &action : actions) {
+                // Update the symbol name
+
+                if (action->isSeparator()) {
+                    menu.addSeparator();
+                }
+                else {
+                    action->setData(symbol);
+                    menu.addAction(action);
+                }
+            }
+            if (!actions.isEmpty())
+                menu.addSeparator();
+
+            menu.addAction(_impl->removeWatchlist);
+
+            menu.exec(menuPoint);
+        });*/
 
     _impl->sevenDayGraph = new QChartView(this);
     _impl->sevenDayGraph->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::Dialog);
@@ -616,36 +616,36 @@ border: 0px;
 #ifdef Q_OS_MAC
     _impl->sevenDayGraph->setAttribute(Qt::WA_TranslucentBackground);
 #endif
+    /*
+        connect(ui()->watchListWidget, &WatchlistWidget::itemHover, this, [&](const QString &symbol, const QString &source) {
+            if (symbol.isEmpty() || source.isEmpty()) {
+                _impl->sevenDayGraph->hide();
+                return;
+            }
 
-    connect(ui()->watchListWidget, &WatchlistWidget::itemHover, this, [&](const QString &symbol, const QString &source) {
-        if (symbol.isEmpty() || source.isEmpty()) {
+            auto itemIter = _impl->exchangeList.find(uuid(source.toStdString(), false));
+            if (itemIter == _impl->exchangeList.end()) {
+                logError("wlOrderbookSend", QString("Watchlist item for the symbol %1 was not found").arg(symbol));
+                return;
+            }
+
+            const auto &exchInfo = itemIter->second;
+            auto origin          = ui()->watchListWidget->mapToGlobal(ui()->watchListWidget->frameGeometry().topRight()); // To get the right
+
+            plotSevenDaysChart(symbol, exchInfo.exchange->get7dayData(symbol));
+
+            _impl->sevenDayGraph->setGeometry(
+                origin.x(),
+                origin.y(),
+                400, 400);
+
+            _impl->sevenDayGraph->show();
+        });
+
+        connect(ui()->watchListWidget, &WatchlistWidget::mouseLeave, this, [&]() {
             _impl->sevenDayGraph->hide();
-            return;
-        }
-
-        auto itemIter = _impl->exchangeList.find(uuid(source.toStdString(), false));
-        if (itemIter == _impl->exchangeList.end()) {
-            logError("wlOrderbookSend", QString("Watchlist item for the symbol %1 was not found").arg(symbol));
-            return;
-        }
-
-        const auto &exchInfo = itemIter->second;
-        auto origin          = ui()->watchListWidget->mapToGlobal(ui()->watchListWidget->frameGeometry().topRight()); // To get the right
-
-        plotSevenDaysChart(symbol, exchInfo.exchange->get7dayData(symbol));
-
-        _impl->sevenDayGraph->setGeometry(
-            origin.x(),
-            origin.y(),
-            400, 400);
-
-        _impl->sevenDayGraph->show();
-    });
-
-    connect(ui()->watchListWidget, &WatchlistWidget::mouseLeave, this, [&]() {
-        _impl->sevenDayGraph->hide();
-    });
-
+        });
+    */
     // Init Last-7-day chart
     _impl->last7Chart = new QChart;
     _impl->last7Chart->setAnimationOptions(QChart::AllAnimations);
@@ -974,54 +974,55 @@ void CentaurApp::onAddToWatchList(const QString &symbol, const QString &sender, 
         logError("watchlist", QString(tr("The sender %1 is not registered.")).arg(sender));
         return;
     }
+    /*
+        auto *watchInterface = interface->second.exchange;
 
-    auto watchInterface = interface->second.exchange;
+        // Generate a unique-id
+        const auto [addSuccess, symbolWatchlistPixmap] = watchInterface->addSymbolToWatchlist(symbol);
+        if (addSuccess) {
+            // QPixmap icon;
+            // qDebug() << icon << watchInterface->getBaseFromSymbol(symbol);
+            ui()->watchListWidget->insertItem(symbolWatchlistPixmap, symbol, sender, 0.0, 0.0, 0);
 
-    // Generate a unique-id
-    const auto [addSuccess, symbolWatchlistPixmap] = watchInterface->addSymbolToWatchlist(symbol);
-    if (addSuccess) {
-        // QPixmap icon;
-        // qDebug() << icon << watchInterface->getBaseFromSymbol(symbol);
-        ui()->watchListWidget->insertItem(symbolWatchlistPixmap, symbol, sender, 0.0, 0.0, 0);
+            // Add to the database
+            if (addToDatabase)
+                dal::DataAccess::addSymbolToFavorites(symbol, sender);
 
-        // Add to the database
-        if (addToDatabase)
-            dal::DataAccess::addSymbolToFavorites(symbol, sender);
+            // TODO: move the next code to a separate function (MAY BE) need more analysis
+            QLinearGradient gr_p({ 0, 0 }, { 1, 1 });
+            gr_p.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
+            gr_p.setColorAt(0, QColor(1, 166, 7));
+            gr_p.setColorAt(0.5, QColor(26, 175, 32));
+            gr_p.setColorAt(1, QColor(1, 133, 6));
 
-        // TODO: move the next code to a separate function (MAY BE) need more analysis
-        QLinearGradient gr_p({ 0, 0 }, { 1, 1 });
-        gr_p.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
-        gr_p.setColorAt(0, QColor(1, 166, 7));
-        gr_p.setColorAt(0.5, QColor(26, 175, 32));
-        gr_p.setColorAt(1, QColor(1, 133, 6));
+            QLinearGradient gr_n({ 0, 0 }, { 1, 1 });
+            gr_n.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
+            gr_n.setColorAt(0, QColor(167, 29, 7));
+            gr_n.setColorAt(0.5, QColor(176, 52, 32));
+            gr_n.setColorAt(1, QColor(134, 23, 6));
 
-        QLinearGradient gr_n({ 0, 0 }, { 1, 1 });
-        gr_n.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
-        gr_n.setColorAt(0, QColor(167, 29, 7));
-        gr_n.setColorAt(0.5, QColor(176, 52, 32));
-        gr_n.setColorAt(1, QColor(134, 23, 6));
+            auto dataList = watchInterface->getWatchlist24hrPriceChange();
 
-        auto dataList = watchInterface->getWatchlist24hrPriceChange();
+            std::transform(dataList.begin(), dataList.end(), dataList.begin(),
+                [&sender, &ui = _impl->ui](const std::tuple<qreal, qreal, QString> &data) -> std::tuple<qreal, qreal, QString> {
+                    ui->watchListWidget->updateDifference(std::get<2>(data), sender, std::get<1>(data));
+                    return { std::get<0>(data),
+                        std::get<1>(data),
+                        QString(R"(<font size="12"><b>%1</b></font><br><font size="11"><b>$ %2</b><br>%3 %</font>)")
+                            .arg(std::get<2>(data), QLocale(QLocale::English).toString(std::get<0>(data), 'f', 2))
+                            .arg(std::get<1>(data), 'f', '2') };
+                });
 
-        std::transform(dataList.begin(), dataList.end(), dataList.begin(),
-            [&sender, &ui = _impl->ui](const std::tuple<qreal, qreal, QString> &data) -> std::tuple<qreal, qreal, QString> {
-                ui->watchListWidget->updateDifference(std::get<2>(data), sender, std::get<1>(data));
-                return { std::get<0>(data),
-                    std::get<1>(data),
-                    QString(R"(<font size="12"><b>%1</b></font><br><font size="11"><b>$ %2</b><br>%3 %</font>)")
-                        .arg(std::get<2>(data), QLocale(QLocale::English).toString(std::get<0>(data), 'f', 2))
-                        .arg(std::get<1>(data), 'f', '2') };
-            });
-
-        ui()->widget->setData(dataList, gr_n, gr_p);
-    }
-    else {
-        logError("watchlist", QString("Symbol %1 was not added to the watchlist").arg(symbol));
-    }
+            ui()->widget->setData(dataList, gr_n, gr_p);
+        }
+        else {
+            logError("watchlist", QString("Symbol %1 was not added to the watchlist").arg(symbol));
+        }*/
 }
 
 void CentaurApp::onTickerUpdate(const QString &symbol, const QString &source, quint64 receivedTime, double price) noexcept
 {
+    /*
     const auto ms        = static_cast<qint64>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
     const qint64 latency = static_cast<qint64>(receivedTime) > ms ? 0ll : ms - static_cast<qint64>(receivedTime);
 
@@ -1036,7 +1037,7 @@ void CentaurApp::onTickerUpdate(const QString &symbol, const QString &source, qu
     QString depthCharDepthObjectName = QString("%1%2depth").arg(source, symbol);
     auto *depthDlg                   = this->findChild<DepthChartDialog *>(depthCharDepthObjectName);
     if (depthDlg != nullptr)
-        depthDlg->setPrice(price);
+        depthDlg->setPrice(price);*/
 }
 
 void CentaurApp::onRemoveWatchList(const QString &itemSource, const QString &itemSymbol) noexcept
@@ -1046,7 +1047,7 @@ void CentaurApp::onRemoveWatchList(const QString &itemSource, const QString &ite
 
     auto interfaceIter = _impl->exchangeList.find(uuid(itemSource.toStdString(), false));
     if (interfaceIter == _impl->exchangeList.end()) {
-        QString message = QString(tr("Failed to locate the symbol interface."));
+        const QString message = QString(tr("Failed to locate the symbol interface."));
         logError("wlRemove", message);
         QMessageBox box;
         box.setText(tr("Could remove the symbol"));
@@ -1055,50 +1056,50 @@ void CentaurApp::onRemoveWatchList(const QString &itemSource, const QString &ite
         box.exec();
         return;
     }
+    /*
+        // Call the plugin to inform that it must not send data of the symbol anymore
+        auto &exchInfo = interfaceIter->second;
 
-    // Call the plugin to inform that it must not send data of the symbol anymore
-    auto &exchInfo = interfaceIter->second;
+        exchInfo.exchange->removeSymbolFromWatchlist(itemSymbol);
 
-    exchInfo.exchange->removeSymbolFromWatchlist(itemSymbol);
+        // Remove the row
+        ui()->watchListWidget->removeItem(itemSymbol, itemSource);
 
-    // Remove the row
-    ui()->watchListWidget->removeItem(itemSymbol, itemSource);
+        { // TODO: find a better way to remove from the squarify
+            QLinearGradient gr_p({ 0, 0 }, { 1, 1 });
+            gr_p.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
+            gr_p.setColorAt(0, QColor(1, 166, 7));
+            gr_p.setColorAt(0.5, QColor(26, 175, 32));
+            gr_p.setColorAt(1, QColor(1, 133, 6));
 
-    { // TODO: find a better way to remove from the squarify
-        QLinearGradient gr_p({ 0, 0 }, { 1, 1 });
-        gr_p.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
-        gr_p.setColorAt(0, QColor(1, 166, 7));
-        gr_p.setColorAt(0.5, QColor(26, 175, 32));
-        gr_p.setColorAt(1, QColor(1, 133, 6));
+            QLinearGradient gr_n({ 0, 0 }, { 1, 1 });
+            gr_n.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
+            gr_n.setColorAt(0, QColor(167, 29, 7));
+            gr_n.setColorAt(0.5, QColor(176, 52, 32));
+            gr_n.setColorAt(1, QColor(134, 23, 6));
 
-        QLinearGradient gr_n({ 0, 0 }, { 1, 1 });
-        gr_n.setCoordinateMode(QGradient::CoordinateMode::ObjectMode);
-        gr_n.setColorAt(0, QColor(167, 29, 7));
-        gr_n.setColorAt(0.5, QColor(176, 52, 32));
-        gr_n.setColorAt(1, QColor(134, 23, 6));
+            auto dataList = exchInfo.exchange->getWatchlist24hrPriceChange();
 
-        auto dataList = exchInfo.exchange->getWatchlist24hrPriceChange();
+            std::transform(dataList.begin(), dataList.end(), dataList.begin(),
+                [&exchInfo, &ui = _impl->ui](const std::tuple<qreal, qreal, QString> &data) -> std::tuple<qreal, qreal, QString> {
+                    ui->watchListWidget->updateDifference(std::get<2>(data), exchInfo.exchange->getPluginUUID().to_qstring(false), std::get<1>(data));
+                    return { std::get<0>(data),
+                        std::get<1>(data),
+                        QString(R"(<font size="12"><b>%1</b></font><br><font size="11"><b>$ %2</b><br>%3 %</font>)")
+                            .arg(std::get<2>(data), QLocale(QLocale::English).toString(std::get<0>(data), 'f', 2))
+                            .arg(std::get<1>(data), 'f', '2') };
+                });
 
-        std::transform(dataList.begin(), dataList.end(), dataList.begin(),
-            [&exchInfo, &ui = _impl->ui](const std::tuple<qreal, qreal, QString> &data) -> std::tuple<qreal, qreal, QString> {
-                ui->watchListWidget->updateDifference(std::get<2>(data), exchInfo.exchange->getPluginUUID().to_qstring(false), std::get<1>(data));
-                return { std::get<0>(data),
-                    std::get<1>(data),
-                    QString(R"(<font size="12"><b>%1</b></font><br><font size="11"><b>$ %2</b><br>%3 %</font>)")
-                        .arg(std::get<2>(data), QLocale(QLocale::English).toString(std::get<0>(data), 'f', 2))
-                        .arg(std::get<1>(data), 'f', '2') };
-            });
+            ui()->widget->setData(dataList, gr_n, gr_p);
+        }
 
-        ui()->widget->setData(dataList, gr_n, gr_p);
-    }
-
-    logInfo("watchlist", QString(tr("%1 was removed from the UI list")).arg(itemSymbol));
-    dal::DataAccess::deleteFavoritesSymbol(itemSymbol, itemSource);
+        logInfo("watchlist", QString(tr("%1 was removed from the UI list")).arg(itemSymbol));
+        dal::DataAccess::deleteFavoritesSymbol(itemSymbol, itemSource);*/
 }
 
 void CentaurApp::onSetWatchlistSelection(const QString &source, const QString &symbol) noexcept
 {
-    std::pair<QString, QString> selection = { source, symbol };
+    const std::pair<QString, QString> selection = { source, symbol };
 
     if (_impl->currentWatchListSelection == selection)
         return;
@@ -1192,7 +1193,7 @@ void CentaurApp::plotSevenDaysChart(const QString &symbol, const QList<std::pair
 
 void CentaurApp::onShowPlugins() noexcept
 {
-    QGraphicsBlurEffect blur;
+    const QGraphicsBlurEffect blur;
 
     SettingsDialog dlg(this);
 
