@@ -10,6 +10,17 @@
     </qresource>
 
     <qresource prefix="/svg/commands">
-        <file alias="extension">../res/svg/</file>
+        <file alias="extension">../res/svg/extension_white_48dp.svg</file>
+        <file alias="terminal">../res/svg/terminal_white_48dp.svg</file>
+        <file alias="server-green">../res/svg/dns_green_48dp.svg</file>
+        <file alias="server-red">../res/svg/dns_red_48dp.svg</file>
+    </qresource>
+
+    <qresource prefix="/svg/panel">
+        <file alias="dashboard">../res/svg/dashboard_white_48dp.svg</file>
+        <file alias="currency-exchange">../res/svg/currency_exchange_white_48dp.svg</file>
+        <file alias="menu-open">../res/svg/menu_open_white_48dp.svg</file>
+        <file alias="menu">../res/svg/menu_white_36dp.svg</file>
+        <file alias="favorites">../res/svg/star_white_48dp.svg</file>
     </qresource>
 </RCC>

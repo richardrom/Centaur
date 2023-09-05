@@ -2,9 +2,6 @@
     <qresource prefix="/img">
         <file alias="arrow-down">../res/img/downArrow.svg</file>
         <file alias="arrow-up">../res/img/upArrow.svg</file>
-        <file alias="terminal">../res/img/terminal_white_48dp.svg</file>
-        <file alias="server_green">../res/img/dns_green_48dp.svg</file>
-        <file alias="server_red">../res/img/dns_red_48dp.svg</file>
         <file alias="settings">../res/img/settings_white_48dp.svg</file>
         <file alias="on-top">../res/img/tab_white_48dp.svg</file>
     </qresource>
