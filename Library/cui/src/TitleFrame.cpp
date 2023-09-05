@@ -23,6 +23,7 @@ static auto initFontFromInfo(const QFont &font_p, const cen::theme::FontTextLayo
         font.setFamily(fifo.style.fontName);
 
     font.setItalic(fifo.style.italic);
+
     font.setKerning(fifo.style.kerning);
     font.setUnderline(fifo.style.underline);
 
@@ -60,6 +61,8 @@ struct TitleFrame::Impl
     SystemPushButton *maximizeButton { nullptr }; // Under macOS, this is the fullscreen button
 
     bool previousFullScreenStatusWasMax = false;
+
+    std::vector<QToolButton *> toolButtons;
 };
 
 void TitleFrame::Impl::initData(QWidget *titleWidget)
@@ -333,7 +336,7 @@ void TitleFrame::paintEvent(QPaintEvent *event)
         painter.setFont(initFontFromInfo(QApplication::font(), P_IMPL()->uiInformation->font));
         const QFontMetrics fontMetrics(initFontFromInfo(QApplication::font(), P_IMPL()->uiInformation->font));
         const QString elidedText = fontMetrics.elidedText(P_IMPL()->frameTitle, Qt::TextElideMode::ElideRight, static_cast<int>(width), 0);
-        painter.drawText(event->rect(), elidedText, P_IMPL()->uiInformation->font.opts);
+        painter.drawText(rect(), elidedText, P_IMPL()->uiInformation->font.opts);
     }
 }
 
@@ -453,10 +456,17 @@ void TitleFrame::resizeEvent(QResizeEvent *event)
 {
     const auto &size = event->size();
 #ifdef Q_OS_MAC
-    static constexpr int buttonSpacing = 8;
-    static constexpr int maxSize       = 12;
-    static constexpr int xPosition     = 10;
-    const int yPosition                = (size.height() - maxSize) / 2;
+    static constexpr int buttonSpacing     = 8;
+    static constexpr int toolButtonSpacing = 4;
+    static constexpr int maxSize           = 12;
+    static constexpr int xPosition         = 10;
+    const int yPosition                    = (size.height() - maxSize) / 2;
+
+    const int toolButtonSize = std::min(size.height(), size.width()) - 4;
+    // Since the button size will be four pts less than std::min(size.height(), size.width())
+    // The Y Position at 2 px will center at Y the tool button
+    static constexpr int toolButtonYPosition = 2;
+
 #else
     // TODO: DO WINDOWS AND LINUX
 #endif
@@ -465,7 +475,7 @@ void TitleFrame::resizeEvent(QResizeEvent *event)
         P_IMPL()->closeButton->setGeometry(xAdvance, yPosition, maxSize, maxSize);
         xAdvance += maxSize + buttonSpacing;
     }
-
+ 
     if (P_IMPL()->minimizeButton) {
         P_IMPL()->minimizeButton->setGeometry(xAdvance, yPosition, maxSize, maxSize);
         xAdvance += maxSize + buttonSpacing;
@@ -475,7 +485,26 @@ void TitleFrame::resizeEvent(QResizeEvent *event)
         P_IMPL()->maximizeButton->setGeometry(xAdvance, yPosition, maxSize, maxSize);
     }
 
+    int toolButtonXAdvance = size.width() - xPosition - toolButtonSize;
+    for (auto *button : P_IMPL()->toolButtons) {
+        button->setGeometry(toolButtonXAdvance, toolButtonYPosition, toolButtonSize, toolButtonSize);
+        toolButtonXAdvance -= toolButtonSpacing + toolButtonSize;
+    }
+
     WindowFrame::resizeEvent(event);
+}
+
+QToolButton *TitleFrame::createToolButton(const QString &objectName)
+{
+    auto *button = new QToolButton(this);
+    button->setObjectName(objectName);
+    button->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    button->setCheckable(false);
+    button->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonIconOnly);
+
+    P_IMPL()->toolButtons.emplace_back(button);
+
+    return button;
 }
 
 END_CENTAUR_NAMESPACE

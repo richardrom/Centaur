@@ -13,6 +13,7 @@
 #ifndef CENTAUR_TITLEFRAME_HPP
 #define CENTAUR_TITLEFRAME_HPP
 
+#include <QToolButton>
 #include <SystemPushButton.hpp>
 #include <WindowFrame.hpp>
 
@@ -43,6 +44,8 @@ public:
 
     void hideSystemButtons();
     void showSystemButtons();
+
+    QToolButton *createToolButton(const QString &objectName);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
