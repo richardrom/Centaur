@@ -181,6 +181,7 @@ struct theme::ThemeParser::Impl
     auto parseCDialog(const QDomElement &element) -> void;
     auto parseTitleBar(const QDomElement &element) -> void;
     auto parseCommandsFrame(const QDomElement &element) -> void;
+    auto parseSidePanelFrame(const QDomElement &element) -> void;
 
     C_NODISCARD auto parseStates(const QDomElement &element) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::Elements;
     C_NODISCARD auto parseElementState(const QDomElement &element) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::ElementState;
@@ -379,6 +380,9 @@ void theme::ThemeParser::loadTheme(const std::string &file)
                 }
                 else if (nodeName == "commands-frame") {
                     P_IMPL()->parseCommandsFrame(cuiElement);
+                }
+                else if (nodeName == "side-panel") {
+                    P_IMPL()->parseSidePanelFrame(cuiElement);
                 }
             }
         }
@@ -2696,4 +2700,31 @@ auto theme::ThemeParser::Impl::parseCommandsFrame(const QDomElement &element) ->
         }
     }
     parser->uiElements.commandFrameInformation = cffo;
+}
+
+auto theme::ThemeParser::Impl::parseSidePanelFrame(const QDomElement &element) -> void
+{
+    using namespace Qt::Literals::StringLiterals;
+    CENTAUR_THEME_INTERFACE_NAMESPACE::SideFrameInformation sffo;
+    NODE_ITERATOR(sideFrameNode, element)
+    {
+        NODE_ELEMENT(sideFrameNode, sideFrameElement)
+
+        const QString nodeName  = sideFrameElement.tagName();
+        const QString nodeValue = sideFrameElement.text();
+
+        if (nodeName == "background-brush") {
+            sffo.backgroundBrush = getBrush(nodeValue);
+        }
+        else if (nodeName == "hide-panel-animation") {
+            sffo.hidePanelAnimation = getAnimation(nodeValue);
+        }
+        else if (nodeName == "show-panel-animation") {
+            sffo.showPanelAnimation = getAnimation(nodeValue);
+        }
+        else {
+            errors.emplace_back(u"node '%1' is not recognized in the commands-frame information"_s.arg(nodeName));
+        }
+    }
+    parser->uiElements.sideFrameInformation = sffo;
 }

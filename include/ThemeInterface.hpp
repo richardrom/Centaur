@@ -344,6 +344,13 @@ struct CommandFrameInformation
     QBrush backgroundBrush { Qt::NoBrush };
 };
 
+struct SideFrameInformation
+{
+    QBrush backgroundBrush { Qt::NoBrush };
+    ThemeAnimation *hidePanelAnimation;
+    ThemeAnimation *showPanelAnimation;
+};
+
 using ToolButtonInformation = PushButtonInformation;
 
 using ColorMap            = std::unordered_map<QString, QColor>;
@@ -413,6 +420,7 @@ struct UIElements
     TitleBarInformation titleBarInformation;
     MainFrameInformation mainFrameInformation;
     CommandFrameInformation commandFrameInformation;
+    SideFrameInformation sideFrameInformation;
 };
 
 #if defined(C_GNU_CLANG)

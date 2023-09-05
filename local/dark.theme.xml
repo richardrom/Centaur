@@ -17,6 +17,8 @@
     </constants>
 
     <colors>
+        <color name="hollow-color">#00000000</color>
+        <color name="white-semitransparent">#50ffffff</color>
         <color name="black">black</color>
         <color name="white">white</color>
         <color name="main-dark">#030507</color>
@@ -46,6 +48,7 @@
         <color name="main-darken-85p-des-50p-lighten-30p">#2e558b</color>
         <color name="main-dark-lighten-3p">#070c11</color>
         <color name="main-dark-lighten-6p">#0c141c</color>
+        <color name="main-dark-lighten-10p">#121e2a</color>
         <color name="disable-color">#606060</color>
         <color name="disable-text-color">#A8A8A8</color>
         <color name="gray-e0">#E0E0E0</color>
@@ -53,6 +56,8 @@
         <color name="gray-78">#787878</color>
         <color name="gray-5c">#5c5c5c</color>
         <color name="gray-6e">#6e6e6e</color>
+
+        <color name="main-lighten-15p-semitransparent">#5063a7fc</color>
 
 
         <color name="blue">blue</color>
@@ -67,6 +72,7 @@
         <brush name="main-frame-background" format="regular" color="main-dark"/>
         <brush name="main-lighten-10p-brush" format="regular" color="main-lighten-10p"/>
         <brush name="main-lighten-15p-brush" format="regular" color="main-lighten-15p"/>
+        <brush name="main-lighten-15p-semitransparent-brush" format="regular" color="main-lighten-15p-semitransparent"/>
         <brush name="main-lighten-25p-brush" format="regular" color="main-lighten-25p"/>
         <brush name="main-lighten-50p-brush" format="regular" color="main-lighten-50p"/>
         <brush name="main-darken-15p-brush" format="regular" color="main-darken-15p"/>
@@ -91,6 +97,10 @@
         <brush name="gray-b0-brush" format="regular" color="gray-b0"/>
         <brush name="gray-5c-brush" format="regular" color="gray-5c"/>
         <brush name="gray-6e-brush" format="regular" color="gray-6e"/>
+        <brush name="hollow-brush" format="regular" color="hollow-color"/>
+        <brush name="white-semitransparent-brush" format="regular" color="white-semitransparent"/>
+
+
         <brush name="progress-bar-brush" format="linear-gradient">
             <points>
                 <x-start>0.5</x-start>
@@ -186,7 +196,6 @@
             </colors>
         </brush>
 
-
         <brush name="title-brush" format="linear-gradient">
             <points>
                 <x-start>0.5</x-start>
@@ -197,6 +206,19 @@
             <colors>
                 <color name="black">0</color>
                 <color name="main-dark">1.0</color>
+            </colors>
+        </brush>
+
+        <brush name="side-panel-brush" format="linear-gradient">
+            <points>
+                <x-start>0.5</x-start>
+                <y-start>0.0</y-start>
+                <x-end>0.5</x-end>
+                <y-end>1.0</y-end>
+            </points>
+            <colors>
+                <color name="main-dark-lighten-6p">0.0</color>
+                <color name="main-dark-lighten-10p">1.0</color>
             </colors>
         </brush>
     </brushes>
@@ -249,6 +271,18 @@
                 <weight>medium</weight>
             </style>
         </font>
+
+        <font name="button-font-side-panel">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style>
+                <weight>medium</weight>
+            </style>
+        </font>
+
         <font name="button-focus-font">
             <options>
                 <vertical-alignment>center</vertical-alignment>
@@ -260,6 +294,16 @@
             </style>
         </font>
 
+        <font name="button-focus-font-side-panel">
+            <options>
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
+                <wrap-mode>at-word-or-anywhere</wrap-mode>
+            </options>
+            <style underline="1">
+                <weight>demi-bold</weight>
+            </style>
+        </font>
 
         <font name="regular-font">
             <options>
@@ -392,6 +436,14 @@
         </animation>
         <animation name="check-box-hover-out">
             <easing-curve>out-in-sine</easing-curve>
+            <duration>200</duration>
+        </animation>
+        <animation name="side-panel-hide">
+            <easing-curve>out-in-sine</easing-curve>
+            <duration>200</duration>
+        </animation>
+        <animation name="side-panel-show">
+            <easing-curve>in-out-sine</easing-curve>
             <duration>200</duration>
         </animation>
     </animations>
@@ -1089,6 +1141,7 @@
             </box>
         </check-boxes>
 
+
         <tool-buttons>
             <button>
                 <animations>
@@ -1097,7 +1150,6 @@
                         <hover-out>hover-exit</hover-out>
                     </animation>
                 </animations>
-
                 <enabled>
                     <state-normal>
                         <frame>tool-button-frame</frame>
@@ -1135,6 +1187,105 @@
                     </state-normal>
                 </disabled>
             </button>
+
+            <button name="settingsButton">
+                <animations>
+                    <animation hint="color" to="background" start="hollow-color" end="white-semitransparent">
+                        <hover-in>hover-enter</hover-in>
+                        <hover-out>hover-exit</hover-out>
+                    </animation>
+                </animations>
+                <enabled>
+
+                    <state-normal>
+                        <frame>tool-button-frame</frame>
+                        <font>button-font</font>
+                        <font-pen>black-pen</font-pen>
+                        <frame-brush>hollow-brush</frame-brush>
+                    </state-normal>
+                    <state-hover>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>white-semitransparent-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-hover>
+                    <state-focus>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>accent-brush</frame-brush>
+                        <frame-pen>main-darken-15p-def-btn-pen</frame-pen>
+                        <font>button-focus-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-focus>
+                    <state-pressed>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>main-lighten-15p-semitransparent-brush</frame-brush>
+                        <font>button-focus-font</font>
+                        <font-pen>black-pen</font-pen>
+                    </state-pressed>
+                </enabled>
+
+                <disabled>
+                    <state-normal>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>disable-color-brush</frame-brush>
+                        <font>button-font</font>
+                        <font-pen>disable-text-pen</font-pen>
+                    </state-normal>
+                </disabled>
+            </button>
+
+
+            <button name="viewPluginsButton" copy="settingsButton"/>
+            <button name="viewLogsButton" copy="settingsButton"/>
+            <button name="viewServerStatusButton" copy="settingsButton"/>
+            <button name="toolBarDashboard" copy="settingsButton"/>
+
+            <button name="viewDashboardButton">
+                <animations>
+                    <animation hint="color" to="background" start="hollow-color" end="white-semitransparent">
+                        <hover-in>hover-enter</hover-in>
+                        <hover-out>hover-exit</hover-out>
+                    </animation>
+                </animations>
+                <enabled>
+                    <state-normal>
+                        <font>button-font-side-panel</font>
+                        <font-pen>white-pen</font-pen>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>hollow-brush</frame-brush>
+                    </state-normal>
+                    <state-hover>
+                        <font>button-font-side-panel</font>
+                        <font-pen>white-pen</font-pen>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>white-semitransparent-brush</frame-brush>
+                    </state-hover>
+                    <state-focus>
+                        <font>button-focus-font-side-panel</font>
+                        <font-pen>white-pen</font-pen>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>accent-brush</frame-brush>
+                        <frame-pen>main-darken-15p-def-btn-pen</frame-pen>
+                    </state-focus>
+                    <state-pressed>
+                        <font>button-focus-font-side-panel</font>
+                        <font-pen>white-pen</font-pen>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>main-lighten-15p-semitransparent-brush</frame-brush>
+                    </state-pressed>
+                </enabled>
+                <disabled>
+                    <state-normal>
+                        <frame>tool-button-frame</frame>
+                        <frame-brush>disable-color-brush</frame-brush>
+                        <font>button-font-side-panel</font>
+                        <font-pen>disable-text-pen</font-pen>
+                    </state-normal>
+                </disabled>
+            </button>
+            <button name="viewFavoritesButton" copy="viewDashboardButton"/>
+            <button name="viewExchangesButton" copy="viewDashboardButton"/>
+            <button name="sidePanelViewButton" copy="viewDashboardButton"/>
         </tool-buttons>
 
         <groupbox>
@@ -1190,8 +1341,11 @@
                 <font>title-font</font>
                 <font-pen>title-font-pen</font-pen>
             </bar>
-
-
         </title-bar>
+        <side-panel>
+            <hide-panel-animation>side-panel-hide</hide-panel-animation>
+            <show-panel-animation>side-panel-show</show-panel-animation>
+            <background-brush>side-panel-brush</background-brush>
+        </side-panel>
     </cui-elements>
 </theme>
