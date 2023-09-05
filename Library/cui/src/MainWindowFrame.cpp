@@ -23,7 +23,7 @@ struct MainWindowFrame::Impl
 };
 
 MainWindowFrame::MainWindowFrame(QWidget *parent) :
-    WindowFrame(parent),
+    WindowFrame(WindowFrame::FrameMode::Movable, parent), // Allow the main frame to receive native resizing events
     _impl { std::make_unique<MainWindowFrame::Impl>() }
 {
 }
