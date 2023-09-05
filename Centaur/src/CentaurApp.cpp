@@ -921,16 +921,18 @@ void CentaurApp::startLoggingService() noexcept
 
 void CentaurApp::startCommunicationsServer() noexcept
 {
-    _impl->server = std::make_unique<ProtocolServer>(this);
+    auto *statusButton = findChild<QToolButton *>("viewServerStatusButton");
+    _impl->server      = std::make_unique<ProtocolServer>(this);
     QIcon icon;
     if (_impl->server->isListening()) {
-        icon.addFile(QString::fromUtf8(":/img/server_green"), QSize(), QIcon::Normal, QIcon::Off);
-        ui()->serverStatusButton->setIcon(icon);
+        icon.addFile(QString::fromUtf8(":/svg/commands/server-green"), QSize(), QIcon::Normal, QIcon::Off);
+        if (statusButton)
+            statusButton->setIcon(icon);
     }
     else {
-
-        icon.addFile(QString::fromUtf8(":/img/server_red"), QSize(), QIcon::Normal, QIcon::Off);
-        ui()->serverStatusButton->setIcon(icon);
+        icon.addFile(QString::fromUtf8(":/svg/commands/server-red"), QSize(), QIcon::Normal, QIcon::Off);
+        if (statusButton)
+            statusButton->setIcon(icon);
     }
 }
 
