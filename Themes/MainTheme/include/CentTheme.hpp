@@ -111,6 +111,10 @@ private:
     void drawToolButton(const QStyleOptionToolButton *option, QPainter *painter, const QWidget *widget) const;
     void drawToolButtonLabel(const QStyleOptionToolButton *option, QPainter *painter, const QWidget *widget) const;
     void drawGroupBox(const QStyleOptionGroupBox *option, QPainter *painter, const QWidget *widget) const;
+    void drawTabWidgetBackground(const QStyleOption *option, QPainter *painter, const QWidget *widget) const;
+    void drawTabBarBackground(const QStyleOptionTabBarBase *option, QPainter *painter, const QWidget *widget) const;
+    void drawTabBarShape(const QStyleOptionTab *option, QPainter *painter, const QWidget *widget) const;
+    void drawTabBarTabLabel(const QStyleOptionTab *option, QPainter *painter, const QWidget *widget) const;
 
     static void drawFrameAnimation(QPainter *painter, const QWidget *widget, const cen::theme::ElementState &state, QRect &widgetRect, bool isSunken = false);
 
@@ -126,11 +130,11 @@ private:
     auto getTableViewInformation(const QWidget *widget) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::TableViewInformation &;
     auto getCheckBoxInformation(const QWidget *widget) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::CheckBoxInformation &;
     auto getGroupBoxInformation(const QWidget *widget) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::GroupBoxInformation &;
+    auto getTabWidgetInformation(const QWidget *widget) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::TabWidgetInformation &;
 
     static auto getPushButtonDefaultState(const QStyleOptionButton *option, CENTAUR_THEME_INTERFACE_NAMESPACE::PushButtonInformation *element) -> CENTAUR_THEME_INTERFACE_NAMESPACE::ElementState &;
     static auto getElementState(const QStyleOption *option, CENTAUR_THEME_INTERFACE_NAMESPACE::UIElementBasis *element, bool *validSunken = nullptr) -> CENTAUR_THEME_INTERFACE_NAMESPACE::ElementState &;
-    static auto
-    getCheckBoxInformationState(const QStyleOption *option, CENTAUR_THEME_INTERFACE_NAMESPACE::CheckBoxInformation *state)
+    static auto getCheckBoxInformationState(const QStyleOption *option, CENTAUR_THEME_INTERFACE_NAMESPACE::CheckBoxInformation *state)
         -> CENTAUR_THEME_INTERFACE_NAMESPACE::CheckBoxInformation::CheckElementState &;
 
     static auto getComboBoxState(const QStyleOptionComboBox *option, CENTAUR_THEME_INTERFACE_NAMESPACE::ComboBoxInformation *element)

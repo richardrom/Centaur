@@ -446,6 +446,16 @@ auto CentTheme::getGroupBoxInformation(const QWidget *widget) const -> CENTAUR_T
     return m_uiElements->groupBoxInformation;
 }
 
+auto CentTheme::getTabWidgetInformation(const QWidget *widget) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::TabWidgetInformation &
+{
+    const QString objectName = widget == nullptr ? "" : widget->objectName();
+
+    const auto &iter = m_uiElements->tabWidgetOverride.find(objectName);
+    if (iter != m_uiElements->tabWidgetOverride.end())
+        return iter->second;
+    return m_uiElements->tabWidgetInformation;
+}
+
 auto CentTheme::getCheckBoxInformationState(const QStyleOption *option, CENTAUR_THEME_INTERFACE_NAMESPACE::CheckBoxInformation *state)
     -> CENTAUR_THEME_INTERFACE_NAMESPACE::CheckBoxInformation::CheckElementState &
 {
@@ -505,13 +515,14 @@ auto CentTheme::getComboBoxState(const QStyleOptionComboBox *option, CENTAUR_THE
         element->dropArrowPen, element->dropArrowSize };
 }
 
-void CentTheme::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter,
-    const QWidget *widget) const
+void CentTheme::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
     painter->setRenderHints(m_renderHints);
 
     switch (element) {
-        case PE_Frame: return;
+        case PE_Frame:
+            painter->fillRect(option->rect, Qt::blue);
+            return;
         case PE_FrameDefaultButton: C_FALLTHROUGH;
         case PE_FrameDockWidget: return;
         case PE_FrameFocusRect:
@@ -521,16 +532,27 @@ void CentTheme::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOpti
         case PE_FrameLineEdit: C_FALLTHROUGH;
         case PE_FrameMenu: C_FALLTHROUGH;
         case PE_FrameStatusBarItem: C_FALLTHROUGH;
-        case PE_FrameTabWidget: C_FALLTHROUGH;
+
         case PE_FrameWindow: C_FALLTHROUGH;
         case PE_FrameButtonBevel: C_FALLTHROUGH;
         case PE_FrameButtonTool: C_FALLTHROUGH;
-        case PE_FrameTabBarBase: C_FALLTHROUGH;
+
         case PE_PanelButtonCommand: C_FALLTHROUGH;
         case PE_PanelButtonBevel: C_FALLTHROUGH;
         case PE_PanelButtonTool: C_FALLTHROUGH;
         case PE_PanelMenuBar: C_FALLTHROUGH;
         case PE_PanelToolBar: return;
+
+        case PE_FrameTabWidget:
+            painter->fillRect(option->rect, Qt::blue);
+            return;
+        case PE_FrameTabBarBase:
+            {
+                if (const auto *tbb = qstyleoption_cast<const QStyleOptionTabBarBase *>(option)) {
+                    drawTabBarBackground(tbb, painter, widget);
+                }
+            }
+            return;
         case PE_PanelLineEdit:
             drawEditLinePanel(option, painter, qobject_cast<const QLineEdit *>(widget));
             return;
@@ -577,12 +599,13 @@ void CentTheme::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOpti
         case PE_IndicatorToolBarHandle: C_FALLTHROUGH;
         case PE_IndicatorToolBarSeparator: C_FALLTHROUGH;
         case PE_PanelTipLabel: C_FALLTHROUGH;
-        case PE_IndicatorTabTear: break;
+
         case PE_PanelScrollAreaCorner:
             // TODO: THIS
             painter->fillRect(option->rect, Qt::green);
             return;
-        case PE_Widget: break;
+        case PE_Widget:
+            break;
         case PE_IndicatorColumnViewArrow: C_FALLTHROUGH;
         case PE_IndicatorItemViewItemDrop: break;
         case PE_PanelItemViewItem:
@@ -594,7 +617,11 @@ void CentTheme::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOpti
         case PE_PanelStatusBar: C_FALLTHROUGH;
         case PE_IndicatorTabClose: break;
         case PE_PanelMenu: drawPanelMenu(option, painter); return;
-        case PE_IndicatorTabTearRight: C_FALLTHROUGH;
+        case PE_IndicatorTabTear: C_FALLTHROUGH;
+        case PE_IndicatorTabTearRight:
+            // TODO: DRAW TEARS
+            painter->fillRect(option->rect, Qt::darkCyan);
+            return;
         case PE_CustomBase: break;
     }
     // qDebug() << "ELE" << element;
@@ -618,10 +645,24 @@ void CentTheme::drawControl(QStyle::ControlElement element, const QStyleOption *
             drawCheckBoxLabel(qstyleoption_cast<const QStyleOptionButton *>(option), painter, qobject_cast<const QCheckBox *>(widget));
             return;
         case CE_RadioButton: C_FALLTHROUGH;
-        case CE_RadioButtonLabel: C_FALLTHROUGH;
-        case CE_TabBarTab: C_FALLTHROUGH;
-        case CE_TabBarTabShape: C_FALLTHROUGH;
-        case CE_TabBarTabLabel: break;
+        case CE_RadioButtonLabel: break;
+        case CE_TabBarTab:
+            if (const auto *tab = qstyleoption_cast<const QStyleOptionTab *>(option); tab) {
+                drawControl(CE_TabBarTabShape, tab, painter, widget);
+                drawControl(CE_TabBarTabLabel, tab, painter, widget);
+            }
+            return;
+        case CE_TabBarTabShape:
+            if (const auto *tab = qstyleoption_cast<const QStyleOptionTab *>(option); tab) {
+                drawTabBarShape(tab, painter, widget);
+            }
+            return;
+        case CE_TabBarTabLabel:
+            if (const auto *tab = qstyleoption_cast<const QStyleOptionTab *>(option); tab) {
+                drawTabBarTabLabel(tab, painter, widget);
+            }
+            return;
+
         case CE_ProgressBar:
             drawProgressBarContents(qstyleoption_cast<const QStyleOptionProgressBar *>(option), painter,
                 qobject_cast<const QProgressBar *>(widget));
@@ -686,6 +727,15 @@ void CentTheme::drawControl(QStyle::ControlElement element, const QStyleOption *
             drawTableView(qstyleoption_cast<const QStyleOptionViewItem *>(option), painter, widget);
             return;
         case CE_ShapedFrame:
+
+            if (widget->metaObject() != nullptr && strcmp(widget->metaObject()->className(), "QStackedWidget") == 0) {
+                if (widget->parentWidget() != nullptr && widget->parentWidget()->metaObject() != nullptr) {
+                    if (strcmp(widget->parentWidget()->metaObject()->className(), "QTabWidget") == 0) {
+                        // Draw the QTabWidget background
+                        drawTabWidgetBackground(option, painter, widget);
+                    }
+                }
+            }
 
             if (qobject_cast<const QTableView *>(widget) != nullptr || qobject_cast<const QTableWidget *>(widget) != nullptr) {
                 drawTableFrameBackground(option, painter, widget);
@@ -1072,6 +1122,9 @@ void CentTheme::polish(QWidget *widget)
         auto &tbi = getToolButtonInformation(widget);
         widget->setAttribute(Qt::WA_Hover, true);
         animInfo = tbi.animations;
+    }
+    else if (strcmp(className, "QTabWidget") == 0 || strcmp(className, "QTabBar") == 0) {
+        widget->setAttribute(Qt::WA_Hover, true);
     }
 
     if (!animInfo.empty()) {
@@ -2295,4 +2348,142 @@ void CentTheme::drawGroupBox(const QStyleOptionGroupBox *option, QPainter *paint
     }
     painter->restore();
     // painter->fillRect(contentsRect, Qt::blue);
+}
+
+void CentTheme::drawTabWidgetBackground(const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+{
+    const auto &twfo = getTabWidgetInformation(widget);
+    painter->save();
+    {
+        painter->setBrush(twfo.backgroundBrush);
+        painter->setPen(Qt::NoPen);
+        CentTheme::drawFrame(painter, twfo.widgetFrame, option->rect);
+    }
+    painter->restore();
+}
+
+void CentTheme::drawTabBarBackground(const QStyleOptionTabBarBase *option, QPainter *painter, const QWidget *widget) const
+{
+    const auto &twfo = getTabWidgetInformation(widget);
+    QRect barRect    = option->rect;
+    barRect.setY(0);
+
+    if (!option->state.testFlag(QStyle::State_Enabled)) {
+        painter->fillRect(barRect, twfo.disabledTabBarBackgroundBrush);
+        return;
+    }
+    painter->fillRect(barRect, twfo.tabBarBackgroundBrush);
+}
+
+void CentTheme::drawTabBarShape(const QStyleOptionTab *option, QPainter *painter, const QWidget *widget) const
+{
+    const auto &twfo = getTabWidgetInformation(widget);
+
+    const bool isSelected  = option->state.testFlag(QStyle::State_Selected);
+    const bool isMouseOver = option->state.testFlag(QStyle::State_MouseOver);
+
+    if (!option->state.testFlag(QStyle::State_Enabled)) {
+        if (!isSelected) {
+            painter->fillRect(option->rect, twfo.disabledTabBrush);
+            return;
+        }
+        painter->fillRect(option->rect, twfo.disabledSelectedTabBrush);
+        return;
+    }
+
+    if (isMouseOver) {
+        painter->fillRect(option->rect, twfo.hoverTabBrush);
+        return;
+    }
+    if (isSelected) {
+        painter->fillRect(option->rect, twfo.selectedTabBrush);
+        return;
+    }
+
+    painter->fillRect(option->rect, twfo.tabBrush);
+}
+
+void CentTheme::drawTabBarTabLabel(const QStyleOptionTab *option, QPainter *painter, const QWidget *widget) const
+{
+    const auto &twfo = getTabWidgetInformation(widget);
+
+    const int horizontalPadding = pixelMetric(QStyle::PM_TabBarTabHSpace, option, widget) / 4;
+
+    const auto state = option->state.toInt();
+    QRect textRect   = option->rect;
+    textRect.setLeft(textRect.left() + horizontalPadding);
+
+    if (!option->icon.isNull()) {
+        QSize iconSize = option->iconSize;
+        if (!iconSize.isValid()) {
+            const int extent = pixelMetric(QStyle::PM_SmallIconSize, option, widget);
+            iconSize         = QSize(extent, extent);
+        }
+        QSize iconTabSize = option->icon.actualSize(iconSize,
+            state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled,
+            state & QStyle::State_Selected ? QIcon::On : QIcon::Off);
+
+        iconTabSize = QSize(
+            std::min(iconTabSize.width(), iconSize.width()),
+            std::min(iconTabSize.height(), iconSize.height()));
+
+        const int xPadding = (iconSize.width() - iconTabSize.width()) / 2;
+        QRect iconRect {
+            xPadding + horizontalPadding,
+            option->rect.center().y() - iconTabSize.height() / 2,
+            iconTabSize.width(),
+            iconTabSize.height()
+        };
+
+        iconRect = visualRect(option->direction, option->rect, iconRect);
+
+        const QPixmap pixmap = option->icon.pixmap(option->iconSize,
+            state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled,
+            state & QStyle::State_Selected ? QIcon::On : QIcon::Off);
+
+        painter->drawPixmap(iconRect.topLeft(), pixmap);
+
+        textRect.setLeft(textRect.left() + iconRect.width() + 4);
+    }
+    textRect.setRight(textRect.right() - horizontalPadding);
+
+    const QTextOption *options = nullptr;
+    if (!(state & QStyle::State_Enabled)) {
+        if (state & QStyle::State_Selected) {
+            painter->setPen(twfo.selectedDisabledFontPen);
+            painter->setFont(initFontFromInfo(QApplication::font(), twfo.selectedDisabledFontInformation));
+            options = std::addressof(twfo.selectedDisabledFontInformation.opts);
+        }
+        else {
+            painter->setPen(twfo.disabledFontPen);
+            painter->setFont(initFontFromInfo(QApplication::font(), twfo.disabledFontInformation));
+
+            options = std::addressof(twfo.disabledFontInformation.opts);
+        }
+    }
+    else {
+        if (state & QStyle::State_MouseOver) {
+            painter->setPen(twfo.hoverFontPen);
+            painter->setFont(initFontFromInfo(QApplication::font(), twfo.hoverFontInformation));
+            options = std::addressof(twfo.hoverFontInformation.opts);
+        }
+        else {
+            if (state & QStyle::State_Selected) {
+                painter->setPen(twfo.selectedFontPen);
+                painter->setFont(initFontFromInfo(QApplication::font(), twfo.selectedFontInformation));
+                options = std::addressof(twfo.selectedFontInformation.opts);
+            }
+            else {
+                painter->setPen(twfo.fontPen);
+                painter->setFont(initFontFromInfo(QApplication::font(), twfo.fontInformation));
+                options = std::addressof(twfo.fontInformation.opts);
+            }
+        }
+    }
+    const QFontMetrics fontMetrics = painter->fontMetrics();
+    const QString elidedText       = fontMetrics.elidedText(option->text,
+              Qt::TextElideMode::ElideRight,
+              textRect.width(),
+              0);
+    painter->drawText(textRect, elidedText, *options);
 }

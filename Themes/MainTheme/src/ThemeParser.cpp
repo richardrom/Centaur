@@ -182,6 +182,7 @@ struct theme::ThemeParser::Impl
     auto parseTitleBar(const QDomElement &element) -> void;
     auto parseCommandsFrame(const QDomElement &element) -> void;
     auto parseSidePanelFrame(const QDomElement &element) -> void;
+    auto parseTabWidgetInformation(const QDomElement &element) -> void;
 
     C_NODISCARD auto parseStates(const QDomElement &element) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::Elements;
     C_NODISCARD auto parseElementState(const QDomElement &element) const -> CENTAUR_THEME_INTERFACE_NAMESPACE::ElementState;
@@ -357,6 +358,9 @@ void theme::ThemeParser::loadTheme(const std::string &file)
                 }
                 else if (nodeName == "groupbox") {
                     P_IMPL()->parseGroupBoxInformation(uiElement);
+                }
+                else if (nodeName == "tabs") {
+                    P_IMPL()->parseTabWidgetInformation(uiElement);
                 }
                 else {
                     P_IMPL()->errors.emplace_back(u"node '%1' in <ui-elements> node is not valid"_s.arg(nodeName));
@@ -2727,4 +2731,110 @@ auto theme::ThemeParser::Impl::parseSidePanelFrame(const QDomElement &element) -
         }
     }
     parser->uiElements.sideFrameInformation = sffo;
+}
+
+auto theme::ThemeParser::Impl::parseTabWidgetInformation(const QDomElement &element) -> void
+{
+    using namespace Qt::Literals::StringLiterals;
+
+    NODE_ITERATOR(tabsWidgetNode, element)
+    {
+        CENTAUR_THEME_INTERFACE_NAMESPACE::TabWidgetInformation twfo;
+
+        NODE_ELEMENT(tabsWidgetNode, tabsWidgetElement)
+
+        const QString name = tabsWidgetElement.attribute("name");
+        const QString copy = tabsWidgetElement.attribute("copy");
+
+        if (!copy.isEmpty()) {
+            if (copy == "*")
+                twfo = parser->uiElements.tabWidgetInformation;
+            else {
+                auto iter = parser->uiElements.tabWidgetOverride.find(copy);
+                if (iter != parser->uiElements.tabWidgetOverride.end()) {
+                    twfo = iter->second;
+                }
+                else {
+                    errors.emplace_back(u"tab '%1' was not defined and can not be copied"_s.arg(copy));
+                    continue; // avoid overwriting the default data
+                }
+            }
+        }
+
+        NODE_ITERATOR(tabNode, tabsWidgetElement)
+        {
+            NODE_ELEMENT(tabNode, tabElement)
+
+            const QString nodeName  = tabElement.tagName();
+            const QString nodeValue = tabElement.text();
+
+            if (nodeName == "frame") {
+                twfo.widgetFrame = getFrameInformation(nodeValue);
+            }
+            else if (nodeName == "background-brush") {
+                twfo.backgroundBrush = getBrush(nodeValue);
+            }
+            else if (nodeName == "tab-background-brush") {
+                twfo.tabBarBackgroundBrush = getBrush(nodeValue);
+            }
+            else if (nodeName == "disabled-tab-background-brush") {
+                twfo.disabledTabBarBackgroundBrush = getBrush(nodeValue);
+            }
+            else if (nodeName == "tab-brush") {
+                twfo.tabBrush = getBrush(nodeValue);
+            }
+            else if (nodeName == "tab-selected-brush") {
+                twfo.selectedTabBrush = getBrush(nodeValue);
+            }
+            else if (nodeName == "tab-hover-brush") {
+                twfo.hoverTabBrush = getBrush(nodeValue);
+            }
+            else if (nodeName == "disabled-tab-brush") {
+                twfo.disabledTabBrush = getBrush(nodeValue);
+            }
+            else if (nodeName == "disabled-tab-selected-brush") {
+                twfo.disabledSelectedTabBrush = getBrush(nodeValue);
+            }
+            else if (nodeName == "font") {
+                twfo.fontInformation = getFont(nodeValue);
+            }
+            else if (nodeName == "font-pen") {
+                twfo.fontPen = getPen(nodeValue);
+            }
+            else if (nodeName == "font-hover") {
+                twfo.hoverFontInformation = getFont(nodeValue);
+            }
+            else if (nodeName == "font-hover-pen") {
+                twfo.hoverFontPen = getPen(nodeValue);
+            }
+            else if (nodeName == "font-selected") {
+                twfo.selectedFontInformation = getFont(nodeValue);
+            }
+            else if (nodeName == "font-selected-pen") {
+                twfo.selectedFontPen = getPen(nodeValue);
+            }
+            else if (nodeName == "font-disabled") {
+                twfo.disabledFontInformation = getFont(nodeValue);
+            }
+            else if (nodeName == "font-disabled-pen") {
+                twfo.disabledFontPen = getPen(nodeValue);
+            }
+            else if (nodeName == "font-disabled-selected") {
+                twfo.selectedDisabledFontInformation = getFont(nodeValue);
+            }
+            else if (nodeName == "font-disabled-selected-pen") {
+                twfo.selectedDisabledFontPen = getPen(nodeValue);
+            }
+            else {
+                errors.emplace_back(u"node '%1' in groupbox is not recognized"_s.arg(nodeName));
+            }
+        }
+
+        if (!name.isEmpty()) {
+            parser->uiElements.tabWidgetOverride[name] = twfo;
+        }
+        else {
+            parser->uiElements.tabWidgetInformation = twfo;
+        }
+    }
 }

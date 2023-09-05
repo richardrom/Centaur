@@ -317,6 +317,32 @@ struct GroupBoxInformation
     int headerHeight { -1 };
 };
 
+struct TabWidgetInformation
+{
+    QBrush backgroundBrush { Qt::NoBrush };
+    QBrush tabBarBackgroundBrush { Qt::NoBrush };
+    QBrush disabledTabBarBackgroundBrush { Qt::NoBrush };
+    QBrush tabBrush { Qt::NoBrush };
+    QBrush selectedTabBrush { Qt::NoBrush };
+    QBrush hoverTabBrush { Qt::NoBrush };
+    QBrush disabledTabBrush { Qt::NoBrush };
+    QBrush disabledSelectedTabBrush { Qt::NoBrush };
+
+    QPen selectedDisabledFontPen { Qt::NoPen };
+    QPen disabledFontPen { Qt::NoPen };
+    QPen selectedFontPen { Qt::NoPen };
+    QPen hoverFontPen { Qt::NoPen };
+    QPen fontPen { Qt::NoPen };
+
+    FontTextLayout selectedDisabledFontInformation;
+    FontTextLayout disabledFontInformation;
+    FontTextLayout selectedFontInformation;
+    FontTextLayout hoverFontInformation;
+    FontTextLayout fontInformation;
+
+    FrameInformation widgetFrame;
+};
+
 struct MainFrameInformation
 {
     QBrush backgroundBrush { Qt::NoBrush };
@@ -371,6 +397,7 @@ using CheckBoxMap         = std::unordered_map<QString, CheckBoxInformation>;
 using GroupBoxMap         = std::unordered_map<QString, GroupBoxInformation>;
 using DialogMap           = std::unordered_map<QString, DialogInformation>;
 using TitleBarMap         = std::unordered_map<QString, TitleBarInformation>;
+using TabWidgetMap        = std::unordered_map<QString, TabWidgetInformation>;
 
 struct ThemeConstants
 {
@@ -405,6 +432,7 @@ struct UIElements
     GroupBoxMap groupBoxOverride;
     DialogMap dialogOverride;
     TitleBarMap titleBarOverride;
+    TabWidgetMap tabWidgetOverride;
     PushButtonInformation pushButtonInformation;
     ToolButtonInformation toolButtonInformation;
     LineEditInformation lineEditInformation;
@@ -421,6 +449,7 @@ struct UIElements
     MainFrameInformation mainFrameInformation;
     CommandFrameInformation commandFrameInformation;
     SideFrameInformation sideFrameInformation;
+    TabWidgetInformation tabWidgetInformation;
 };
 
 #if defined(C_GNU_CLANG)
