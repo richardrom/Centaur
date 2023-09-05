@@ -513,7 +513,7 @@ void CentTheme::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOpti
     switch (element) {
         case PE_Frame: return;
         case PE_FrameDefaultButton: C_FALLTHROUGH;
-        case PE_FrameDockWidget: break;
+        case PE_FrameDockWidget: return;
         case PE_FrameFocusRect:
             // painter->fillRect(option->rect, QColor(0, 0, 255));
             return;
@@ -530,7 +530,7 @@ void CentTheme::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOpti
         case PE_PanelButtonBevel: C_FALLTHROUGH;
         case PE_PanelButtonTool: C_FALLTHROUGH;
         case PE_PanelMenuBar: C_FALLTHROUGH;
-        case PE_PanelToolBar: break;
+        case PE_PanelToolBar: return;
         case PE_PanelLineEdit:
             drawEditLinePanel(option, painter, qobject_cast<const QLineEdit *>(widget));
             return;
@@ -1078,7 +1078,7 @@ void CentTheme::polish(QWidget *widget)
         const QPointer<helper::AnimationBase> animationBase = new helper::AnimationBase(widget, animInfo);
     }
 
-    QProxyStyle::polish(widget);
+    //  QProxyStyle::polish(widget);
 }
 
 void CentTheme::polish(QPalette &pal)
@@ -2035,7 +2035,7 @@ void CentTheme::drawCheckBoxIndicator(const QStyleOption *option, QPainter *pain
     }
     painter->restore();
 }
-
+ 
 void CentTheme::drawToolButton(const QStyleOptionToolButton *option, QPainter *painter, const QWidget *widget) const
 {
     auto &tbi = getToolButtonInformation(widget);
