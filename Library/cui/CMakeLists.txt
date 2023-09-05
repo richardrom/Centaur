@@ -55,7 +55,8 @@ SET(INCLUDE_FILES
         include/WindowFrame.hpp
         include/TitleFrame.hpp
         include/MainWindowFrame.hpp
-        include/CommandsFrame.hpp)
+        include/CommandsFrame.hpp
+        include/SidePanelFrame.hpp)
 
 SET(SOURCE_FILES
         src/EditorDelegate.cpp
@@ -81,7 +82,8 @@ SET(SOURCE_FILES
         src/cui.cpp
         src/WindowFrame.cpp
         src/TitleFrame.cpp
-        src/MainWindowFrame.cpp)
+        src/MainWindowFrame.cpp
+        src/SidePanelFrame.cpp)
 
 SET(UI_FILES
         rcc/resources.qrc
