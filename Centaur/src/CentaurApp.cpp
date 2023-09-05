@@ -786,12 +786,15 @@ void CentaurApp::saveInterfaceState() noexcept
     settings.setValue("state", saveState());
     settings.endGroup();
 
-    _impl->logDialog->saveInterface();
-
-    settings.beginGroup("Splitter0");
-    settings.setValue("geometry", ui()->splitter->saveGeometry());
-    settings.setValue("state", ui()->splitter->saveState());
+    settings.beginGroup("animations");
+    settings.setValue("use", m_useAnimations);
     settings.endGroup();
+
+    settings.beginGroup("sidePanel");
+    settings.setValue("contracted", m_sidePanelContracted);
+    settings.endGroup();
+
+    _impl->logDialog->saveInterface();
 
     logInfo("app", "UI state saved");
 }
@@ -807,11 +810,6 @@ void CentaurApp::loadInterfaceState() noexcept
     restoreState(settings.value("state").toByteArray());
     settings.endGroup();
 
-    settings.beginGroup("Splitter0");
-    ui()->splitter->restoreGeometry(settings.value("geometry").toByteArray());
-    ui()->splitter->restoreState(settings.value("state").toByteArray());
-    settings.endGroup();
-
     // Load advanced settings
     settings.beginGroup("advancedSettings-PixmapCache");
     // Always write the default
@@ -823,6 +821,14 @@ void CentaurApp::loadInterfaceState() noexcept
     else {
         QPixmapCache::setCacheLimit(pixCacheValue);
     }
+    settings.endGroup();
+
+    settings.beginGroup("animations");
+    m_useAnimations = settings.value("use", true).toBool();
+    settings.endGroup();
+
+    settings.beginGroup("sidePanel");
+    m_sidePanelContracted = settings.value("contracted", false).toBool();
     settings.endGroup();
 
     logInfo("app", "UI state loaded");
