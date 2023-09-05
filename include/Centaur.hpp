@@ -163,10 +163,23 @@ private:           \
 #define CENT_LIBRARY_HIDDEN
 #endif /*USE_CENT_LIBRARY*/
 
+#include <utility>
+
 namespace CENTAUR_NAMESPACE
 {
     constexpr char CentaurVersionString[]         = "0.1.0";
     constexpr char CentaurProtocolVersionString[] = "0.1.0";
+
+    /// \brief Helper function to avoid new warnings
+    /// \tparam T QtObject class
+    /// \tparam Args Constructor parameter types
+    /// \param args Constructor parameters
+    /// \return A created objected
+    template <typename T, typename... Args>
+    C_ALWAYS_INLINE T *createObject(Args &&...args)
+    {
+        return new T(std::forward<Args>(args)...);
+    }
 } // namespace CENTAUR_NAMESPACE
 
 #endif // CENTAUR_PROJECT
