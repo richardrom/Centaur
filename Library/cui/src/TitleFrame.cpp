@@ -112,7 +112,10 @@ TitleFrame::TitleFrame(QWidget *parent) :
     // in either case, set the movable parent to this Widget
     const auto *parentClassName = parent->metaObject()->className();
     if (strcmp(parentClassName, "cen::WindowFrame") == 0 && parent->parent() != nullptr) {
-        const auto *parentParentClassName = parent->parent()->metaObject()->className();
+        const auto *superClassObject = parent->parent()->metaObject()->superClass();
+        // Title Frame must have a parent
+        assert(superClassObject != nullptr);
+        const auto *parentParentClassName = superClassObject->className();
         if (strcmp(parentParentClassName, "cen::CDialog") == 0
             || strcmp(parentParentClassName, "QDialog") == 0) {
             overrideMovableParent(parent->parentWidget());
@@ -475,7 +478,7 @@ void TitleFrame::resizeEvent(QResizeEvent *event)
         P_IMPL()->closeButton->setGeometry(xAdvance, yPosition, maxSize, maxSize);
         xAdvance += maxSize + buttonSpacing;
     }
- 
+
     if (P_IMPL()->minimizeButton) {
         P_IMPL()->minimizeButton->setGeometry(xAdvance, yPosition, maxSize, maxSize);
         xAdvance += maxSize + buttonSpacing;
