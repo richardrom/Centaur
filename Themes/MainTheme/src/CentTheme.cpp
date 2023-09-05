@@ -70,7 +70,7 @@ void helper::AnimationBase::setupAnimation(const CENTAUR_THEME_INTERFACE_NAMESPA
         bool redrawWidget = false;
 
         /// \note BY NOW, animationSteps assumes it contains at least one
-        /// element an as most two. Assuming only a pair of "Applications"
+        /// element, and as most two. Assuming only a pair of "Applications"
         /// Understanding that an application is Hover in and Hover out or Focus
         /// in or focus out
 
@@ -2035,7 +2035,7 @@ void CentTheme::drawCheckBoxIndicator(const QStyleOption *option, QPainter *pain
     }
     painter->restore();
 }
- 
+
 void CentTheme::drawToolButton(const QStyleOptionToolButton *option, QPainter *painter, const QWidget *widget) const
 {
     auto &tbi = getToolButtonInformation(widget);
