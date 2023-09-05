@@ -436,6 +436,8 @@ void CentaurApp::initializeInterface() noexcept
     viewServerStatusButton->setIcon(loadIcon(QString::fromUtf8(":/svg/commands/server-red")));
 
     connect(ui()->settingsButton, &QPushButton::released, this, &CentaurApp::onShowSettings);
+    connect(viewLogsButton, &QToolButton::released, this, &CentaurApp::onShowLogDialog);
+
     for (auto &action : _impl->candleActions->actions) {
         auto &[tmFrame, act] = action;
         connect(act, &QAction::triggered, this, [&, _tmFrame = tmFrame]() {
