@@ -54,11 +54,11 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="CENTAUR_NAMESPACE::MovableFrame" name="titleFrame">
+       <widget class="CENTAUR_NAMESPACE::TitleFrame" name="titleFrame">
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>20</height>
+          <height>25</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -82,159 +82,19 @@
         <property name="autoFillBackground">
          <bool>false</bool>
         </property>
-        <property name="styleSheet">
-         <string notr="true">QFrame{
-background-color: qlineargradient(x1:0.5, y1: 0, x2:0.5, y2:1, 
-							stop: 1  rgb(23,31,38), stop: 0 rgb(36,44,50));
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-border-bottom-left-radius: 0px;
-border-bottom-right-radius: 0px;
-border: 0px;
-}</string>
-        </property>
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>
         </property>
-        <layout class="QVBoxLayout" name="titleFrameLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
-          <number>1</number>
-         </property>
-         <item>
-          <widget class="QFrame" name="titleBarFrame">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QFrame{
-background-color: rgba(0,0,0,0);
-border: 0px;
-}</string>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="titleBarFrameLayout_2">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <property name="sizeConstraint">
-             <enum>QLayout::SetNoConstraint</enum>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QFrame" name="titleBarFrame_2">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="sizeIncrement">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QFrame{
-background-color: rgba(0,0,0,0);
-border: 0px;
-}</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QHBoxLayout" name="titleBarFrameLayout2_2">
-               <property name="spacing">
-                <number>-1</number>
-               </property>
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QLabel" name="titleLabel_2">
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>Logs</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
+        <property name="lineWidth">
+         <number>0</number>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QTableWidget" name="logsTable">
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
@@ -283,9 +143,9 @@ border: 0px;
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CENTAUR_NAMESPACE::MovableFrame</class>
+   <class>CENTAUR_NAMESPACE::TitleFrame</class>
    <extends>QFrame</extends>
-   <header>../../Library/cui/include/MovableFrame.hpp</header>
+   <header>../../Library/cui/include/TitleFrame.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

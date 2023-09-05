@@ -85,14 +85,8 @@ LogDialog::LogDialog(QWidget *parent) :
     CDialog { parent },
     _impl { new Impl(this) }
 {
-    /*
-        ui()->closeButton->setButtonClass(SystemPushButton::ButtonClass::override);
-        connect(ui()->closeButton, &SystemPushButton::systemPressed, this, [&]() {
-            hide();
-        });
-    */
 
-    ui()->titleFrame->overrideParent(this);
+    ui()->titleFrame->setFrameTitle(tr("Logs"));
 
     QTableWidget *logger = ui()->logsTable;
     logger->setHorizontalHeaderLabels({ tr("Date"), tr("User"), tr("Session"), tr("Type"), tr("Source"), tr("Message") });
