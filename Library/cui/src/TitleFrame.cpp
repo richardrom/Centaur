@@ -55,8 +55,6 @@ struct TitleFrame::Impl
     qreal topRightRadius { 0.0 };
     qreal bottomRightRadius { 0.0 };
 
-    int maxTitleWidth { 0 };
-
     SystemPushButton *closeButton { nullptr };
     SystemPushButton *minimizeButton { nullptr };
     SystemPushButton *maximizeButton { nullptr }; // Under macOS, this is the fullscreen button
