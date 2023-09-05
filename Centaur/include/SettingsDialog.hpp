@@ -27,6 +27,7 @@ namespace Ui
 
 class SettingsDialog : public CDialog
 {
+    Q_OBJECT
     enum class StatusMode
     {
         error,

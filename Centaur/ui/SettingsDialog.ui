@@ -1274,9 +1274,10 @@ font-size:  25px;
    <header>../../Library/cui/include/SearchLineEdit.hpp</header>
   </customwidget>
   <customwidget>
-   <class>CENTAUR_NAMESPACE::OptionsTableWidget</class>
-   <extends>QTableView</extends>
-   <header>../../Library/cui/include/OptionsTableWidget.hpp</header>
+   <class>CENTAUR_NAMESPACE::TitleFrame</class>
+   <extends>QFrame</extends>
+   <header>../../Library/cui/include/TitleFrame.hpp</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>CENTAUR_NAMESPACE::WindowFrame</class>
@@ -1285,10 +1286,9 @@ font-size:  25px;
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>CENTAUR_NAMESPACE::TitleFrame</class>
-   <extends>QFrame</extends>
-   <header>../../Library/cui/include/TitleFrame.hpp</header>
-   <container>1</container>
+   <class>CENTAUR_NAMESPACE::OptionsTableWidget</class>
+   <extends>QTableView</extends>
+   <header>../../Library/cui/include/OptionsTableWidget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>
