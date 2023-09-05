@@ -454,10 +454,13 @@ void CentaurApp::initializeInterface() noexcept
             dlg.exec();
         });
 
-    connect(ui()->watchlistButton, &QPushButton::clicked, this, [&](bool clicked) {
-        if (clicked)
-            ui()->stackedWidget->setCurrentWidget(ui()->watchListPage);
-    });
+    connect(ui()->sidePanelViewButton, &QToolButton::released, this, &CentaurApp::onToggleSidePanel);
+
+    /*
+        connect(ui()->watchlistButton, &QPushButton::clicked, this, [&](bool clicked) {
+            if (clicked)
+                ui()->stackedWidget->setCurrentWidget(ui()->watchListPage);
+        });*/
 
     connect(_impl->orderbookDepth, &QAction::triggered, this, [&, action = _impl->orderbookDepth](C_UNUSED bool trigger) {
         const auto actionData    = _impl->orderbookDepth->data().value<OrderBookDepthInformation>();
