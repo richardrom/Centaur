@@ -59,6 +59,7 @@ namespace CENTAUR_PLUGIN_NAMESPACE
         QString base;
         qreal quoteQuantity;
     };
+
     class ExchangeRatePlugin : public QObject,
                                public CENTAUR_PLUGIN_NAMESPACE::IExchangeRate
     {
@@ -155,9 +156,9 @@ namespace CENTAUR_PLUGIN_NAMESPACE
     m_logger->debug(x, y)
 #else
 #define logTrace(x, y) \
-    ((void *)0)
+    (reinterpret_cast<void *>(0))
 #define logDebug(x, y) \
-    ((void *)0)
+    (reinterpret_cast<void *>(0))
 #endif /**/
 
 #define logError(x, y) \
