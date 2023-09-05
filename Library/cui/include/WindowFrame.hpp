@@ -46,7 +46,12 @@ public:
     /// \return A widget that is receiving all the resizing and moving events
     C_NODISCARD QWidget *activeParent() const;
 
+    /// \brief Obtain the current frame mode
+    /// \return The current frame mode
+    WindowFrame::FrameMode frameMode() const;
+
 protected:
+    void leaveEvent(QEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;

@@ -58,8 +58,6 @@ struct WindowFrame::Impl
     // Movable parameters
     QRect normalGeometry;
     bool thisEvent { false };
-
-    WindowFrame::FrameMode activeMode { WindowFrame::FrameMode::AllModes };
 };
 
 WindowFrame::WindowFrame(QWidget *parent) noexcept :
@@ -97,6 +95,12 @@ QWidget *WindowFrame::activeParent() const
     return P_IMPL()->topLevelParent;
 }
 
+void WindowFrame::leaveEvent(C_UNUSED QEvent *event)
+{
+    setCursor(Qt::ArrowCursor);
+    update();
+}
+
 void WindowFrame::mousePressEvent(QMouseEvent *event)
 {
     const QPoint localPoint = event->pos();
@@ -113,8 +117,6 @@ void WindowFrame::mousePressEvent(QMouseEvent *event)
             P_IMPL()->rightDiff  = activeParent()->geometry().right() - event->globalPosition().toPoint().x();
             P_IMPL()->leftDiff   = event->globalPosition().toPoint().x() - activeParent()->geometry().left();
             P_IMPL()->topDiff    = event->globalPosition().toPoint().y() - activeParent()->geometry().top();
-
-            P_IMPL()->activeMode = WindowFrame::FrameMode::Resizable;
         }
     }
 
@@ -125,30 +127,26 @@ void WindowFrame::mousePressEvent(QMouseEvent *event)
 
         if (event->buttons().testFlag(Qt::LeftButton)) {
             movableActive = true;
-            // There are some widget that propagate the mouseMoveEvent to this Widget
+            // There are some widgets that propagate the mouseMoveEvent to this Widget
             // and start moving the whole window or dialog without a direct mouse press on this WindowFrame (QComboBox, QToolButton),
-            // Taking advantage of this, with the flag, m_thisEvent, mouseMoveEvent can be ignored unless
-            // the user press the MovableFrame directly
-            P_IMPL()->thisEvent = true;
+            // Taking advantage of this; with the flag, m_thisEvent, mouseMoveEvent can be ignored unless
+            // the user presses the MovableFrame directly
 
-            P_IMPL()->activeMode = WindowFrame::FrameMode::Movable;
+            P_IMPL()->thisEvent = true;
         }
     }
 
-    // We'll grab the mouse in either situations
+    // We'll grab the mouse in either situation
     if (movableActive || resizeActive) {
         P_IMPL()->startPoint = event->globalPosition().toPoint();
         grabMouse();
     }
-
-    QWidget::mousePressEvent(event);
 }
 
 void WindowFrame::mouseReleaseEvent(QMouseEvent *event)
 {
-    P_IMPL()->activeMode = WindowFrame::FrameMode::AllModes;
-    P_IMPL()->thisEvent  = false;
-    P_IMPL()->mouseAt    = -1;
+    P_IMPL()->thisEvent = false;
+    P_IMPL()->mouseAt   = -1;
     releaseMouse();
 
     QWidget::mouseReleaseEvent(event);
@@ -156,8 +154,8 @@ void WindowFrame::mouseReleaseEvent(QMouseEvent *event)
 
 void WindowFrame::mouseMoveEvent(QMouseEvent *event)
 {
-    if (P_IMPL()->activeMode == WindowFrame::FrameMode::Resizable
-        || P_IMPL()->activeMode == WindowFrame::FrameMode::AllModes) {
+    if (P_IMPL()->mode == WindowFrame::FrameMode::Resizable
+        || P_IMPL()->mode == WindowFrame::FrameMode::AllModes) {
         const QPoint localPoint = event->pos();
         QRect geometry          = activeParent()->geometry();
 
@@ -198,8 +196,8 @@ void WindowFrame::mouseMoveEvent(QMouseEvent *event)
             activeParent()->setGeometry(geometry);
         }
     }
-    else if (P_IMPL()->activeMode == WindowFrame::FrameMode::Movable
-             || P_IMPL()->activeMode == WindowFrame::FrameMode::AllModes) {
+    else if (P_IMPL()->mode == WindowFrame::FrameMode::Movable
+             || P_IMPL()->mode == WindowFrame::FrameMode::AllModes) {
 
         if (event->buttons().testFlag(Qt::LeftButton) && P_IMPL()->thisEvent) {
             if ((event->globalPosition().toPoint() - P_IMPL()->startPoint) != QPoint { 0, 0 }) {
@@ -300,6 +298,11 @@ void WindowFrame::paintEvent(QPaintEvent *event)
      for (const auto &frame : P_IMPL()->activeFrames) {
          painter.drawRect(frame);
      }*/
+}
+
+WindowFrame::FrameMode WindowFrame::frameMode() const
+{
+    return _impl->mode;
 }
 
 END_CENTAUR_NAMESPACE
