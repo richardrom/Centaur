@@ -1232,4 +1232,90 @@ void CentaurApp::onViewCandleChart(const QString &symbol, const QString &source,
     }
 }
 
+void CentaurApp::onToggleSidePanel() noexcept
+{
+    static constexpr int _defaultWidth   = 40;
+    static constexpr int _defaultHeight  = 20;
+    static constexpr int _maxButtonWidth = 16777215;
+    static constexpr int _minButtonWidth = 35;
+    static constexpr int _maxFrameWidth  = 250;
+    static constexpr int _minFrameWidth  = 45;
+
+    const std::array<QToolButton *, 3> sidePanelButtons {
+        ui()->viewDashboardButton,
+        ui()->viewFavoritesButton,
+        ui()->viewExchangesButton
+    };
+
+    auto loadIcon = [](const QString &url) {
+        QIcon icon;
+        icon.addFile(url, QSize(), QIcon::Normal, QIcon::On);
+        return icon;
+    };
+
+    auto updateButtonsHide = [](QToolButton *button) -> void {
+        button->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonIconOnly);
+        button->setMaximumWidth(_minButtonWidth);
+    };
+
+    auto updateButtonsShow = [](QToolButton *button) -> void {
+        button->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonTextBesideIcon);
+        button->setMaximumWidth(_maxButtonWidth);
+    };
+
+    if (m_sidePanelContracted) {
+        // Show Panel
+        ui()->sidePanelStatusFrameSpacerLeft->changeSize(_defaultWidth, _defaultHeight, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        ui()->sidePanelStatusFrameSpacerRight->changeSize(0, _defaultHeight, QSizePolicy::Fixed, QSizePolicy::Minimum);
+        ui()->sidePanelViewButton->setIcon(loadIcon(QString::fromUtf8(":/svg/panel/menu-open")));
+        std::for_each(sidePanelButtons.begin(), sidePanelButtons.end(), updateButtonsShow);
+    }
+    else {
+        // Hide panel
+        ui()->sidePanelStatusFrameSpacerLeft->changeSize(0, _defaultHeight, QSizePolicy::Fixed, QSizePolicy::Minimum);
+        ui()->sidePanelStatusFrameSpacerRight->changeSize(_defaultWidth, _defaultHeight, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        ui()->sidePanelViewButton->setIcon(loadIcon(QString::fromUtf8(":/svg/panel/menu")));
+        std::for_each(sidePanelButtons.begin(), sidePanelButtons.end(), updateButtonsHide);
+    }
+
+    ui()->sidePanelToggleLayout->invalidate();
+
+    auto *iTheme = cuiTheme();
+    using namespace CENTAUR_THEME_INTERFACE_NAMESPACE;
+    const auto *animation = [&panelIsContracted = m_sidePanelContracted, &iTheme]() -> ThemeAnimation * {
+        if (iTheme == nullptr)
+            return nullptr;
+        if (!panelIsContracted)
+            return iTheme->uiElements().sideFrameInformation.hidePanelAnimation;
+        return iTheme->uiElements().sideFrameInformation.showPanelAnimation;
+    }();
+
+    if (!m_useAnimations || animation == nullptr) {
+        QSize currentPanelFrameSize = ui()->sideBarLeftFrame->maximumSize();
+        if (!m_sidePanelContracted) {
+            currentPanelFrameSize.setWidth(_minFrameWidth);
+        }
+        else {
+            currentPanelFrameSize.setWidth(_maxFrameWidth);
+        }
+        ui()->sideBarLeftFrame->setMaximumSize(currentPanelFrameSize);
+    }
+    else {
+
+        auto *maxSizeAnimation = createObject<QPropertyAnimation>(ui()->sideBarLeftFrame, "maximumSize", this);
+
+        const auto originSize = ui()->sideBarLeftFrame->maximumSize();
+        maxSizeAnimation->setDuration(animation->duration);
+        maxSizeAnimation->setEasingCurve(animation->easingCurve);
+        maxSizeAnimation->setStartValue(originSize);
+        maxSizeAnimation->setEndValue(
+            m_sidePanelContracted
+                ? QSize(_maxFrameWidth, originSize.height())
+                : QSize(_minFrameWidth, originSize.height()));
+        maxSizeAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+    }
+
+    m_sidePanelContracted = !m_sidePanelContracted;
+}
+
 END_CENTAUR_NAMESPACE
