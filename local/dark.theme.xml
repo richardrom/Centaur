@@ -485,7 +485,7 @@
             <duration>200</duration>
         </animation>
         <animation name="side-panel-hide">
-            <easing-curve>out-in-sine</easing-curve>
+            <easing-curve>linear</easing-curve>
             <duration>200</duration>
         </animation>
         <animation name="side-panel-show">
