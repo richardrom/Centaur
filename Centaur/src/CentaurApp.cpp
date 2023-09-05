@@ -436,14 +436,11 @@ void CentaurApp::initializeInterface() noexcept
     viewServerStatusButton->setIcon(loadIcon(QString::fromUtf8(":/svg/commands/server-red")));
 
     connect(ui()->settingsButton, &QPushButton::released, this, &CentaurApp::onShowSettings);
-    connect(ui()->pluginsViewButton, &QPushButton::released, this, &CentaurApp::onShowPlugins);
-    connect(ui()->logsViewButtton, &QPushButton::released, this, &CentaurApp::onShowLogDialog);
-
     for (auto &action : _impl->candleActions->actions) {
-        auto &[tf, act] = action;
-        connect(act, &QAction::triggered, this, [&, tf = tf]() {
+        auto &[tmFrame, act] = action;
+        connect(act, &QAction::triggered, this, [&, _tmFrame = tmFrame]() {
             const auto actionData = _impl->orderbookDepth->data().value<OrderBookDepthInformation>();
-            onViewCandleChart(actionData.symbol, actionData.source, tf);
+            onViewCandleChart(actionData.symbol, actionData.source, _tmFrame);
         });
     }
 
